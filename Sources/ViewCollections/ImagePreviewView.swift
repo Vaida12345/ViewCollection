@@ -114,11 +114,11 @@ public struct ImagePreviewView: View {
             }
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
-//        .onSwap(to: .bottom, progress: $swapProgress) {
-//            withAnimation(.interpolatingSpring) {
-//                onReturn()
-//            }
-//        }
+        .onSwap(to: .bottom, progress: $swapProgress) {
+            withAnimation(.interpolatingSpring) {
+                onReturn()
+            }
+        }
         .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.regularMaterial.opacity(0.5 + (1 - swapProgress) * 0.5))
