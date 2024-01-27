@@ -236,16 +236,4 @@ public struct ImagePreviewView: View {
     }
     
 }
-
-
-#Preview {
-    @Namespace var nameSpace
-    
-    if #available(iOS 17, *) {
-        return ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace, onReturn: {}, onDelete: {})
-    } else {
-        return EmptyView()
-    }
-}
-
 #endif

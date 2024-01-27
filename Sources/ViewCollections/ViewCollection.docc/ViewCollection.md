@@ -4,7 +4,7 @@ A collection of SwiftUI Views.
 
 ## Overview
 
-This package provides a collection of stand-alone SwiftUI Views. The views in the DataBase framework provides the foundation functionalities.
+This package provides a collection of stand-alone SwiftUI Views. The views in the `Nucleus` framework provides the foundation functionalities.
 
 ## Getting Started
 
@@ -19,12 +19,9 @@ and then adding the appropriate module to your target dependencies.
 
 ### Using Xcode Package support
 
-You can add this framework as a dependency to your Xcode project by clicking File -> Swift Packages -> Add Package Dependency.
-
-The package is located at `~/Library/Mobile Documents/com~apple~CloudDocs/DataBase/Projects/Packages/ViewCollection`
+You can add this framework as a dependency to your Xcode project by clicking File -> Swift Packages -> Add Package Dependency. The package is located at:
+```
+~/Library/Mobile Documents/com~apple~CloudDocs/DataBase/Projects/Packages/ViewCollection
+```
 
 ## Topics
-
-### <!--@START_MENU_TOKEN@-->Group<!--@END_MENU_TOKEN@-->
-
-- <!--@START_MENU_TOKEN@-->``Symbol``<!--@END_MENU_TOKEN@-->
