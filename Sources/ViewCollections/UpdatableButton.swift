@@ -7,6 +7,7 @@
 //
 
 
+#if os(iOS)
 import SwiftUI
 
 
@@ -82,3 +83,19 @@ public struct UpdatableButton<Label>: View where Label: View {
         self.label = label
     }
 }
+
+
+#Preview {
+    
+    @State var isOn: Bool = false
+    
+    return UpdatableButton(isOn: $isOn) {
+        try await Task.sleep(for: .seconds(2))
+        return true
+    } label: {
+        Text("Tap me")
+    }
+
+    
+}
+#endif

@@ -39,8 +39,8 @@ import SwiftUI
 ///     ContentView()
 ///         .background(BlurredEffectView().ignoresSafeArea())
 ///     }
-///     .windowStyle(.hiddenTitleBar)
 /// }
+/// .windowStyle(.hiddenTitleBar)
 /// ```
 ///
 /// ![View Example](blurredEffectView)

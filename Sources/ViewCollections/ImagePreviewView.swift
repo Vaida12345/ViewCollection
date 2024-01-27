@@ -10,9 +10,47 @@
 #if canImport(UIKit)
 import Foundation
 import SwiftUI
+import Nucleus
 
 
 /// A view providing zoomable preview to an image.
+///
+/// When implementing the view. Keep in mind that
+/// - The `matchedGeometryEffect` should only applied to one id at a time, hence the `if`s.
+/// - Use `zIndex` to achieve a smooth transition of the material background.
+///
+/// ```swift
+/// struct ContentView: View {
+///
+///     @Namespace var nameSpace
+///     let image = Image(systemName: "faceid")
+///     @State private var showImage = false
+///
+///     var body: some View {
+///         ZStack {
+///             Button {
+///                  withAnimation {
+///                      showImage.toggle()
+///                  }
+///              } label: {
+///                  if !showImage {
+///                      image
+///                          .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
+///                  }
+///              }
+///             .zIndex(-1)
+///
+///             if showImage {
+///                 ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace) {
+///                     showImage = false
+///                 }
+///             }
+///         }
+///     }
+/// }
+/// ```
+///
+/// ![Example View](imagePreviewView)
 @available(iOS 17, *)
 public struct ImagePreviewView: View {
     
@@ -43,7 +81,8 @@ public struct ImagePreviewView: View {
                 }
             } label: {
                 Label("Return", systemImage: "arrow.down")
-                    .padding(.horizontal, 13)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
                     .background {
                         Capsule()
@@ -64,7 +103,8 @@ public struct ImagePreviewView: View {
                     }
                 } label: {
                     Label("Remove", systemImage: "trash")
-                        .padding(.horizontal, 13)
+                        .padding(.horizontal)
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                         .background {
                             Capsule()
@@ -89,19 +129,14 @@ public struct ImagePreviewView: View {
     public var body: some View {
         ZStack(alignment: verticalSizeClass == .regular ? .bottom : .trailing) {
             imageView
-                .zIndex(-1)
             
-            if verticalSizeClass == .regular {
-                HStack(spacing: 25) {
-                    controls
-                }
-                .padding()
-            } else {
-                VStack(spacing: 25) {
-                    controls
-                }
-                .padding()
+            let layout = verticalSizeClass == .regular ? AnyLayout(EqualWidthHStack(spacing: 25)) : AnyLayout(EqualWidthVStack(spacing: 25))
+            
+            layout {
+                controls
             }
+            .padding()
+            .zIndex(-1)
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
         .onSwap(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
@@ -235,5 +270,45 @@ public struct ImagePreviewView: View {
         
     }
     
+}
+
+
+#Preview {
+    @Namespace var nameSpace
+    
+    let image = Image(systemName: "faceid")
+    
+    @State var showImage = true
+    
+    
+    if #available(iOS 17, *) {
+        return ZStack {
+            VStack {
+                Spacer()
+                
+                Button {
+                    withAnimation {
+                        showImage.toggle()
+                    }
+                } label: {
+                    if !showImage {
+                        image
+                            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
+                    }
+                }
+            }
+            .zIndex(-1)
+            
+            if showImage {
+                ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace) {
+                    showImage = false
+                } onDelete: {
+                    
+                }
+            }
+        }
+    } else {
+        return EmptyView()
+    }
 }
 #endif
