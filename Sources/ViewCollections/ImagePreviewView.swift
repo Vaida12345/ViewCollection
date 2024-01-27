@@ -26,19 +26,44 @@ public struct ImagePreviewView: View {
     
     @State private var swapProgress: Double = 0
     
+    @State private var magnifyBy = 1.0
+    @State private var __previousScale = 1.0
     
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
     
+    private var magnifyGesture: some Gesture {
+        MagnifyGesture()
+            .onChanged { value in
+                magnifyBy = min(max(__previousScale * value.magnification, 0.1), 5)
+                print(magnifyBy)
+            }
+            .onEnded { value in
+                magnifyBy = min(max(__previousScale * value.magnification, 0.1), 5)
+                __previousScale = magnifyBy
+            }
+    }
+    
+    
     private var imageView: some View {
-        image
-            .resizable()
-            .scaledToFit()
-            .cornerRadius(5)
-            .scaleEffect(.square(0.8 + 0.2 * (1 - swapProgress)))
-            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
-            .padding()
-            .matchedGeometryEffect(id: "ImagePreviewView.imageView", in: nameSpace)
+        GeometryReader { proxy in
+            ScrollView(.horizontal) {
+                ScrollView(.vertical) {
+                    image
+                        .resizable()
+                        .scaledToFit()
+                        .contentShape(Rectangle())
+                        .frame(idealWidth: proxy.size.width, idealHeight: proxy.size.height)
+                        .gesture(magnifyGesture)
+                        .scaleEffect(magnifyBy)
+                }
+            }
+        }
+        .scrollIndicators(.never)
+        .cornerRadius(5)
+        .scaleEffect(.square(0.8 + 0.2 * (1 - swapProgress)))
+        .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
+        .matchedGeometryEffect(id: "ImagePreviewView.imageView", in: nameSpace)
     }
     
     private var controls: some View {
@@ -119,7 +144,6 @@ public struct ImagePreviewView: View {
                 onReturn()
             }
         }
-        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.regularMaterial.opacity(0.5 + (1 - swapProgress) * 0.5))
         .ignoresSafeArea()
@@ -152,11 +176,38 @@ public struct ImagePreviewView: View {
 #Preview {
     @Namespace var nameSpace
     
+    let image = Image(systemName: "faceid")
+    
+    @State var showImage = false
+    
+    
     if #available(iOS 17, *) {
-        return ImagePreviewView(image: Image(systemName: "faceid"), nameSpace: nameSpace, onReturn: {}, onDelete: {})
-    } else {
-        return EmptyView()
+        return ZStack {
+            VStack {
+                Spacer()
+                
+                Button {
+                    withAnimation {
+                        showImage.toggle()
+                    }
+                } label: {
+                    if !showImage {
+                        image
+                            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
+                    }
+                }
+            }
+            .zIndex(-1)
+            
+            if showImage {
+                ImagePreviewView(image: image, nameSpace: nameSpace) {
+                    showImage = false
+                }
+            }
+        }
     }
+    
+    return EmptyView()
 }
 
 #endif
