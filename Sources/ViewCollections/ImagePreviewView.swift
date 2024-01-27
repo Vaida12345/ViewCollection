@@ -16,61 +16,30 @@ import SwiftUI
 @available(iOS 17, *)
 public struct ImagePreviewView: View {
     
-    private let image: Image
-    
-    private let onReturn: () -> Void
+    private let image: UIImage
     
     private let onDelete: (() -> Void)?
     
     private let nameSpace: Namespace.ID
     
-    @State private var swapProgress: Double = 0
-    
-    @State private var magnifyBy = 1.0
-    @State private var __previousScale = 1.0
+    @StateObject private var scrollCoordinator: ScrollController.Coordinator
     
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
     
-    private var magnifyGesture: some Gesture {
-        MagnifyGesture()
-            .onChanged { value in
-                magnifyBy = min(max(__previousScale * value.magnification, 0.1), 5)
-                print(magnifyBy)
-            }
-            .onEnded { value in
-                magnifyBy = min(max(__previousScale * value.magnification, 0.1), 5)
-                __previousScale = magnifyBy
-            }
-    }
-    
-    
     private var imageView: some View {
-        GeometryReader { proxy in
-            ScrollView(.horizontal) {
-                ScrollView(.vertical) {
-                    image
-                        .resizable()
-                        .scaledToFit()
-                        .contentShape(Rectangle())
-                        .frame(idealWidth: proxy.size.width, idealHeight: proxy.size.height)
-                        .gesture(magnifyGesture)
-                        .scaleEffect(magnifyBy)
-                }
-            }
-        }
-        .scrollIndicators(.never)
-        .cornerRadius(5)
-        .scaleEffect(.square(0.8 + 0.2 * (1 - swapProgress)))
-        .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
-        .matchedGeometryEffect(id: "ImagePreviewView.imageView", in: nameSpace)
+        ScrollController(image: image, coordinator: scrollCoordinator)
+            .ignoresSafeArea()
+            .scaleEffect(scrollCoordinator.zoomScale != 1 ? 1 : 0.8 + 0.2 * (1 - scrollCoordinator.swapProgress))
+            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
+            .matchedGeometryEffect(id: "ImagePreviewView.imageView", in: nameSpace)
     }
     
     private var controls: some View {
         Group {
             Button {
                 withAnimation(.interpolatingSpring) {
-                    onReturn()
+                    scrollCoordinator.onReturn()
                 }
             } label: {
                 Label("Return", systemImage: "arrow.down")
@@ -86,6 +55,7 @@ public struct ImagePreviewView: View {
                             .fill(.ultraThinMaterial.opacity(0.5))
                     }
             }
+            .matchedGeometryEffect(id: "ImagePreviewView.controls.return", in: nameSpace)
             
             if let onDelete {
                 Button {
@@ -107,46 +77,45 @@ public struct ImagePreviewView: View {
                         }
                         .foregroundStyle(.red)
                 }
+                .matchedGeometryEffect(id: "ImagePreviewView.controls.delete", in: nameSpace)
             }
         }
-        .matchedGeometryEffect(id: "ImagePreviewView.controls", in: nameSpace)
         .animation(.interpolatingSpring, value: verticalSizeClass)
         .transition(.offset(y: 100).combined(with: .opacity).combined(with: .scale))
-        .opacity(0.25 + (1 - swapProgress) * 0.75)
+        .opacity(0.25 + (1 - scrollCoordinator.swapProgress) * 0.75)
     }
     
     
     public var body: some View {
-        Group {
+        ZStack(alignment: verticalSizeClass == .regular ? .bottom : .trailing) {
+            imageView
+                .zIndex(-1)
+            
             if verticalSizeClass == .regular {
-                VStack {
-                    imageView
-                    
-                    HStack {
-                        controls
-                    }
-                    .padding()
+                HStack(spacing: 25) {
+                    controls
                 }
+                .padding()
             } else {
-                HStack {
-                    imageView
-                    
-                    VStack {
-                        controls
-                    }
-                    .padding()
+                VStack(spacing: 25) {
+                    controls
                 }
+                .padding()
             }
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
-        .onSwap(to: .bottom, progress: $swapProgress) {
+        .onSwap(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
             withAnimation(.interpolatingSpring) {
-                onReturn()
+                scrollCoordinator.onReturn()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(.regularMaterial.opacity(0.5 + (1 - swapProgress) * 0.5))
-        .ignoresSafeArea()
+        .background {
+            Rectangle()
+                .fill(.regularMaterial)
+                .opacity(0.5 + (1 - scrollCoordinator.swapProgress) * 0.5)
+                .ignoresSafeArea()
+        }
     }
     
     
@@ -157,11 +126,11 @@ public struct ImagePreviewView: View {
     ///   - onReturn: The handler when the preview should be dismissed.
     ///   - onDelete: The optional handler when the `image` should be deleted
     ///   - nameSpace: The namespace containing ``ImagePreviewView/nameSpaceID``. Used for smooth transition.
-    public init(image: Image, nameSpace: Namespace.ID, onReturn: @escaping () -> Void, onDelete: (() -> Void)? = nil) {
+    public init(image: UIImage, nameSpace: Namespace.ID, onReturn: @escaping () -> Void, onDelete: (() -> Void)? = nil) {
         self.image = image
         self.nameSpace = nameSpace
-        self.onReturn = onReturn
         self.onDelete = onDelete
+        self._scrollCoordinator = StateObject(wrappedValue: .init(onReturn: onReturn))
     }
 
     
@@ -170,44 +139,113 @@ public struct ImagePreviewView: View {
     /// The ID can be used inside `matchedGeometryEffect` to provide a smooth transition of image.
     public static let nameSpaceID = "ImagePreviewView.image"
     
+    
+    private struct ScrollController: UIViewRepresentable {
+        
+        private let image: UIImage
+        
+        private let coordinator: Coordinator
+        
+        fileprivate func makeUIView(context: Context) -> UIScrollView {
+            let scrollView = UIScrollView()
+            scrollView.delegate = context.coordinator
+            
+            let imageView = UIImageView(image: image)
+            imageView.contentMode = .scaleAspectFit
+            imageView.frame.size = UIScreen.main.bounds.size
+            
+            scrollView.addSubview(imageView)
+            scrollView.contentSize = imageView.frame.size
+            scrollView.isScrollEnabled = false
+            scrollView.showsVerticalScrollIndicator = false
+            scrollView.showsHorizontalScrollIndicator = false
+            scrollView.maximumZoomScale = 5
+            scrollView.minimumZoomScale = 0.5
+            scrollView.frame = UIScreen.main.bounds
+            
+            NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification,
+                                                   object: nil,
+                                                   queue: .main) { notification in
+                DispatchQueue.main.delay(seconds: 0.1) {
+                    UIView.animate(withDuration: 1) {
+                        scrollView.contentSize = UIScreen.main.bounds.size
+                        scrollView.frame = UIScreen.main.bounds
+                        imageView.frame = UIScreen.main.bounds
+                    }
+                }
+            }
+            
+            return scrollView
+        }
+        
+        fileprivate func updateUIView(_ uiView: UIScrollView, context: Context) {
+            
+        }
+        
+        
+        fileprivate init(image: UIImage, coordinator: Coordinator) {
+            self.image = image
+            self.coordinator = coordinator
+        }
+        
+        
+        fileprivate typealias UIViewType = UIScrollView
+        
+        fileprivate final class Coordinator: NSObject, UIScrollViewDelegate, ObservableObject {
+            
+            @Published fileprivate var zoomScale: Double = 1
+            
+            @Published fileprivate var swapProgress: Double = 0
+            
+            fileprivate let onReturn: () -> Void
+            
+            
+            fileprivate func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+                scrollView.subviews.first
+            }
+            
+            fileprivate func scrollViewDidZoom(_ scrollView: UIScrollView) {
+                self.zoomScale = scrollView.zoomScale
+                
+                scrollView.isScrollEnabled = zoomScale <= 1
+                if zoomScale == 0.5 {
+                    withAnimation(.interpolatingSpring) {
+                        onReturn()
+                    }
+                } else if zoomScale < 1 {
+                    swapProgress = (2 - 2 * zoomScale)
+                }
+            }
+            
+            fileprivate func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
+                if scale > 0.5 && scale < 1 {
+                    scrollView.setZoomScale(1, animated: true) // not yet
+                }
+            }
+            
+            fileprivate init(onReturn: @escaping () -> Void) {
+                self.onReturn = onReturn
+            }
+            
+        }
+        
+        fileprivate func makeCoordinator() -> Coordinator {
+            self.coordinator
+        }
+        
+    }
+    
 }
 
 
 #Preview {
     @Namespace var nameSpace
     
-    let image = Image(systemName: "faceid")
-    
-    @State var showImage = false
-    
-    
     if #available(iOS 17, *) {
-        return ZStack {
-            VStack {
-                Spacer()
-                
-                Button {
-                    withAnimation {
-                        showImage.toggle()
-                    }
-                } label: {
-                    if !showImage {
-                        image
-                            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
-                    }
-                }
-            }
-            .zIndex(-1)
-            
-            if showImage {
-                ImagePreviewView(image: image, nameSpace: nameSpace) {
-                    showImage = false
-                }
-            }
-        }
+        return ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace, onReturn: {}, onDelete: {})
+    } else {
+        return EmptyView()
     }
-    
-    return EmptyView()
 }
 
 #endif
