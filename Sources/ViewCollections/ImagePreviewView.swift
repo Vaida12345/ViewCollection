@@ -42,7 +42,9 @@ import Nucleus
 ///
 ///             if showImage {
 ///                 ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace) {
-///                     showImage = false
+///                     withAnimation(.interpolatingSpring) {
+///                         showImage = false
+///                     }
 ///                 }
 ///             }
 ///         }
@@ -76,9 +78,7 @@ public struct ImagePreviewView: View {
     private var controls: some View {
         Group {
             Button {
-                withAnimation(.interpolatingSpring) {
-                    scrollCoordinator.onReturn()
-                }
+                scrollCoordinator.onReturn()
             } label: {
                 Label("Return", systemImage: "arrow.down")
                     .padding(.horizontal)
@@ -95,12 +95,13 @@ public struct ImagePreviewView: View {
                     }
             }
             .matchedGeometryEffect(id: "ImagePreviewView.controls.return", in: nameSpace)
+            .onChange(of: scrollCoordinator.zoomScale) { oldValue, newValue in
+                print(newValue)
+            }
             
             if let onDelete {
                 Button {
-                    withAnimation(.interpolatingSpring) {
-                        onDelete()
-                    }
+                    onDelete()
                 } label: {
                     Label("Remove", systemImage: "trash")
                         .padding(.horizontal)
@@ -129,20 +130,18 @@ public struct ImagePreviewView: View {
     public var body: some View {
         ZStack(alignment: verticalSizeClass == .regular ? .bottom : .trailing) {
             imageView
+                .zIndex(-1)
             
             let layout = verticalSizeClass == .regular ? AnyLayout(EqualWidthHStack(spacing: 25)) : AnyLayout(EqualWidthVStack(spacing: 25))
             
             layout {
                 controls
             }
-            .padding()
-            .zIndex(-1)
+            .padding(.all, 5)
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
         .onSwap(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
-            withAnimation(.interpolatingSpring) {
-                scrollCoordinator.onReturn()
-            }
+            scrollCoordinator.onReturn()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
@@ -244,9 +243,7 @@ public struct ImagePreviewView: View {
                 
                 scrollView.isScrollEnabled = zoomScale <= 1
                 if zoomScale == 0.5 {
-                    withAnimation(.interpolatingSpring) {
-                        onReturn()
-                    }
+                    onReturn()
                 } else if zoomScale < 1 {
                     swapProgress = (2 - 2 * zoomScale)
                 }
@@ -255,6 +252,8 @@ public struct ImagePreviewView: View {
             fileprivate func scrollViewDidEndZooming(_ scrollView: UIScrollView, with view: UIView?, atScale scale: CGFloat) {
                 if scale > 0.5 && scale < 1 {
                     scrollView.setZoomScale(1, animated: true) // not yet
+                    self.zoomScale = 1
+                    self.swapProgress = 0
                 }
             }
             
