@@ -8,7 +8,7 @@
 
 
 import SwiftUI
-import Nucleus
+import Stratum
 
 
 /// An gallery that shows items of different ratio properly.

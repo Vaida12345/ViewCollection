@@ -3,7 +3,7 @@
 
 import PackageDescription
 
-let package = Package(
+let package = Package (
     name: "ViewCollection",
     platforms: [
         .macOS(.v13),
@@ -13,10 +13,10 @@ let package = Package(
     ], products: [
         .library(name: "ViewCollection", targets: ["ViewCollection"]),
     ], dependencies: [
-        .package(name: "Nucleus", 
-                 path: "~/Library/Mobile Documents/com~apple~CloudDocs/DataBase/Projects/Packages/DataBase"),
+        .package(name: "Stratum",
+                 path: "~/Library/Mobile Documents/com~apple~CloudDocs/DataBase/Projects/Packages/Stratum"),
     ], targets: [
-        .target(name: "ViewCollection", dependencies: ["Nucleus"]),
+        .target(name: "ViewCollection", dependencies: ["Stratum"]),
         .testTarget(name: "ViewCollectionTests", dependencies: ["ViewCollection"]),
     ]
 )

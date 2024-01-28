@@ -8,7 +8,7 @@
 
 
 import SwiftUI
-import Nucleus
+import Stratum
 
 
 /// The palette as a color picker.

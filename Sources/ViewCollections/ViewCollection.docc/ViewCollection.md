@@ -25,3 +25,21 @@ You can add this framework as a dependency to your Xcode project by clicking Fil
 ```
 
 ## Topics
+
+### Views
+The stand-alone views
+
+- ``BlurredEffectView``
+- ``ColorPaletteView``
+- ``DashedSlider``
+- ``GalleryView``
+- ``ImagePreviewView``
+- ``TextAutoCompleteField``
+- ``UpdatableButton``
+
+### Styles
+The styles to the SwiftUI defined views.
+
+- ``LargeButtonStyle``
+- ``SimpleCircularProgressViewStyle``
+- ``SimpleLinearProgressViewStyle``
