@@ -27,7 +27,7 @@ You can add this framework as a dependency to your Xcode project by clicking Fil
 ## Topics
 
 ### Views
-The stand-alone views
+The stand-alone views.
 
 - ``BlurredEffectView``
 - ``ColorPaletteView``
@@ -43,3 +43,10 @@ The styles to the SwiftUI defined views.
 - ``LargeButtonStyle``
 - ``SimpleCircularProgressViewStyle``
 - ``SimpleLinearProgressViewStyle``
+
+### Layouts
+A set of customized layouts.
+
+- ``EqualWidthHStack``
+- ``EqualWidthVStack``
+- ``FilledVGrid``
