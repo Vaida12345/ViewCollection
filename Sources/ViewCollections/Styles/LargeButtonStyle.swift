@@ -85,6 +85,11 @@ extension ButtonStyle where Self == LargeButtonStyle {
     ///
     /// - Parameters:
     ///   - color: The background color that occupies most of the view.
+    ///
+    /// ## Topics
+    ///
+    /// ### Returned Style
+    /// - ``LargeButtonStyle``
     public static func large(color: Color? = nil) -> LargeButtonStyle {
         LargeButtonStyle(color: color)
     }

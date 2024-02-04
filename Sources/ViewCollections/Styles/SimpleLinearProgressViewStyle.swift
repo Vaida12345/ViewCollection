@@ -24,6 +24,11 @@ public struct SimpleLinearProgressViewStyle: ProgressViewStyle {
 extension ProgressViewStyle where Self == SimpleLinearProgressViewStyle {
     
     /// A simple linear progress style, without labels.
+    ///
+    /// ## Topics
+    ///
+    /// ### Returned Style
+    /// - ``SimpleLinearProgressViewStyle``
     public static var simpleLinear: SimpleLinearProgressViewStyle {
         SimpleLinearProgressViewStyle()
     }

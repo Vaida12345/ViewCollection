@@ -29,6 +29,7 @@ You can add this framework as a dependency to your Xcode project by clicking Fil
 ### Views
 The stand-alone views.
 
+- ``AsyncView``
 - ``BlurredEffectView``
 - ``ColorPaletteView``
 - ``DashedSlider``
@@ -37,12 +38,19 @@ The stand-alone views.
 - ``TextAutoCompleteField``
 - ``UpdatableButton``
 
+### Modifiers
+A set of view modifiers.
+
+- ``SwiftUI/View/animatedAppearing(_:)``
+- ``SwiftUI/View/onSwipe(to:sensitivity:maxDistance:progress:disabled:handler:)``
+
+
 ### Styles
 The styles to the SwiftUI defined views.
 
-- ``LargeButtonStyle``
-- ``SimpleCircularProgressViewStyle``
-- ``SimpleLinearProgressViewStyle``
+- ``SwiftUI/ButtonStyle/large(color:)``
+- ``SwiftUI/ProgressViewStyle/simpleCircular``
+- ``SwiftUI/ProgressViewStyle/simpleLinear``
 
 ### Layouts
 A set of customized layouts.

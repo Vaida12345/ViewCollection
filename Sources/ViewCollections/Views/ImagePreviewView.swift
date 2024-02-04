@@ -10,7 +10,7 @@
 #if canImport(UIKit)
 import Foundation
 import SwiftUI
-import Nucleus
+import Stratum
 
 
 /// A view providing zoomable preview to an image.
@@ -140,7 +140,7 @@ public struct ImagePreviewView: View {
             .padding(.all, 5)
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
-        .onSwap(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
+        .onSwipe(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
             scrollCoordinator.onReturn()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
