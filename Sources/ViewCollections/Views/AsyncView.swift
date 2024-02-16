@@ -40,7 +40,11 @@ import Stratum
 ///
 /// In this example, `data` is passed to `ParagraphView` as an `@State` property. Such property is reset when the `receivedData.id` changes.
 ///
+/// The `state`'s initial value can only be set once; there after, setting it in init has not effect, which is why an `id(_:)` is required.
+///
 /// - experiment: For some reason, however, the `data` is linked with the `id`, meaning that the `data` is preserved for each `id`.
+///
+/// - Tip: Initialize the `_state` using `State.init(wrappedValue:)`.
 ///
 /// > Note:
 /// > It is also possible to pass an `@Observable` object. Declare the `data` as a constant in the child view, then inside the `body`, declare:
