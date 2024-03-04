@@ -55,35 +55,12 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View {
     
     private let resultGenerator: @Sendable () async throws -> Success?
     private let viewGenerator: (_ result: Success) -> Content
-    private let placeHolder: (() -> PlaceHolder)?
-    
-    @State private var result: Success?
+    private let placeHolder: () -> PlaceHolder
+    private let id: Int
     
     public var body: some View {
-        Group {
-            if let result = result {
-                viewGenerator(result)
-            } else {
-                Group {
-                    if let placeHolder = placeHolder {
-                        placeHolder()
-                    } else {
-                        Rectangle()
-                            .frame(width: 0, height: 0) // do not change to empty view. Must be here for `task` to work.
-                    }
-                }
-                .task(priority: .utility) {
-                    do {
-                        let result = try await resultGenerator()
-                        Task.detached { @MainActor in
-                            self.result = result
-                        }
-                    } catch {
-                        AlertManager(error).present()
-                    }
-                }
-            }
-        }
+        BodyView(resultGenerator: resultGenerator, viewGenerator: viewGenerator, placeHolder: placeHolder, id: id)
+            .id(id)
     }
     
     /// Initialize the `AsyncView`.
@@ -96,23 +73,72 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View {
     ///   - result: The closure that would typically take time to generate the result.
     ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
     ///   - placeHolder: The temperate view shown when the result is still be generated.
-    public init(result: @escaping @Sendable () async throws -> Success, @ViewBuilder content: @escaping (_ result: Success) -> Content, @ViewBuilder placeHolder: @escaping () -> PlaceHolder) {
+    public init(result: @escaping @Sendable () async throws -> Success?, 
+                @ViewBuilder content: @escaping (_ result: Success) -> Content,
+                @ViewBuilder placeHolder: @escaping () -> PlaceHolder = { EmptyView() },
+                id: Int = 0) {
         self.resultGenerator = result
         self.viewGenerator = content
         self.placeHolder = placeHolder
+        self.id = id
     }
     
-    /// Initialize the `AsyncView`.
-    ///
-    /// The result generator is a sendable closure to lift the work out of `@MainActor`. Hence, any update to UI should be called using `@MainActor Task`.
-    ///
-    /// - Parameters:
-    ///   - result: The closure that would typically take time to generate the result.
-    ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
-    public init(result: @escaping @Sendable () async throws -> Success, @ViewBuilder content: @escaping (_ result: Success) -> Content) where PlaceHolder == EmptyView {
-        self.resultGenerator = result
-        self.viewGenerator = content
-        self.placeHolder = nil
+    
+    public func id(_ id: some Hashable) -> AsyncView {
+        AsyncView(result: resultGenerator, content: viewGenerator, placeHolder: placeHolder, id: id.hashValue)
+    }
+    
+    
+    private struct BodyView: View {
+        
+        let resultGenerator: @Sendable () async throws -> Success?
+        let viewGenerator: (_ result: Success) -> Content
+        let placeHolder: () -> PlaceHolder
+        let id: Int
+        
+        @State private var result: Success?
+        
+        
+        var body: some View {
+            Group {
+                if let result = result {
+                    viewGenerator(result)
+                } else {
+                    Group {
+                        let placeHolder = placeHolder()
+                        if !(placeHolder is EmptyView) {
+                            placeHolder
+                        } else {
+                            Rectangle()
+                                .frame(width: 0, height: 0) // do not change to empty view. Must be here for `task` to work.
+                        }
+                    }
+                    .task {
+                        do {
+                            let result = try await resultGenerator()
+                            Task { @MainActor in
+                                self.result = result
+                            }
+                        } catch {
+                            AlertManager(error).present()
+                        }
+                    }
+                }
+            }
+            .onChange(of: id) { _ in
+                Task {
+                    do {
+                        let result = try await resultGenerator()
+                        Task { @MainActor in
+                            self.result = result
+                            print("update")
+                        }
+                    } catch {
+                        AlertManager(error).present()
+                    }
+                }
+            }
+        }
     }
     
 }
