@@ -12,6 +12,8 @@ import SwiftUI
 
 
 /// A button which only updates the state when instructed.
+///
+/// Open an unstructured `Task` only when something makes sense to execute *concurrently* to the `View`'s normal operation, like refreshing the model, not `buttonTapped()` callbacks. 
 public struct UpdatableButton<Label>: View where Label: View {
     
     @Binding private var isOn: Bool
@@ -39,12 +41,12 @@ public struct UpdatableButton<Label>: View where Label: View {
                         do {
                             guard try await update() else { return }
                             
-                            Task { @MainActor in
+                            await MainActor.run {
                                 isLoading = false
                                 isOn.toggle()
                             }
                         } catch {
-                            Task { @MainActor in
+                            await MainActor.run {
                                 isLoading = false
                             }
                         }

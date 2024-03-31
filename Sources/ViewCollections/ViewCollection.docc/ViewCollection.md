@@ -37,6 +37,7 @@ The stand-alone views.
 - ``ImagePreviewView``
 - ``TextAutoCompleteField``
 - ``UpdatableButton``
+- ``FinderItemView``
 
 ### Modifiers
 A set of view modifiers.

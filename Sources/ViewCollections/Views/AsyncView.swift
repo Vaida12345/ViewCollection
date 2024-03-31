@@ -44,6 +44,8 @@ import Stratum
 ///
 /// - experiment: For some reason, however, the `data` is linked with the `id`, meaning that the `data` is preserved for each `id`.
 ///
+/// - note: Open an unstructured `Task` only when something makes sense to execute *concurrently* to the `View`'s normal operation, like refreshing the model, not `buttonTapped()` callbacks.
+///
 /// - Tip: Initialize the `_state` using `State.init(wrappedValue:)`.
 ///
 /// > Note:
@@ -116,7 +118,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View {
                     .task {
                         do {
                             let result = try await resultGenerator()
-                            Task { @MainActor in
+                            await MainActor.run {
                                 self.result = result
                             }
                         } catch {
@@ -129,7 +131,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View {
                 Task {
                     do {
                         let result = try await resultGenerator()
-                        Task { @MainActor in
+                        await MainActor.run {
                             self.result = result
                             print("update")
                         }
