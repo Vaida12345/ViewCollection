@@ -59,3 +59,10 @@ A set of customized layouts.
 - ``EqualWidthHStack``
 - ``EqualWidthVStack``
 - ``FilledVGrid``
+
+### Structures
+A set of auxiliary structure working with `SwiftUI` to deliver the views.
+
+- ``ColorPalette``
+- ``DesignPattern``
+- ``MutableBinding``

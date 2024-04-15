@@ -11,7 +11,7 @@
 import SwiftUI
 import Stratum
 
-/// A preview image of a ``FinderItem``.
+/// A preview image of a `FinderItem`.
 public struct FinderItemView: View {
     
     // MARK: - Instance Stored Properties
