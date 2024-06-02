@@ -14,7 +14,7 @@ extension View {
     /// The `fullScreenCover` for *iPhone* and *Apple Watch*, `sheet` otherwise.
     @inlinable
     @ViewBuilder
-    func screenCover<Content>(
+    public func screenCover<Content>(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content

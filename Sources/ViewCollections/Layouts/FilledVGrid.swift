@@ -95,7 +95,7 @@ public struct FilledVGrid: Layout {
     
     
     /// The padding distance between items
-    public struct Spacing: Equatable {
+    public struct Spacing: Equatable, ExpressibleByFloatLiteral {
         
         public let horizontal: CGFloat?
         
@@ -110,6 +110,10 @@ public struct FilledVGrid: Layout {
         public init(horizontal: CGFloat? = nil, vertical: CGFloat? = nil) {
             self.horizontal = horizontal
             self.vertical = vertical
+        }
+        
+        public init(floatLiteral value: FloatLiteralType) {
+            self.init(horizontal: value, vertical: value)
         }
         
         /// Indicates no padding required.
