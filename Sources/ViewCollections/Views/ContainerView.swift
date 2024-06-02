@@ -19,7 +19,7 @@ public struct ContainerView<Content: View>: View {
         ZStack(alignment: alignment) {
             Rectangle()
                 .fill(.clear)
-                .frame(width: .infinity, height: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             
             content()
         }

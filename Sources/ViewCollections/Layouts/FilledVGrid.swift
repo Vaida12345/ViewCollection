@@ -204,7 +204,7 @@ public struct FilledVGrid: Layout {
         
         var size = calculateSize()
         
-        print("proposal", proposal, size)
+//        print("proposal", proposal, size)
         return size.size
     }
     
