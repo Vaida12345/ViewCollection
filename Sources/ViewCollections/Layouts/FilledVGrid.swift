@@ -250,7 +250,7 @@ public struct FilledVGrid: Layout {
     
     
     /// The padding distance between items
-    public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
+    public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, Sendable {
         
         public let horizontal: CGFloat?
         

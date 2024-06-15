@@ -89,7 +89,7 @@ public enum DesignPattern: Codable, Equatable {
     }
     
     /// The design pattern for current device should be applied.
-    public static let current: DesignPattern = {
+    public static var current: DesignPattern {
 #if os(macOS)
         .mac
 #elseif os(visionOS)
@@ -122,5 +122,5 @@ public enum DesignPattern: Codable, Equatable {
 #elseif os(watchOS)
         .watch
 #endif
-    }()
+    }
 }

@@ -53,7 +53,7 @@ import Stratum
 /// > ```swift
 /// > @Bindable var data = data
 /// > ```
-public struct AsyncView<Success, Content: View, PlaceHolder: View>: View {
+public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where Success: Sendable {
     
     private let resultGenerator: @Sendable () async throws -> Success?
     private let viewGenerator: (_ result: Success) -> Content
