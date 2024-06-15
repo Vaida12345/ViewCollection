@@ -84,7 +84,7 @@ public struct GalleryView: Layout {
                 let _sizes = subviews.map { $0.dimensions(in: .unspecified) }
                 let __sizes = subviews.map { $0.dimensions(in: .zero) }
                 let ___sizes = zip(_sizes, __sizes).filter { $0.0 != $0.1 }.map(\.0) // obtain the sizes that cannot be changed.
-                let idealWidth = ___sizes.map(\.width).average() ?? _sizes.map(\.width).average()
+                let idealWidth = ___sizes.map(\.width).mean ?? _sizes.map(\.width).mean
                 let sizes = subviews.map { $0.dimensions(in: .init(width: idealWidth, height: nil)) }
                 let indexes = calculateRows(itemsPerRow: itemsPerRow, sizes: sizes)
                 

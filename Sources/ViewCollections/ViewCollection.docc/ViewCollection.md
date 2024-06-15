@@ -2,6 +2,19 @@
 
 A collection of SwiftUI Views.
 
+@Metadata {
+    @PageColor(orange)
+    
+    @SupportedLanguage(swift)
+    
+    @Available(macOS,    introduced: 13.0)
+    @Available(iOS,      introduced: 16.0)
+    @Available(watchOS,  introduced: 9.0)
+    @Available(tvOS,     introduced: 16.0)
+    @Available(visionOS, introduced: 1.0)
+}
+
+
 ## Overview
 
 This package provides a collection of stand-alone SwiftUI Views. The views in the `Nucleus` framework provides the foundation functionalities.
@@ -59,6 +72,7 @@ A set of customized layouts.
 - ``EqualWidthHStack``
 - ``EqualWidthVStack``
 - ``FilledVGrid``
+- ``ContainerView``
 
 ### Structures
 A set of auxiliary structure working with `SwiftUI` to deliver the views.

@@ -52,8 +52,8 @@ public struct FilledVGrid: Layout {
         guard !subviews.isEmpty else { return .zero }
         
         let dimensions = subviews.map { $0.dimensions(in: proposal) }
-        let averageHeight = dimensions.map(\.height).average()!
-        let averageWidth = dimensions.map(\.width).average()!
+        let averageHeight = dimensions.map(\.height).mean!
+        let averageWidth = dimensions.map(\.width).mean!
         let sizes = subviews.map { $0.dimensions(in: .init(width: nil, height: averageHeight)) }
         
         func calculateMinimumSize() -> (size: CGSize, strategy: Strategy)  {
@@ -202,7 +202,7 @@ public struct FilledVGrid: Layout {
             }
         }
         
-        var size = calculateSize()
+        let size = calculateSize()
         
 //        print("proposal", proposal, size)
         return size.size
@@ -212,7 +212,7 @@ public struct FilledVGrid: Layout {
 //        print("bounce", bounds.origin, bounds.size, "proposal", proposal)
         guard !subviews.isEmpty else { return }
         
-        let averageHeight = subviews.map { $0.dimensions(in: .unspecified) }.map(\.height).average()!
+        let averageHeight = subviews.map { $0.dimensions(in: .unspecified) }.map(\.height).mean!
         let sizes = subviews.map { $0.dimensions(in: .init(width: nil, height: averageHeight)) }
         
         var width: CGFloat = 0

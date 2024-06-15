@@ -1,14 +1,19 @@
 //
 //  ContainerView.swift
-//
+//  The ViewCollection Module
 //
 //  Created by Vaida on 6/2/24.
+//  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
 import Foundation
 import SwiftUI
 
 
+/// A view that could take up the entire parent view.
+///
+/// In the following example, the VStack is placed at the center of the parent view.
+/// ![Example](equalWidthVStack)
 public struct ContainerView<Content: View>: View {
     
     let content: () -> Content
@@ -25,7 +30,10 @@ public struct ContainerView<Content: View>: View {
         }
     }
     
-    
+    /// Creates the container view.
+    ///
+    /// - Parameters:
+    ///   - alignment: The placement for `content`.
     public init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.alignment = alignment
