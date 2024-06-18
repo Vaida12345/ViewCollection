@@ -121,8 +121,8 @@ public struct ColorPaletteView: View {
     /// - Parameters:
     ///   - color: The selection of color.
     ///   - colorSet: The set of color to choose from.
-    public init(color: Binding<Color>, set colorSet: [Color]) {
-        self.init(color: color, set: colorSet, shownCustomColor: true)
+    public init(color: Binding<Color>, set colorSet: [Color] = [.red, .orange, .yellow, .green, .mint, .cyan, .blue, .purple, .pink]) {
+        self.init(color: color, set: colorSet, shownCustomColor: false)
     }
     
     /// Determines whether show the custom color picker in the palette.
@@ -151,7 +151,7 @@ private extension Color {
 #if DEBUG && os(macOS)
 struct ColorPalettePreview: PreviewProvider {
     static var previews: some View {
-        ColorPaletteView(color: .constant(.blue), set: Color.allColors + [.accentColor, .secondary])
+        ColorPaletteView(color: .constant(.blue))
     }
 }
 #endif
