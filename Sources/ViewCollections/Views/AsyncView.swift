@@ -73,7 +73,7 @@ public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: Vi
     ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
     ///   - placeHolder: The temperate view shown when the result is still be generated.
     public init(captures: Captures,
-                result: @escaping @Sendable (Captures) async throws -> Success?,
+                result: @escaping @Sendable (_ captures: Captures) async throws -> Success?,
                 @ViewBuilder content: @escaping (_ result: Success) -> Content,
                 @ViewBuilder placeHolder: @escaping () -> PlaceHolder = { EmptyView() }) {
         self.captures = captures
