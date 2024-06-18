@@ -18,18 +18,41 @@ import Stratum
 /// > Present the value on completion of `await`ed result generator.
 /// >
 /// > ```swift
-/// > AsyncView {
-/// >     // value: () async throws -> String
-/// > } content: { result in
+/// > AsyncView(generator: fetchData) { result in
 /// >     Text(result)
 /// > }
 /// > ```
 ///
+/// ## Fetch Data
+///
+/// For the first closure, `generator`, you **need** to pass *only* a `nonisolated` method. Then, give the view an `id` to track changes.
+///
+///
+/// ## Dealing with states
+///
+/// A typical use of this view is to create a `@State` based on the result of `generator`. However, SwiftUI would not like that. A workaround would be adding an `id` to the `AsyncView` with the identifier as an indication that the `View` should be reset.
+///
+/// ```swift
+/// AsyncView(generator: fetchData) { results, data in
+///     ParagraphView(results: results, receivedData: receivedData, data: data)
+/// }
+/// .id(receivedData.id)
+/// ```
+///
+/// In this example, `data` is passed to `ParagraphView` as an `@State` property. Such property is reset when the `receivedData.id` changes.
+///
+/// The `state`'s initial value can only be set once; there after, setting it in init has not effect, which is why an `id(_:)` is required.
+///
+/// - experiment: For some reason, however, the `data` is linked with the `id`, meaning that the `data` is preserved for each `id`.
+///
+/// - note: Open an unstructured `Task` only when something makes sense to execute *concurrently* to the `View`'s normal operation, like refreshing the model, not `buttonTapped()` callbacks.
+///
+/// - Tip: Initialize the `_state` using `State.init(wrappedValue:)`.
+///
 /// - Tip: Open an unstructured `Task` only when something makes sense to execute *concurrently* to the `View`'s normal operation, like refreshing the model, not `buttonTapped()` callbacks.
-public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: View where Success: Sendable, Captures: Sendable & Equatable {
+public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where Success: Sendable {
     
-    private let captures: Captures
-    private let resultGenerator: @Sendable (Captures) async throws -> Success?
+    private let resultGenerator: @Sendable () async throws -> Success?
     private let viewGenerator: (_ result: Success) -> Content
     private let placeHolder: () -> PlaceHolder
     
@@ -37,7 +60,7 @@ public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: Vi
     
     public var body: some View {
         Group {
-            if let result = result {
+            if let result {
                 viewGenerator(result)
             } else {
                 Group {
@@ -50,13 +73,8 @@ public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: Vi
                     }
                 }
                 .task {
-                    await self.update(captures: self.captures)
+                    await self.update()
                 }
-            }
-        }
-        .onChange(of: captures) { newValue in
-            Task { @MainActor in
-                await self.update(captures: newValue)
             }
         }
     }
@@ -65,30 +83,25 @@ public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: Vi
     ///
     /// The result generator is a sendable closure to lift the work out of `@MainActor`. Hence there should not exits any UI updates within the `result` closure.
     ///
-    /// - Important: Do not attempt to auto capture, pass arguments using `capture` instead.
+    /// - Important: Do not attempt to auto capture, pass arguments to another `nonisolated` method and pass to the `generator` again.
     ///
     /// - Parameters:
-    ///   - captures: The captured contents that will be passed to `result`. Please do not use auto capture within that closure.
-    ///   - result: The closure that would typically take time to generate the result.
+    ///   - generator: The closure that would typically take time to generate the result.
     ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
     ///   - placeHolder: The temperate view shown when the result is still be generated.
-    public init(captures: Captures,
-                result: @escaping @Sendable (_ captures: Captures) async throws -> Success?,
+    public init(generator: @escaping @Sendable () async throws -> Success?,
                 @ViewBuilder content: @escaping (_ result: Success) -> Content,
                 @ViewBuilder placeHolder: @escaping () -> PlaceHolder = { EmptyView() }) {
-        self.captures = captures
-        self.resultGenerator = result
+        self.resultGenerator = generator
         self.viewGenerator = content
         self.placeHolder = placeHolder
     }
     
-    func update(captures: Captures) async {
-        nonisolated(unsafe)
-        let captures = captures
+    func update() async {
         nonisolated(unsafe)
         let resultGenerator = resultGenerator
         nonisolated(unsafe)
-        let success = await _updates(captures, resultGenerator: resultGenerator)
+        let success = await _updates(resultGenerator: resultGenerator)
         await MainActor.run {
             self.result = success
         }
@@ -97,9 +110,9 @@ public struct AsyncView<Success, Captures, Content: View, PlaceHolder: View>: Vi
 }
 
 nonisolated
-private func _updates<Captures, Success>(_ captures: Captures, resultGenerator: @Sendable (Captures) async throws -> Success?) async -> Success? {
+private func _updates<Success>(resultGenerator: @Sendable () async throws -> Success?) async -> Success? {
     do {
-        return try await resultGenerator(captures)
+        return try await resultGenerator()
     } catch is CancellationError {
         return nil
     } catch {
@@ -115,11 +128,12 @@ private struct AsyncViewPreview: View {
     
     var body: some View {
         VStack {
-            AsyncView(captures: state) { state in
-                state
+            AsyncView {
+                await state
             } content: { result in
                 Text("\(result)")
             }
+            .id(state)
             
             Text("\(state)")
             
