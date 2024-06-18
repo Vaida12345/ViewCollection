@@ -133,7 +133,6 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
                         let result = try await resultGenerator()
                         await MainActor.run {
                             self.result = result
-                            print("update")
                         }
                     } catch {
                         AlertManager(error).present()

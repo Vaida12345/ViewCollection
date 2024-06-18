@@ -53,7 +53,7 @@ public struct ColorPaletteView: View {
             }
         } label: {
             ZStack {
-                let showBorder = self.color == color && customColor == nil
+                let showBorder = self.color.isEqual(to: color) && customColor == nil
                 
                 Circle()
                     .stroke(color, lineWidth: 2)
@@ -99,7 +99,7 @@ public struct ColorPaletteView: View {
         .frame(width: 30, height: 30)
         .onChange(of: color) { color in
             guard customColor == nil else { return }
-            if !colorSet.contains(color) {
+            if !colorSet.contains(where: { color.isEqual(to: $0) }) {
                 self.customColor = color
             }
         }
@@ -111,7 +111,7 @@ public struct ColorPaletteView: View {
         self.colorSet = colorSet
         self.shownCustomColor = shownCustomColor
         
-        if !colorSet.contains(color.wrappedValue) {
+        if !colorSet.contains(where: { color.wrappedValue.isEqual(to: $0) }) {
             self._customColor = State<Color?>(initialValue: color.wrappedValue)
         }
     }
@@ -128,6 +128,21 @@ public struct ColorPaletteView: View {
     /// Determines whether show the custom color picker in the palette.
     public func showCustomColor(_ bool: Bool) -> ColorPaletteView {
         ColorPaletteView(color: $color, set: colorSet, shownCustomColor: bool)
+    }
+    
+}
+
+
+private extension Color {
+    
+    func isEqual(to color: Color) -> Bool {
+        let lhs =  self.animatableData
+        let rhs = color.animatableData
+        for i in 0..<lhs.count {
+            guard abs(lhs[i] - rhs[i]) <= 0.1 else { return false }
+        }
+        
+        return true
     }
     
 }
