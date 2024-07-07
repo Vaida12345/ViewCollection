@@ -83,12 +83,14 @@ public struct DashedSlider: UIViewControllerRepresentable {
             /// The size of each *dash*.
             fileprivate let dashSize: CGSize
             
-            fileprivate let verticalSpacing = UIScreen.main.bounds.height / 20 - 4
+            fileprivate let verticalSpacing: CGFloat
             
             /// Creates the frame.
+            @MainActor
             public init(sliderWidth: Double, dashSize: CGSize) {
                 self.sliderWidth = sliderWidth
                 self.dashSize = dashSize
+                self.verticalSpacing = UIScreen.main.bounds.height / 20 - 4
             }
             
         }

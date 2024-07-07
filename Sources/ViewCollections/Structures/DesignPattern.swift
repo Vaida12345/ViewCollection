@@ -89,6 +89,7 @@ public enum DesignPattern: Codable, Equatable {
     }
     
     /// The design pattern for current device should be applied.
+    @MainActor
     public static var current: DesignPattern {
 #if os(macOS)
         .mac

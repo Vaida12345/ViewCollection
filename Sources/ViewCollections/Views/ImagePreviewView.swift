@@ -200,7 +200,7 @@ public struct ImagePreviewView: View {
             NotificationCenter.default.addObserver(forName: UIDevice.orientationDidChangeNotification,
                                                    object: nil,
                                                    queue: .main) { notification in
-                DispatchQueue.main.delay(seconds: 0.1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     UIView.animate(withDuration: 1) {
                         scrollView.contentSize = UIScreen.main.bounds.size
                         scrollView.frame = UIScreen.main.bounds
