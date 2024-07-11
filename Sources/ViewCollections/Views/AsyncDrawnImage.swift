@@ -10,6 +10,8 @@ import GraphicsKit
 
 
 /// An image that is drawn without blocking the main thread.
+///
+/// This view is best used in cases where the size of the image is known.
 public struct AsyncDrawnImage: View {
     
     private let frame: CGSize
@@ -20,9 +22,12 @@ public struct AsyncDrawnImage: View {
     
     private let cornerRadius: CGFloat
     
-    nonisolated private func contextDraw() async -> CGImage? {
-        let imageSize = source.size.aspectRatio(contentMode, in: frame)
-        let contextSize = frame
+    @Environment(\.displayScale) private var displayScale
+    
+    
+    nonisolated private func contextDraw() async -> NativeImage? {
+        let contextSize = await CGSize(width: frame.width * displayScale, height: frame.height * displayScale)
+        let imageSize = source.size.aspectRatio(contentMode, in: contextSize)
         
         let context = CGContext.createContext(size: contextSize, bitsPerComponent: source.bitsPerComponent, space: source.colorSpace!, withAlpha: true)
         
@@ -34,13 +39,19 @@ public struct AsyncDrawnImage: View {
         context.clip()
         
         context.draw(source, in: CGRect(center: contextSize.center, size: imageSize))
-        return context.makeImage()
+        guard let cgImage = context.makeImage() else { return nil }
+        
+#if canImport(AppKit)
+        return NSImage(cgImage: cgImage, size: frame)
+#elseif canImport(UIKit)
+        return UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
+#endif
     }
     
     public var body: some View {
-        AsyncView(generator: contextDraw) { (image: CGImage?) in
+        AsyncView(generator: contextDraw) { (image: NativeImage?) in
             if let image {
-                Image(cgImage: image)
+                Image(nativeImage: image)
             }
         }
         .frame(width: frame.width, height: frame.height)
@@ -94,11 +105,17 @@ public struct AsyncDrawnImage: View {
     }
     
     /// Creates the image with the given image and the size of presentation.
+    ///
+    /// - Parameters:
+    ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(cgImage: CGImage, frame: CGSize) {
         self.init(frame: frame, contentMode: .fit, source: cgImage, cornerRadius: 0)
     }
     
     /// Creates the image with the given image and the size of presentation.
+    ///
+    /// - Parameters:
+    ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(nativeImage: NativeImage, frame: CGSize) {
         self.init(frame: frame, contentMode: .fit, source: nativeImage.cgImage!, cornerRadius: 0)
     }
