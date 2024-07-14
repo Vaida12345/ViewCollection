@@ -18,15 +18,24 @@ public struct AsyncDrawnImage: View {
     
     private let contentMode: ContentMode
     
-    private let source: CGImage
+    private let source: Source
     
     private let cornerRadius: CGFloat
     
     @Environment(\.displayScale) private var displayScale
     
     
-    nonisolated private func contextDraw() async -> NativeImage? {
+    nonisolated private func contextDraw() async -> CGImage? {
         let contextSize = await CGSize(width: frame.width * displayScale, height: frame.height * displayScale)
+        let source: CGImage?
+        switch self.source {
+        case .image(let cgImage):
+            source = cgImage
+        case .generator(let generator):
+            source = await generator()
+        }
+        guard let source else { return nil }
+        
         let imageSize = source.size.aspectRatio(contentMode, in: contextSize)
         
         let context = CGContext.createContext(size: contextSize, bitsPerComponent: source.bitsPerComponent, space: source.colorSpace!, withAlpha: true)
@@ -39,19 +48,18 @@ public struct AsyncDrawnImage: View {
         context.clip()
         
         context.draw(source, in: CGRect(center: contextSize.center, size: imageSize))
-        guard let cgImage = context.makeImage() else { return nil }
         
-#if canImport(AppKit)
-        return NSImage(cgImage: cgImage, size: frame)
-#elseif canImport(UIKit)
-        return UIImage(cgImage: cgImage, scale: displayScale, orientation: .up)
-#endif
+        return context.makeImage()
     }
     
     public var body: some View {
-        AsyncView(generator: contextDraw) { (image: NativeImage?) in
+        AsyncView(generator: contextDraw) { (image: CGImage?) in
             if let image {
-                Image(nativeImage: image)
+#if canImport(AppKit)
+                Image(nsImage: NSImage(cgImage: image, size: frame))
+#elseif canImport(UIKit)
+                Image(uiImage: UIImage(cgImage: image, scale: displayScale, orientation: .up))
+#endif
             }
         }
         .frame(width: frame.width, height: frame.height)
@@ -97,7 +105,7 @@ public struct AsyncDrawnImage: View {
     }
     
     
-    private init(frame: CGSize, contentMode: ContentMode, source: CGImage, cornerRadius: CGFloat) {
+    private init(frame: CGSize, contentMode: ContentMode, source: Source, cornerRadius: CGFloat) {
         self.frame = frame
         self.contentMode = contentMode
         self.source = source
@@ -109,7 +117,7 @@ public struct AsyncDrawnImage: View {
     /// - Parameters:
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(cgImage: CGImage, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: cgImage, cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .image(cgImage), cornerRadius: 0)
     }
     
     /// Creates the image with the given image and the size of presentation.
@@ -117,7 +125,15 @@ public struct AsyncDrawnImage: View {
     /// - Parameters:
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(nativeImage: NativeImage, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: nativeImage.cgImage!, cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .image(nativeImage.cgImage!), cornerRadius: 0)
+    }
+    
+    /// Creates the image with the given image and the size of presentation.
+    ///
+    /// - Parameters:
+    ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
+    public init(generator: @escaping @Sendable () async -> CGImage?, frame: CGSize) {
+        self.init(frame: frame, contentMode: .fit, source: .generator(generator), cornerRadius: 0)
     }
     
     public func cornerRadius(_ radius: CGFloat) -> AsyncDrawnImage {
@@ -126,6 +142,12 @@ public struct AsyncDrawnImage: View {
     
     public func contentMode(_ mode: ContentMode) -> AsyncDrawnImage {
         AsyncDrawnImage(frame: self.frame, contentMode: mode, source: self.source, cornerRadius: self.cornerRadius)
+    }
+    
+    
+    private enum Source {
+        case image(CGImage)
+        case generator(@Sendable () async -> CGImage?)
     }
     
 }
