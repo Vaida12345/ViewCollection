@@ -38,7 +38,7 @@ public struct AsyncDrawnImage: View {
         
         let imageSize = source.size.aspectRatio(contentMode, in: contextSize)
         
-        let context = CGContext.createContext(size: contextSize, bitsPerComponent: source.bitsPerComponent, space: source.colorSpace!, withAlpha: true)
+        let context = CGContext.createContext(size: contextSize, bitsPerComponent: source.bitsPerComponent, space: CGColorSpaceCreateDeviceRGB(), withAlpha: true)
         
         context.interpolationQuality = .high
         
