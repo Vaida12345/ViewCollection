@@ -38,14 +38,14 @@ public struct EqualWidthHStack: Layout {
     private let spacing: Double
     
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let width = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).width) }
-        let height = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).height) }
-        return CGSize(width: width * Double(subviews.count) + spacing * Double(subviews.count - 1), height: height)
+        let layout = AnyLayout(HStackLayout(spacing: spacing))
+        var cache = layout.makeCache(subviews: subviews)
+        return layout.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
     }
     
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let width = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).width) }
-        let height = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).height) }
+        let width = (bounds.width - Double(subviews.count - 1) * spacing) / Double(subviews.count)
+        let height = subviews.reduce(0) { max($0, $1.dimensions(in: proposal).height) }
         
         for (index, subview) in subviews.enumerated() {
             subview.place(at: bounds.origin + CGPoint(x: (spacing + width) * Double(index), y: 0), 
@@ -74,6 +74,7 @@ public struct EqualWidthHStack: Layout {
 #Preview {
     EqualWidthHStack {
         Text("12345")
+            .frame(maxWidth: .infinity)
             .padding(.horizontal)
             .background(.red)
         
