@@ -101,7 +101,9 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
         nonisolated(unsafe)
         let success = await _updates(resultGenerator: resultGenerator)
         await MainActor.run {
-            self.result = success
+            withAnimation {
+                self.result = success
+            }
         }
     }
     
