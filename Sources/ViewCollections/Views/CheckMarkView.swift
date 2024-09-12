@@ -21,9 +21,14 @@ import SwiftUI
 ///     .foregroundStyle(.blue)
 ///     .frame(width: 200)
 /// ```
+///
+/// ![Example](CheckMarkView)
 public struct CheckMarkView: View {
     
     @State private var isShown = false
+    
+    @Environment(\.isPresented) private var isPresented
+    
     
     public var body: some View {
         GeometryReader { proxy in
@@ -47,9 +52,37 @@ public struct CheckMarkView: View {
                 )
             )
         }
-        .animation(.easeInOut(duration: 0.5), value: isShown)
         .onAppear {
-            isShown = true
+            withAnimation(.easeInOut(duration: 0.5)) {
+                isShown = true
+            }
         }
     }
+}
+
+
+private struct PreviewDriver: View {
+    @State var isShown = false
+    
+    var body: some View {
+        
+        Group {
+            if isShown {
+                CheckMarkView()
+            } else {
+                Rectangle()
+                    .fill(.clear)
+                    .onAppear {
+                        withAnimation(.default.delay(0)) {
+                            isShown = true
+                        }
+                    }
+            }
+        }
+        .frame(width: 200, height: 200)
+    }
+}
+
+#Preview {
+    PreviewDriver()
 }

@@ -51,6 +51,7 @@ The stand-alone views.
 - ``TextAutoCompleteField``
 - ``UpdatableButton``
 - ``FinderItemView``
+- ``CheckMarkView``
 
 ### Modifiers
 A set of view modifiers.
