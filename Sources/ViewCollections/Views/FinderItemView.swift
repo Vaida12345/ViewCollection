@@ -46,7 +46,7 @@ public struct FinderItemView: View {
     
     private func update(url: URL) {
         Task.detached {
-            let image = try await FinderItem(at: url).preview(size: .square(64))
+            let image = try await FinderItem(at: url).load(.preview(size: .square(64)))
             await __update(image: image)
         }
     }

@@ -96,10 +96,9 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     }
     
     func update() async {
-        nonisolated(unsafe)
         let resultGenerator = resultGenerator
-        nonisolated(unsafe)
         let success = await _updates(resultGenerator: resultGenerator)
+        
         await MainActor.run {
             withAnimation {
                 self.result = success
