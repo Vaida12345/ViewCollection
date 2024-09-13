@@ -34,7 +34,7 @@ import Stratum
 /// }
 /// ```
 ///
-/// - Tip: You could embed a grid inside ``Container``, and provide a `topLeading` alignment.
+/// - Tip: You could embed a grid inside ``ContainerView``, and provide a `topLeading` alignment.
 ///
 /// ![Color Palette](orangePalette)
 public struct FilledVGrid: Layout {

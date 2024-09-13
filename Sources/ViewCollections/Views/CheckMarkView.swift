@@ -58,6 +58,12 @@ public struct CheckMarkView: View {
             }
         }
     }
+    
+    
+    public init() {
+        
+    }
+    
 }
 
 
