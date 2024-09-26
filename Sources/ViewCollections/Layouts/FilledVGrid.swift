@@ -11,7 +11,7 @@ import SwiftUI
 import Stratum
 
 
-/// The grid that puts every cell, ideally of equal size, in order.
+/// The grid that puts every cell, ideally of *equal height*, in order.
 ///
 /// A row would be automatically created when the last row cannot fit any more of cells.
 ///
@@ -42,19 +42,50 @@ public struct FilledVGrid: Layout {
     private let spacing: Spacing
     
     enum Strategy {
-        case oneRow, oneColumn, infHeight(maxWidth: CGFloat), infHeight(maxColumnCount: Int), minWidthUnderLimitedHeight(maxColumnCount: Int, maxHeight: CGFloat), minHeightUnderLimitedWidth(maxWidth: CGFloat), minimumSize, bothConstrainsPrioritizeWidth(maxWidth: CGFloat)
+        case oneRow
+        case oneColumn
+        case infHeight(maxWidth: CGFloat)
+        case infHeight(maxColumnCount: Int)
+        case minWidthUnderLimitedHeight(maxColumnCount: Int, maxHeight: CGFloat)
+        case minHeightUnderLimitedWidth(maxWidth: CGFloat), minimumSize
+        case bothConstrains(decision: BothConstrainsDecision)
+        
+        enum BothConstrainsDecision {
+            case prioritizeWidth
+        }
     }
     
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+    public struct Cache {
+        
+        var dimensions: [ViewDimensions] = []
+        
+        var averageHeight: CGFloat = 0
+        
+        var maxWidth: CGFloat = 0
+        
+    }
+    
+    public func updateCache(_ cache: inout Cache, subviews: Subviews) {
+        // do nothing
+    }
+    
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) -> CGSize {
         // proposal size of nil would mean no constrain, for example, the height is nil for vertical scroll view.
         // side of zero would indicate the min length of the side. Should prioritize on filling the other side.
         
         guard !subviews.isEmpty else { return .zero }
         
-        let dimensions = subviews.map { $0.dimensions(in: proposal) }
-        let averageHeight = dimensions.map(\.height).mean!
-        let averageWidth = dimensions.map(\.width).mean!
-        let sizes = subviews.map { $0.dimensions(in: .init(width: nil, height: averageHeight)) }
+        let subviewProposal: ProposedViewSize = if proposal == .zero {
+            .zero
+        } else if proposal == .infinity {
+            .infinity
+        } else {
+            .unspecified
+        }
+        
+        cache.dimensions = subviews.map { $0.dimensions(in: subviewProposal) }
+        cache.averageHeight = cache.dimensions.map(\.height).mean!
+        cache.maxWidth = cache.dimensions.map(\.width).max()!
         
         func calculateMinimumSize() -> (size: CGSize, strategy: Strategy)  {
             // the minimum size, 4 items a row
@@ -65,7 +96,7 @@ public struct FilledVGrid: Layout {
             var resultWidth: CGFloat = .zero
             var count = 0
             
-            for size in sizes {
+            for size in cache.dimensions {
                 if count < 4 {
                     width += (spacing.horizontal ?? 0) + size.width
                     deltaHeight = max(deltaHeight, size.height)
@@ -83,11 +114,11 @@ public struct FilledVGrid: Layout {
         }
         
         func buildOneColumn() -> (size: CGSize, strategy: Strategy) {
-            (CGSize(width: averageWidth, height: dimensions.map(\.height).reduce({ $0 + (spacing.vertical ?? 0) + $1 })!), .oneColumn)
+            (CGSize(width: cache.maxWidth, height: cache.dimensions.map(\.height).reduce({ $0 + (spacing.vertical ?? 0) + $1 })!), .oneColumn)
         }
         
         func buildOneRow() -> (size: CGSize, strategy: Strategy) {
-            (CGSize(width: dimensions.map(\.width).reduce({ $0 + (spacing.horizontal ?? 0) + $1 })!, height: averageHeight), .oneRow)
+            (CGSize(width: cache.dimensions.map(\.width).reduce({ $0 + (spacing.horizontal ?? 0) + $1 })!, height: cache.averageHeight), .oneRow)
         }
         
         func buildMinHeight(maxWidth: CGFloat?) -> (size: CGSize, strategy: Strategy) {
@@ -105,7 +136,7 @@ public struct FilledVGrid: Layout {
                 var resultWidth: CGFloat = .zero
                 var count = 0
                 
-                for size in sizes {
+                for size in cache.dimensions {
                     if (maxWidth != nil) ? (width + (spacing.horizontal ?? 0) + size.width <= maxWidth!) : (count < 4) {
                         width += (spacing.horizontal ?? 0) + size.width
                         deltaHeight = max(deltaHeight, size.height)
@@ -135,7 +166,7 @@ public struct FilledVGrid: Layout {
             var resultWidth: CGFloat = .zero
             var count = 0
             
-            for size in sizes {
+            for size in cache.dimensions {
                 if (maxWidth != nil) ? (width + (spacing.horizontal ?? 0) + size.width <= maxWidth!) : (count < 4) {
                     width += (spacing.horizontal ?? 0) + size.width
                     deltaHeight = max(deltaHeight, size.height)
@@ -157,7 +188,7 @@ public struct FilledVGrid: Layout {
                 return buildOneRow()
             } else if maxWidth == 0 {
                 // prioritize height to ensure min width
-                let stackSize = Int(height / averageHeight)
+                let stackSize = Int(height / cache.averageHeight)
                 let columnCount = (subviews.count / stackSize) + (subviews.count % stackSize == 0 ? 0 : 1)
                 
                 var width: CGFloat = -(spacing.horizontal ?? 0)
@@ -167,7 +198,7 @@ public struct FilledVGrid: Layout {
                 var resultWidth: CGFloat = .zero
                 var count = 0
                 
-                for size in sizes {
+                for size in cache.dimensions {
                     if (count < columnCount) {
                         width += (spacing.horizontal ?? 0) + size.width
                         deltaHeight = max(deltaHeight, size.height)
@@ -183,9 +214,23 @@ public struct FilledVGrid: Layout {
                 
                 return (CGSize(width: max(width, resultWidth), height: height + deltaHeight), .minWidthUnderLimitedHeight(maxColumnCount: columnCount, maxHeight: height))
             } else {
+//
+//                
+//                let minimumSize = calculateMinimumSize().size
+//                if minimumSize.width == proposal.width! {
+//                    // width matches minimum width. Give in if allow more rows.
+//                    if minimumSize.height > proposal.height! {
+//                        // start small, move the last element to new row
+//                        if dimensions.count > 1 {
+//                            let firstRow
+//                        }
+//                    }
+//                }
+//                
+                // fallback to original implementation
                 // both has constrains, has to choose one, prioritize width
                 let size = buildInfHeight(maxWidth: maxWidth).size
-                return (size, .bothConstrainsPrioritizeWidth(maxWidth: maxWidth!))
+                return (size, .bothConstrains(decision: .prioritizeWidth))
             }
         }
         
@@ -204,25 +249,22 @@ public struct FilledVGrid: Layout {
         
         let size = calculateSize()
         
-//        print("proposal", proposal, size)
+        print("proposal", proposal, size)
         return size.size
     }
     
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-//        print("bounce", bounds.origin, bounds.size, "proposal", proposal)
+    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
+        print("bounce", bounds.origin, bounds.size, "proposal", proposal)
         guard !subviews.isEmpty else { return }
-        
-        let averageHeight = subviews.map { $0.dimensions(in: .unspecified) }.map(\.height).mean!
-        let sizes = subviews.map { $0.dimensions(in: .init(width: nil, height: averageHeight)) }
         
         var width: CGFloat = 0
         var height: CGFloat = .zero
         var deltaHeight: CGFloat = .zero
         
         for (index, subview) in subviews.enumerated() {
-            let size = sizes[index]
+            let size = cache.dimensions[index]
             if width + size.width <= bounds.width || width == 0 {
-                subview.place(at: bounds.origin + CGPoint(x: width, y: height), proposal: .init(width: nil, height: averageHeight))
+                subview.place(at: bounds.origin + CGPoint(x: width, y: height), proposal: .init(width: nil, height: cache.averageHeight))
 //                print("place_at", bounds.origin + CGPoint(x: width, y: height))
                 
                 width += size.width + (spacing.horizontal ?? 0)
@@ -232,7 +274,7 @@ public struct FilledVGrid: Layout {
                 deltaHeight = size.height
                 height += deltaHeight + (spacing.vertical ?? 0)
                 
-                subview.place(at: bounds.origin + CGPoint(x: .zero, y: height), proposal: .init(width: nil, height: averageHeight))
+                subview.place(at: bounds.origin + CGPoint(x: .zero, y: height), proposal: .init(width: nil, height: cache.averageHeight))
 //                print("place^at", bounds.origin + CGPoint(x: .zero, y: height))
             }
         }
@@ -248,6 +290,9 @@ public struct FilledVGrid: Layout {
         self.spacing = spacing
     }
     
+    public func makeCache(subviews: Subviews) -> Cache {
+        Cache()
+    }
     
     /// The padding distance between items
     public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral, Sendable {
