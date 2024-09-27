@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import GraphicsKit
+import Stratum
 
 
 /// An image that is drawn without blocking the main thread.
