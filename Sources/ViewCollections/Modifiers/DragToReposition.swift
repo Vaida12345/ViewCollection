@@ -16,7 +16,7 @@ extension View {
             DragGesture()
                 .onChanged { value in
                     // Get the current window
-                    if let window = NSApplication.shared.windows.first {
+                    if let window = NSApplication.shared.windows.first(where: { $0.isKeyWindow }) {
                         // Update window position
                         let newOrigin = CGPoint(
                             x: window.frame.origin.x + value.translation.width,
