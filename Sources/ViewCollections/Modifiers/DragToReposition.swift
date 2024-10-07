@@ -10,6 +10,7 @@ import SwiftUI
 
 extension View {
     
+#if os(macOS)
     /// When the view is dragged, reposition the window.
     public func dragToRepositionWindow() -> some View {
         gesture(
@@ -27,5 +28,6 @@ extension View {
                 }
         )
     }
+#endif
     
 }
