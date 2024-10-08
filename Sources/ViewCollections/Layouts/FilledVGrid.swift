@@ -249,12 +249,12 @@ public struct FilledVGrid: Layout {
         
         let size = calculateSize()
         
-        print("proposal", proposal, size)
+//        print("proposal", proposal, size)
         return size.size
     }
     
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Cache) {
-        print("bounce", bounds.origin, bounds.size, "proposal", proposal)
+//        print("bounce", bounds.origin, bounds.size, "proposal", proposal)
         guard !subviews.isEmpty else { return }
         
         var width: CGFloat = 0
