@@ -16,7 +16,6 @@ let package = Package (
         .package(name: "Stratum",
                  path: "~/Library/Mobile Documents/com~apple~CloudDocs/DataBase/Projects/Packages/Stratum"),
     ], targets: [
-        .target(name: "ViewCollection", dependencies: ["Stratum"]),
-        .testTarget(name: "ViewCollectionTests", dependencies: ["ViewCollection"]),
-    ], swiftLanguageVersions: [.v6]
+        .target(name: "ViewCollection", dependencies: ["Stratum"], path: "Sources"),
+    ], swiftLanguageModes: [.v6]
 )
