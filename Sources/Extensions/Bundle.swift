@@ -15,6 +15,7 @@ public extension Bundle {
         self.infoDictionary?[key.rawValue] as? String
     }
     
+    /// The resource key for lookup in ``load(_:)``.
     enum ResourceKey: String {
         
         /// The user-visible name for the bundle, used by Siri and visible on the iOS Home screen.
