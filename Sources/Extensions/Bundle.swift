@@ -38,12 +38,12 @@ public extension Bundle {
         /// The release or version number of the bundle.
         ///
         /// - Experiment: This is something like *1.3.1*.
-        case versionString = "CFBundleShortVersionString"
+        case version = "CFBundleShortVersionString"
         
         /// The version of the build that identifies an iteration of the bundle.
         ///
         /// - Experiment: This is something like *44*.
-        case version = "CFBundleVersion"
+        case buildVersion = "CFBundleVersion"
         
         /// A human-readable copyright notice for the bundle.
         case copyright = "NSHumanReadableCopyright"
