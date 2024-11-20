@@ -6,10 +6,11 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-
 #if !os(watchOS) && !os(tvOS)
 import SwiftUI
-import Stratum
+import FinderItem
+import NativeImage
+
 
 /// A preview image of a `FinderItem`.
 public struct FinderItemView: View {

@@ -6,9 +6,9 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-
 import SwiftUI
-import Stratum
+import NativeImage
+import Essentials
 
 
 /// An async view that only presents the content if the content is loaded.

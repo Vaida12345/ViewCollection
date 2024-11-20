@@ -6,9 +6,8 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-
 import SwiftUI
-import Stratum
+import NativeImage
 
 
 /// The VStack with equal width for each subview.

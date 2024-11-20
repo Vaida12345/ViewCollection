@@ -1,0 +1,42 @@
+{
+  "originHash" : "a5a7b99e4c260cc9bc44ed1fede1afc8bd170a1814ede7acdc08da464ca5d1c2",
+  "pins" : [
+    {
+      "identity" : "essentials",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Vaida12345/Essentials",
+      "state" : {
+        "revision" : "246636f475fd95bb67d8b703ad895efa6202f86b",
+        "version" : "1.0.1"
+      }
+    },
+    {
+      "identity" : "finderitem",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Vaida12345/FinderItem",
+      "state" : {
+        "revision" : "0071dac1987cb68b067957b455fccdd2b09c528a",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "matrix",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Vaida12345/Matrix.git",
+      "state" : {
+        "revision" : "f2758461a8bf9ba521f311eb13154118e084ef82",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "nativeimage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Vaida12345/NativeImage.git",
+      "state" : {
+        "revision" : "7e51defc3ed3c0aa74e7bcc13101a0d60526a276",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
+}

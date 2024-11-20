@@ -7,7 +7,7 @@
 
 import Foundation
 import SwiftUI
-import Stratum
+import NativeImage
 
 
 public struct FramedImage: View {

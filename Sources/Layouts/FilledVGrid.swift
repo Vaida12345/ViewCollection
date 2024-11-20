@@ -6,9 +6,8 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-
 import SwiftUI
-import Stratum
+import NativeImage
 
 
 /// The grid that puts every cell, ideally of *equal height*, in order.

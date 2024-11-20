@@ -6,11 +6,10 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-
 #if canImport(UIKit)
 import Foundation
 import SwiftUI
-import Stratum
+import NativeImage
 
 
 /// A view providing zoomable preview to an image.

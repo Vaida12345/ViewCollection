@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Stratum
+import NativeImage
 
 
 /// An image that is drawn without blocking the main thread.
