@@ -88,12 +88,8 @@ extension NativeViewControllerRepresentable {
 
 extension NativeViewControllerRepresentable {
     
-    public func sizeThatFits(_ proposal: ProposedViewSize, view: Self.ViewControllerType, context: Self.Context) -> CGSize? {
+    public func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize? {
         nil
-    }
-    
-    public static func dismantleView(_ view: Self.ViewControllerType, coordinator: Self.Coordinator) {
-        
     }
     
 }

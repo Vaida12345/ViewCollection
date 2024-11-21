@@ -92,8 +92,4 @@ extension NativeViewRepresentable {
         nil
     }
     
-    public static func dismantleView(_ view: Self.ViewType, coordinator: Self.Coordinator) {
-        
-    }
-    
 }
