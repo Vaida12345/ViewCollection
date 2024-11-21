@@ -13,6 +13,19 @@ import SwiftUI
 import AppKit
 
 /// A wrapper to `NSViewRepresentable`
+///
+/// ```swift
+/// struct PianoView: NativeViewControllerRepresentable {
+///
+///     func makeViewController(context: Context) -> some NativeViewController {
+///
+///     }
+///
+///     func updateViewController(_ viewController: ViewControllerType, context: Context) {
+///
+///     }
+/// }
+/// ```
 public protocol NativeViewControllerRepresentable: NSViewControllerRepresentable {
     
     @MainActor @preconcurrency
