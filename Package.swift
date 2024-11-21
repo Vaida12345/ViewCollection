@@ -17,5 +17,5 @@ let package = Package (
         .package(url: "https://github.com/Vaida12345/Matrix.git", from: "1.0.0")
     ], targets: [
         .target(name: "ViewCollection", dependencies: ["NativeImage", "Matrix"], path: "Sources"),
-    ], swiftLanguageModes: [.v6]
+    ]
 )
