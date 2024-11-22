@@ -48,8 +48,8 @@ extension NativeViewControllerRepresentable {
         self.makeViewController(context: context)
     }
     
-    public func updateNSViewController(_ nsView: ViewControllerType, context: Self.Context) {
-        self.updateViewController(nsView, context: context)
+    public func updateNSViewController(_ nsViewController: ViewControllerType, context: Self.Context) {
+        self.updateViewController(nsViewController, context: context)
     }
     
     public func sizeThatFits(_ proposal: ProposedViewSize, nsViewController: ViewControllerType, context: Self.Context) -> CGSize? {
@@ -64,7 +64,7 @@ extension NativeViewControllerRepresentable {
 import UIKit
 
 /// A wrapper to `UIViewRepresentable`
-public protocol NativeViewControllerRepresentable: UIViewRepresentable {
+public protocol NativeViewControllerRepresentable: UIViewControllerRepresentable {
     
     @MainActor @preconcurrency
     func makeViewController(context: Self.Context) -> Self.ViewControllerType
@@ -86,12 +86,12 @@ extension NativeViewControllerRepresentable {
         self.makeViewController(context: context)
     }
     
-    public func updateUIView(_ nsViewController: ViewControllerType, context: Self.Context) {
-        self.updateViewController(nsViewController, context: context)
+    public func updateUIViewController(_ uiViewController: ViewControllerType, context: Self.Context) {
+        self.updateViewController(uiViewController, context: context)
     }
     
-    public func sizeThatFits(_ proposal: ProposedViewSize, uiView: ViewControllerType, context: Self.Context) -> CGSize? {
-        self.sizeThatFits(proposal, view: uiView, context: context)
+    public func sizeThatFits(_ proposal: ProposedViewSize, uiViewController: ViewControllerType, context: Self.Context) -> CGSize? {
+        self.sizeThatFits(proposal, viewController: uiViewController, context: context)
     }
     
 }
@@ -103,6 +103,19 @@ extension NativeViewControllerRepresentable {
     
     public func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize? {
         nil
+    }
+    
+}
+
+
+struct __View: NativeViewControllerRepresentable {
+    
+    func makeViewController(context: Context) -> some NativeViewController {
+        NativeViewController()
+    }
+    
+    func updateViewController(_ view: ViewControllerType, context: Context) {
+        
     }
     
 }
