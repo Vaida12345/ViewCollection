@@ -106,16 +106,3 @@ extension NativeViewControllerRepresentable {
     }
     
 }
-
-
-struct __View: NativeViewControllerRepresentable {
-    
-    func makeViewController(context: Context) -> some NativeViewController {
-        NativeViewController()
-    }
-    
-    func updateViewController(_ view: ViewControllerType, context: Context) {
-        
-    }
-    
-}
