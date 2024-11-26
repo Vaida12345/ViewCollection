@@ -45,3 +45,16 @@ extension Binding {
     }
     
 }
+
+
+extension Binding where Value == CGFloat {
+    
+    public var float: Binding<Double> {
+        Binding<Double> {
+            self.wrappedValue
+        } set: {
+            self.wrappedValue = $0
+        }
+    }
+    
+}
