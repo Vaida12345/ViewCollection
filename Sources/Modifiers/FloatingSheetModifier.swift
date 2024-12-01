@@ -13,6 +13,8 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
     
+    let onDismiss: (() -> Void)?
+    
     let content: () -> Overlay
     
     @Environment(\.colorScheme) private var colorScheme
@@ -46,6 +48,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                         )
                         .overlay(alignment: .topTrailing) {
                             Button {
+                                onDismiss?()
                                 withAnimation {
                                     isPresented = false
                                 }
@@ -74,9 +77,16 @@ extension View {
     /// A floating sheet on iOS.
     public func floatingSheet<Content: View>(
         isPresented: Binding<Bool>,
+        onDismiss: (() -> Void)? = nil,
         @ViewBuilder content: @escaping () -> Content
     ) -> some View {
-        self.modifier(FloatingSheetModifier(isPresented: isPresented, content: content))
+        self.modifier(
+            FloatingSheetModifier(
+                isPresented: isPresented,
+                onDismiss: onDismiss,
+                content: content
+            )
+        )
     }
 }
 
