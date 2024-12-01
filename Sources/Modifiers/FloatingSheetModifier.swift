@@ -78,6 +78,9 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                             isPresented = false
                         }
                     }
+                    .onAppear {
+                        self.dismissProgress = 0
+                    }
                 }
             }
         }
@@ -88,7 +91,7 @@ extension View {
     
     /// A floating sheet on iOS.
     ///
-    /// To dismiss a floating sheet, use the `dismissFloatingSheet` environment key.
+    /// To dismiss a floating sheet, use the ``SwiftUICore/EnvironmentValues/dismissFloatingSheet`` environment key.
     public func floatingSheet<Content: View>(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
@@ -119,7 +122,8 @@ extension View {
 
 extension EnvironmentValues {
     
-    @Entry var dismissFloatingSheet: (() -> Void)? = nil
+    /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
+    @Entry public var dismissFloatingSheet: (() -> Void)? = nil
     
 }
 #endif
