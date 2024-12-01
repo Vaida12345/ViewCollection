@@ -13,7 +13,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
     
-    @Environment(\.isPresented) private var isPresentedEnv: Bool
+    @State private var dismissProgress: Double = 0
     
     let onDismiss: (() -> Void)?
     
@@ -35,6 +35,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                         .fill(.regularMaterial)
                         .ignoresSafeArea()
                         .transition(.opacity)
+                        .opacity(1 - dismissProgress)
                 }
                 
                 // Floating sheet
@@ -43,6 +44,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                         VStack {
                             self.content()
                         }
+                        .environment(\.dismissFloatingSheet, { self.isPresented = false })
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 16)
@@ -70,16 +72,13 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                     .padding()
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .animation(.spring, value: isPresented) // animate no matter what
+                    .onSwipe(to: .bottom, progress: $dismissProgress) {
+                        onDismiss?()
+                        withAnimation {
+                            isPresented = false
+                        }
+                    }
                 }
-            }
-            .onSwipe(to: .bottom) {
-                onDismiss?()
-                withAnimation {
-                    isPresented = false
-                }
-            }
-            .onChange(of: isPresentedEnv) { oldValue, newValue in
-                self.isPresented = newValue
             }
         }
     }
@@ -88,6 +87,8 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
 extension View {
     
     /// A floating sheet on iOS.
+    ///
+    /// To dismiss a floating sheet, use the `dismissFloatingSheet` environment key.
     public func floatingSheet<Content: View>(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
@@ -113,8 +114,12 @@ extension View {
             Text("Sheet")
                 .padding(.horizontal)
                 .frame(width: 400)
-            
-//            Slider(value: $width, in: 0...1000)
         }
+}
+
+extension EnvironmentValues {
+    
+    @Entry var dismissFloatingSheet: (() -> Void)? = nil
+    
 }
 #endif
