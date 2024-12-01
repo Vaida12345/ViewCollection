@@ -52,7 +52,6 @@ import NativeImage
 /// ```
 ///
 /// ![Example View](imagePreviewView)
-@available(iOS 17, *)
 public struct ImagePreviewView: View {
     
     private let image: UIImage
@@ -272,41 +271,37 @@ public struct ImagePreviewView: View {
 
 
 #Preview {
-    @Namespace var nameSpace
+    @Previewable @State var showImage = true
+    
+    @Previewable @Namespace var nameSpace
     
     let image = Image(systemName: "faceid")
     
-    @State var showImage = true
     
-    
-    if #available(iOS 17, *) {
-        return ZStack {
-            VStack {
-                Spacer()
-                
-                Button {
-                    withAnimation {
-                        showImage.toggle()
-                    }
-                } label: {
-                    if !showImage {
-                        image
-                            .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
-                    }
-                }
-            }
-            .zIndex(-1)
+    ZStack {
+        VStack {
+            Spacer()
             
-            if showImage {
-                ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace) {
-                    showImage = false
-                } onDelete: {
-                    
+            Button {
+                withAnimation {
+                    showImage.toggle()
+                }
+            } label: {
+                if !showImage {
+                    image
+                        .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
                 }
             }
         }
-    } else {
-        return EmptyView()
+        .zIndex(-1)
+        
+        if showImage {
+            ImagePreviewView(image: UIImage(systemName: "faceid")!, nameSpace: nameSpace) {
+                showImage = false
+            } onDelete: {
+                
+            }
+        }
     }
 }
 #endif

@@ -32,7 +32,7 @@ public struct LargeButtonStyle: ButtonStyle {
             .background(configuration.isPressed ? _color(configuration: configuration).opacity(0.9) : _color(configuration: configuration))
             .cornerRadius(20)
             .foregroundStyle(.white)
-            .onChange(of: configuration.isPressed) { value in
+            .onChange(of: configuration.isPressed) { _, value in
                 if !value && (startDate.distance(to: Date()) < 5) { return }
                 if value { self.startDate = Date() }
                 

@@ -7,10 +7,10 @@ A collection of SwiftUI Views.
     
     @SupportedLanguage(swift)
     
-    @Available(macOS,    introduced: 13.0)
-    @Available(iOS,      introduced: 16.0)
-    @Available(watchOS,  introduced: 9.0)
-    @Available(tvOS,     introduced: 16.0)
+    @Available(macOS,    introduced: 14.0)
+    @Available(iOS,      introduced: 17.0)
+    @Available(watchOS,  introduced: 10.0)
+    @Available(tvOS,     introduced: 17.0)
     @Available(visionOS, introduced: 1.0)
 }
 

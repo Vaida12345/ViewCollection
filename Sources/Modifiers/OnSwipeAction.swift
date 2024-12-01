@@ -9,7 +9,6 @@
 import SwiftUI
 
 
-@available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
 private struct OnSwipeAction: ViewModifier {
     
     private let edge: Edge
@@ -137,7 +136,6 @@ private struct OnSwipeAction: ViewModifier {
 }
 
 
-@available(macOS 14, iOS 17, watchOS 10, tvOS 17, *)
 extension View {
     
     /// Calls the `handler` on swap to `edge`.

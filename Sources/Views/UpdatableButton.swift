@@ -88,7 +88,7 @@ public struct UpdatableButton<Label>: View where Label: View {
 
 #Preview {
     
-    @State var isOn: Bool = false
+    @Previewable @State var isOn: Bool = false
     
     return UpdatableButton(isOn: $isOn) {
         try await Task.sleep(for: .seconds(2))

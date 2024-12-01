@@ -96,7 +96,7 @@ public struct ColorPaletteView: View {
             }
         }
         .frame(width: 30, height: 30)
-        .onChange(of: color) { color in
+        .onChange(of: color) { _, color in
             guard customColor == nil else { return }
             if !colorSet.contains(where: { color.isEqual(to: $0) }) {
                 self.customColor = color

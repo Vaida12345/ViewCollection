@@ -37,7 +37,7 @@ public struct FinderItemView: View {
             .onAppear {
                 update(url: item.url)
             }
-            .onChange(of: item) { newValue in
+            .onChange(of: item) { _, newValue in
                 update(url: newValue.url)
             }
     }

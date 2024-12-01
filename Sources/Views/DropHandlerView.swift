@@ -90,29 +90,18 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
                 .contentShape(Rectangle())
             } else {
                 VStack {
-                    if #available(macOS 13, iOS 16.1, *) {
-                        Image(systemName: "square.and.arrow.down")
-                            .resizable()
-                            .scaledToFit()
-                            .padding()
-                            .frame(width: 150, height: 150, alignment: .center)
-                            .fontWeight(.light)
-                            .foregroundStyle(isDropTargeted ? .blue : .secondary)
-                        
-                        Text(prompt)
-                            .bold()
-                            .fontDesign(.rounded)
-                            .font(.title3)
-                    } else {
-                        Image(systemName: "square.and.arrow.down")
-                            .resizable()
-                            .scaledToFit()
-                            .padding()
-                            .frame(width: 150, height: 150, alignment: .center)
-                        
-                        Text(prompt)
-                            .font(.title)
-                    }
+                    Image(systemName: "square.and.arrow.down")
+                        .resizable()
+                        .scaledToFit()
+                        .padding()
+                        .frame(width: 150, height: 150, alignment: .center)
+                        .fontWeight(.light)
+                        .foregroundStyle(isDropTargeted ? .blue : .secondary)
+                    
+                    Text(prompt)
+                        .bold()
+                        .fontDesign(.rounded)
+                        .font(.title3)
                 }
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

@@ -65,11 +65,7 @@ public enum DesignPattern: Codable, Equatable {
     public var systemImage: String {
         switch self {
         case .mac:
-            if #available(macOS 14, iOS 17, macCatalyst 17, tvOS 17, watchOS 10, *) {
-                "macbook"
-            } else {
-                "laptopcomputer"
-            }
+            "macbook"
         case .phone:
             "iphone.gen3"
         case .pad:
