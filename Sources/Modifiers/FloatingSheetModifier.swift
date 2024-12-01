@@ -13,6 +13,8 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
     
+    @Environment(\.isPresented) private var isPresentedEnv: Bool
+    
     let onDismiss: (() -> Void)?
     
     let content: () -> Overlay
@@ -24,8 +26,9 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
         ZStack {
             content
                 .zIndex(-1)
+                .disabled(true)
             
-            ZStack {
+            Group {
                 // Dimmed background
                 if isPresented {
                     Rectangle()
@@ -66,7 +69,17 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                     }
                     .padding()
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.spring, value: isPresented) // animate no matter what
                 }
+            }
+            .onSwipe(to: .bottom) {
+                onDismiss?()
+                withAnimation {
+                    isPresented = false
+                }
+            }
+            .onChange(of: isPresentedEnv) { oldValue, newValue in
+                self.isPresented = newValue
             }
         }
     }
