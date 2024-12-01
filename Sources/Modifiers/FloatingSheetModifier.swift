@@ -26,7 +26,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
         ZStack {
             content
                 .zIndex(-1)
-                .disabled(true)
+                .disabled(isPresented)
             
             Group {
                 // Dimmed background
@@ -43,8 +43,12 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                     VStack {
                         VStack {
                             self.content()
+                                .environment(\.dismissFloatingSheet, {
+                                    withAnimation {
+                                        self.isPresented = false
+                                    }
+                                })
                         }
-                        .environment(\.dismissFloatingSheet, { self.isPresented = false })
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 16)
@@ -107,6 +111,13 @@ extension View {
     }
 }
 
+extension EnvironmentValues {
+    
+    /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
+    @Entry public var dismissFloatingSheet: () -> Void = { }
+    
+}
+
 #Preview {
     @Previewable @State var width: Double = 100
     
@@ -118,12 +129,5 @@ extension View {
                 .padding(.horizontal)
                 .frame(width: 400)
         }
-}
-
-extension EnvironmentValues {
-    
-    /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
-    @Entry public var dismissFloatingSheet: (() -> Void)? = nil
-    
 }
 #endif

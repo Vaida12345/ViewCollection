@@ -87,10 +87,11 @@ private struct OnSwipeAction: ViewModifier {
     private func handleOnEnd(satisfied: Bool) {
         if satisfied {
             withAnimation(.interpolatingSpring) {
-                handler()
                 progress = 1
+                handler()
             } completion: {
                 offset = .zero
+                progress = 0
             }
         } else {
             withAnimation(.interpolatingSpring) {
