@@ -38,8 +38,6 @@ private struct OnSwipeAction: ViewModifier {
                             offset.height = value.translation.height
                             progress = min(abs(value.translation.height) / maxDistance, 1)
                         }
-                        
-//                        offset.width = decay(value.translation.width, sensitivity: sensitivity, scale: maxDistance)
                     case .leading:
                         if value.translation.width > 0 {
                             offset.width = decay(value.translation.width, sensitivity: sensitivity, scale: maxDistance)
@@ -47,8 +45,6 @@ private struct OnSwipeAction: ViewModifier {
                             offset.width = value.translation.width
                             progress = min(abs(value.translation.width) / maxDistance, 1)
                         }
-                        
-//                        offset.height = decay(value.translation.height, sensitivity: sensitivity, scale: maxDistance)
                     case .bottom:
                         if value.translation.height > 0 {
                             offset.height = value.translation.height
@@ -56,8 +52,6 @@ private struct OnSwipeAction: ViewModifier {
                         } else {
                             offset.height = decay(value.translation.height, sensitivity: sensitivity, scale: maxDistance)
                         }
-                        
-//                        offset.width = decay(value.translation.width, sensitivity: sensitivity, scale: maxDistance)
                     case .trailing:
                         if value.translation.width > 0 {
                             offset.width = value.translation.width
@@ -65,8 +59,6 @@ private struct OnSwipeAction: ViewModifier {
                         } else {
                             offset.width = decay(value.translation.width, sensitivity: sensitivity, scale: maxDistance)
                         }
-                        
-//                        offset.height = decay(value.translation.height, sensitivity: sensitivity, scale: maxDistance)
                     }
                 }
             }
