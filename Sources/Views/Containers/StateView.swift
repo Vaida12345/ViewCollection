@@ -21,6 +21,11 @@ private struct StateView<Value, ContentView: View>: View {
         handler($value)
     }
     
+    init(value: Value, handler: @escaping (_: Binding<Value>) -> ContentView) {
+        self._value = State(initialValue: value)
+        self.handler = handler
+    }
+    
 }
 
 
