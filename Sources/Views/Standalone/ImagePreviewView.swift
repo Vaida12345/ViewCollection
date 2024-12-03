@@ -6,6 +6,7 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
+#if !os(macOS) && !os(visionOS)
 import Foundation
 import SwiftUI
 import NativeImage
@@ -51,8 +52,6 @@ import NativeImage
 /// ```
 ///
 /// ![Example View](imagePreviewView)
-@available(macOS, unavailable)
-@available(visionOS, unavailable)
 public struct ImagePreviewView: View {
     
     private let image: UIImage
@@ -270,7 +269,6 @@ public struct ImagePreviewView: View {
     
 }
 
-#if DEBUG && os(iOS)
 #Preview {
     @Previewable @State var showImage = true
     

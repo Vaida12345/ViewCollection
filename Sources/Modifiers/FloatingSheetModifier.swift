@@ -5,11 +5,10 @@
 //  Created by Vaida on 12/1/24.
 //
 
+#if !os(macOS) && !os(visionOS)
 import SwiftUI
 
 
-@available(macOS, unavailable)
-@available(visionOS, unavailable)
 fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
@@ -121,7 +120,6 @@ extension EnvironmentValues {
     
 }
 
-#if DEBUG && os(iOS)
 #Preview {
     @Previewable @State var width: Double = 100
     

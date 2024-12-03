@@ -6,6 +6,7 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
+#if !os(macOS) && !os(visionOS)
 import SwiftUI
 import CoreHaptics
 
@@ -15,8 +16,6 @@ import CoreHaptics
 /// Currently, only vertical scrolling is supported.
 ///
 /// - Important: You should constrain the `frame` `width` to be ``Coordinator-swift.class/Frame-swift.struct/dashSize`` `.width`.
-@available(macOS, unavailable)
-@available(visionOS, unavailable)
 public struct DashedSlider: UIViewControllerRepresentable {
     
     private let coordinator: Coordinator
@@ -140,7 +139,6 @@ public struct DashedSlider: UIViewControllerRepresentable {
     }
 }
 
-#if DEBUG && os(iOS)
 #Preview {
     DashedSlider(coordinator: .init(value: 0.5))
 }
