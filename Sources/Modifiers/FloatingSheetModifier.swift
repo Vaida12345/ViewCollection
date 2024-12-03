@@ -5,8 +5,8 @@
 //  Created by Vaida on 12/1/24.
 //
 
-#if !os(macOS) && !os(visionOS)
 import SwiftUI
+#if !os(macOS) && !os(visionOS)
 
 
 fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
@@ -113,13 +113,6 @@ extension View {
     }
 }
 
-extension EnvironmentValues {
-    
-    /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
-    @Entry public var dismissFloatingSheet: () -> Void = { }
-    
-}
-
 #Preview {
     @Previewable @State var width: Double = 100
     
@@ -133,3 +126,10 @@ extension EnvironmentValues {
         }
 }
 #endif
+
+extension EnvironmentValues {
+    
+    /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
+    @Entry public var dismissFloatingSheet: () -> Void = { }
+    
+}
