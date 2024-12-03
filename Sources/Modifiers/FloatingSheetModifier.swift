@@ -114,8 +114,6 @@ extension View {
     }
 }
 
-@available(macOS, unavailable)
-@available(visionOS, unavailable)
 extension EnvironmentValues {
     
     /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
