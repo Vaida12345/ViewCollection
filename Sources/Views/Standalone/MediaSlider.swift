@@ -110,12 +110,14 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             .gesture(gesture)
         }
         .frame(height: backgroundHeight)
+#if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
             newValue == 0 || newValue == 1
         }
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
         }
+#endif
     }
     
     private func transactionUpdate(transactionWidth: Double?, geometryWidth: Double) {

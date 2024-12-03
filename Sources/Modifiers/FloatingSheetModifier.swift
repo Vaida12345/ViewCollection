@@ -4,11 +4,12 @@
 //
 //  Created by Vaida on 12/1/24.
 //
-#if os(iOS)
 
 import SwiftUI
 
 
+@available(macOS, unavailable)
+@available(visionOS, unavailable)
 fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
@@ -91,6 +92,8 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     }
 }
 
+@available(macOS, unavailable)
+@available(visionOS, unavailable)
 extension View {
     
     /// A floating sheet on iOS.
@@ -111,6 +114,8 @@ extension View {
     }
 }
 
+@available(macOS, unavailable)
+@available(visionOS, unavailable)
 extension EnvironmentValues {
     
     /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
@@ -118,6 +123,7 @@ extension EnvironmentValues {
     
 }
 
+#if DEBUG && os(iOS)
 #Preview {
     @Previewable @State var width: Double = 100
     

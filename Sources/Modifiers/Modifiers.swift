@@ -9,35 +9,6 @@ import Foundation
 import SwiftUI
 
 
-extension View {
-    
-    /// The `fullScreenCover` for *iPhone* and *Apple Watch*, `sheet` otherwise.
-    @inlinable
-    @ViewBuilder
-    public func screenCover<Content>(
-        isPresented: Binding<Bool>,
-        onDismiss: (() -> Void)? = nil,
-        @ViewBuilder content: @escaping () -> Content
-    ) -> some View where Content : View {
-#if os(macOS)
-        sheet(isPresented: isPresented, onDismiss: onDismiss) {
-            content()
-        }
-#else
-        if DesignPattern.current == .phone || DesignPattern.current == .watch {
-            fullScreenCover(isPresented: isPresented, onDismiss: onDismiss) {
-                content()
-            }
-        } else {
-            sheet(isPresented: isPresented, onDismiss: onDismiss) {
-                content()
-            }
-        }
-#endif
-    }
-    
-}
-
 public extension View {
     
     /// Applies a conditional modifier to the given view.
