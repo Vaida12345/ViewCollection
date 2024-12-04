@@ -128,11 +128,9 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
                     }
                 }
                 .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.fileURL], allowsMultipleSelection: allowMultipleSelection ?? false) { result in
-                    Task {
-                        await withErrorPresented("Failed to import items") {
-                            let urls = try result.get()
-                            try dropHandler(urls.map({ FinderItem(at: $0) }))
-                        }
+                    withErrorPresented("Failed to import items") {
+                        let urls = try result.get()
+                        try dropHandler(urls.map({ FinderItem(at: $0) }))
                     }
                 }
         } else {
