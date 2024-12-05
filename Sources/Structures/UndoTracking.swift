@@ -45,6 +45,8 @@ extension UndoTracking {
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func append<E>(_ newElement: E, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
+        
         let index = self[keyPath: keyPath].count
         
         withAnimation {
@@ -66,6 +68,8 @@ extension UndoTracking {
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func append<E>(contentsOf sequence: some Sequence<E>, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
+        
         let index = self[keyPath: keyPath].count
         
         withAnimation {
@@ -88,6 +92,7 @@ extension UndoTracking {
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func insert<E>(_ newElement: E, at index: Int, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
         
         withAnimation {
             self[keyPath: keyPath].insert(newElement, at: index)
@@ -108,13 +113,15 @@ extension UndoTracking {
     ///   - shouldBeRemoved: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element should be removed from the collection.
     public func removeAll<E>(from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?, where shouldBeRemoved: (E) -> Bool) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
         
-        var removed: [(Int, E)] = []
+        var _removed: [(Int, E)] = []
         for tuple in self[keyPath: keyPath].enumerated() {
             if shouldBeRemoved(tuple.element) {
-                removed.append(tuple)
+                _removed.append(tuple)
             }
         }
+        nonisolated(unsafe) let removed = consume _removed
         
         withAnimation {
             self[keyPath: keyPath].removeAll(where: shouldBeRemoved)
@@ -137,8 +144,9 @@ extension UndoTracking {
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func remove<E>(at index: Int, from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
         
-        let removed = withAnimation {
+        nonisolated(unsafe) let removed = withAnimation {
             self[keyPath: keyPath].remove(at: index)
         }
         
@@ -168,9 +176,10 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func removeLast<E>(_ k: Int, from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let keyPath = keyPath
         nonisolated(unsafe) let undoManager = undoManager
         
-        let removed = self[keyPath: keyPath][(self[keyPath: keyPath].count - 1 - k)..<self[keyPath: keyPath].count]
+        nonisolated(unsafe) let removed = self[keyPath: keyPath][(self[keyPath: keyPath].count - 1 - k)..<self[keyPath: keyPath].count]
         withAnimation {
             self[keyPath: keyPath].removeLast(k)
         }
@@ -183,10 +192,11 @@ extension UndoTracking {
     /// Replace the value indicated by the `keyPath` with the `newValue`
     ///
     /// - Precondition: You need to ensure the `T` is a `struct`.
-    public func replace<T>(_ keyPath: ReferenceWritableKeyPath<Self, T>, with newValue: T, undoManager: UndoManager?, actionName: ((T) -> String)? = nil) {
+    public func replace<T>(_ keyPath: ReferenceWritableKeyPath<Self, T>, with newValue: T, undoManager: UndoManager?, actionName: (@Sendable (T) -> String)? = nil) {
         nonisolated(unsafe) let undoManager = undoManager
+        nonisolated(unsafe) let keyPath = keyPath
         
-        let removed = self[keyPath: keyPath]
+        nonisolated(unsafe) let removed = self[keyPath: keyPath]
         self[keyPath: keyPath] = newValue
         
         if let actionName {
