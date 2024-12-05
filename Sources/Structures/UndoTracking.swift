@@ -28,6 +28,7 @@ import SwiftUI
 /// > let model = Model()
 /// > model.append(0, to \.container)
 /// > ```
+@preconcurrency
 public protocol UndoTracking: AnyObject {
     
 }
@@ -43,6 +44,7 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func append<E>(_ newElement: E, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let undoManager = undoManager
         let index = self[keyPath: keyPath].count
         
         withAnimation {
@@ -63,6 +65,7 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func append<E>(contentsOf sequence: some Sequence<E>, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let undoManager = undoManager
         let index = self[keyPath: keyPath].count
         
         withAnimation {
@@ -84,6 +87,8 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func insert<E>(_ newElement: E, at index: Int, to keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let undoManager = undoManager
+        
         withAnimation {
             self[keyPath: keyPath].insert(newElement, at: index)
         }
@@ -102,6 +107,8 @@ extension UndoTracking {
     ///   - undoManager: The `UndoManager` tracking the changes.
     ///   - shouldBeRemoved: A closure that takes an element of the sequence as its argument and returns a Boolean value indicating whether the element should be removed from the collection.
     public func removeAll<E>(from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?, where shouldBeRemoved: (E) -> Bool) {
+        nonisolated(unsafe) let undoManager = undoManager
+        
         var removed: [(Int, E)] = []
         for tuple in self[keyPath: keyPath].enumerated() {
             if shouldBeRemoved(tuple.element) {
@@ -129,6 +136,8 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func remove<E>(at index: Int, from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let undoManager = undoManager
+        
         let removed = withAnimation {
             self[keyPath: keyPath].remove(at: index)
         }
@@ -159,6 +168,8 @@ extension UndoTracking {
     ///   - keyPath: The key path to the array.
     ///   - undoManager: The `UndoManager` tracking the changes.
     public func removeLast<E>(_ k: Int, from keyPath: ReferenceWritableKeyPath<Self, Array<E>>, undoManager: UndoManager?) {
+        nonisolated(unsafe) let undoManager = undoManager
+        
         let removed = self[keyPath: keyPath][(self[keyPath: keyPath].count - 1 - k)..<self[keyPath: keyPath].count]
         withAnimation {
             self[keyPath: keyPath].removeLast(k)
@@ -173,6 +184,8 @@ extension UndoTracking {
     ///
     /// - Precondition: You need to ensure the `T` is a `struct`.
     public func replace<T>(_ keyPath: ReferenceWritableKeyPath<Self, T>, with newValue: T, undoManager: UndoManager?, actionName: ((T) -> String)? = nil) {
+        nonisolated(unsafe) let undoManager = undoManager
+        
         let removed = self[keyPath: keyPath]
         self[keyPath: keyPath] = newValue
         
