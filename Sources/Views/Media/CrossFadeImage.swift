@@ -27,13 +27,13 @@ public struct CrossFadeImage: View {
         ZStack {
             Image(nativeImage: lowerImage)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: contentMode)
                 .zIndex(-1)
             
             if let upperImage {
                 Image(nativeImage: upperImage)
                     .resizable()
-                    .aspectRatio(contentMode: .fit)
+                    .aspectRatio(contentMode: contentMode)
                     .zIndex(1)
             }
         }
