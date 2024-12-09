@@ -46,7 +46,7 @@ public struct CrossFadeImage: View {
         }
     }
     
-    init(nativeImage: NativeImage, contentMode: ContentMode = .fit) {
+    public init(nativeImage: NativeImage, contentMode: ContentMode = .fit) {
         self.image = nativeImage
         self.contentMode = contentMode
         self._lowerImage = State(initialValue: image)
