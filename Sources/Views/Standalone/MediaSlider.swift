@@ -85,7 +85,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             
             ZStack {
                 RoundedRectangle(cornerRadius: backgroundRadius)
-                    .fill(.regularMaterial)
+                    .fill(.ultraThinMaterial)
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .shadow(radius: 5)
