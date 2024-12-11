@@ -5,12 +5,18 @@
 //  Created by Vaida on 12/2/24.
 //
 
-
 import SwiftUI
 import Essentials
 
 
 /// A slider style that mimics iOS media playback.
+///
+/// The height for this view is mutable. To reserve vertical space for, set maximum height of `15`.
+/// ```swift
+/// MediaSlider(value: $value)
+///     .frame(height: 15)
+///     .padding()
+/// ```
 public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -26,6 +32,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     let range: ClosedRange<T>
     
     let scale: T
+    
     
     var gesture: some Gesture {
         DragGesture(minimumDistance: 0)
@@ -69,8 +76,6 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @State private var reshape = CGSize(width: 1, height: 1)
     
-    @Environment(\.colorScheme) private var colorScheme
-    
     
     public var body: some View {
         GeometryReader { geometry in
@@ -88,7 +93,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                     .fill(.ultraThinMaterial)
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                    .shadow(radius: 5)
+                    .shadow(radius: 10)
                 
                 let progressWidth = normalized * geometry.size.width
                 
@@ -109,10 +114,17 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             }
             .gesture(gesture)
         }
-        .frame(height: backgroundHeight)
+        .environment(\.colorScheme, .light)
+        .background {
+            VStack {
+                Text("\(self.backgroundHeight, format: .number.precision(.fractionLength(2)))")
+                Text("(\(self.reshape.width, format: .number.precision(.fractionLength(2))), \(self.reshape.height, format: .number.precision(.fractionLength(2))))")
+            }
+            .environment(\.colorScheme, .dark)
+        }
 #if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
-            newValue == 0 || newValue == 1
+            (newValue == 0 || newValue == 1) && transactionWidth != nil // ensure it is user initialized.
         }
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
@@ -134,7 +146,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         if raw < 0 || raw > 1 {
             let normal = abs(tanh(raw > 1 ? raw - 1 : raw))
             self.reshape = CGSize(width: 1 + normal * 0.1, height: 1)
-            self.backgroundHeight = clamp(15 - normal * 15, min: 2)
+            self.backgroundHeight = clamp(15 - normal * 15, min: 4)
         }
     }
     
@@ -151,6 +163,6 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     @Previewable @State var value: Double = 0
     
     MediaSlider(value: $value, in: 0...2)
-        .frame(width: 200, height: 10)
+        .frame(width: 200, height: 15)
         .padding(.vertical)
 }
