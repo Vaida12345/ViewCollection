@@ -114,6 +114,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             }
             .gesture(gesture)
         }
+        .frame(height: backgroundHeight)
         .environment(\.colorScheme, .light)
 #if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
