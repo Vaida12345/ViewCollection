@@ -115,13 +115,6 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             .gesture(gesture)
         }
         .environment(\.colorScheme, .light)
-        .background {
-            VStack {
-                Text("\(self.backgroundHeight, format: .number.precision(.fractionLength(2)))")
-                Text("(\(self.reshape.width, format: .number.precision(.fractionLength(2))), \(self.reshape.height, format: .number.precision(.fractionLength(2))))")
-            }
-            .environment(\.colorScheme, .dark)
-        }
 #if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
             (newValue == 0 || newValue == 1) && transactionWidth != nil // ensure it is user initialized.
