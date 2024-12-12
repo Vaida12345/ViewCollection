@@ -12,8 +12,8 @@ let package = Package (
     ], products: [
         .library(name: "ViewCollection", targets: ["ViewCollection"]),
     ], dependencies: [
-        .package(url: "https://github.com/Vaida12345/NativeImage.git", from: "1.0.0"),
-        .package(url: "https://github.com/Vaida12345/Matrix.git", from: "1.0.0")
+        .package(url: "https://www.github.com/Vaida12345/NativeImage", from: "1.0.0"),
+        .package(url: "https://github.com/Vaida12345/Matrix", branch: "main")
     ], targets: [
         .target(name: "ViewCollection", dependencies: ["NativeImage", "Matrix"], path: "Sources"),
     ]
