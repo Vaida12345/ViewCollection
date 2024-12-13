@@ -19,9 +19,14 @@ import SwiftUI
 /// ```swift
 /// @Obsersable
 /// final class <#Model#>: DataProvider {
-///     @MainActor
 ///     static var instance = <#Model#>.load()
 /// }
+/// ```
+///
+/// ## Use instance
+/// To use the instance, observe the model in main app.
+/// ```swift
+/// @State private var <#model#> = <#Model#>.instance
 /// ```
 ///
 /// ## AutoSave
@@ -31,7 +36,7 @@ import SwiftUI
 /// ```swift
 /// final class AppDelegate: ApplicationDelegate {
 ///     override func applicationWillTerminate() {
-///         <#Model#>.instance.save()
+///         try? <#Model#>.instance.save()
 ///     }
 /// }
 /// ```
@@ -46,7 +51,7 @@ public protocol DataProvider: Codable, Identifiable, AnyObject {
     /// The main ``DataProvider`` to work with.
     ///
     /// In the `@main App` declaration, declare a `StateObject` of `instance`. In this way, this structure can be accessed across the app, and any mutation is observed in all views.
-    @MainActor
+    nonisolated(unsafe)
     static var instance: Self { get set }
     
     /// Creates the default value.
@@ -76,7 +81,11 @@ extension DataProvider {
     
     /// Load the saved model, or create a new one using its default initializer.
     public static func load() -> Self {
-        (try? Self.init(at: Self.storageLocation, format: .plist)) ?? Self.init()
+        do {
+            return try Self.init(at: Self.storageLocation, format: .plist)
+        } catch {
+            return Self.init()
+        }
     }
     
 }

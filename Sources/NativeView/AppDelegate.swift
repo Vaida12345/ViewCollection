@@ -45,16 +45,18 @@ extension ApplicationDelegate {
 #elseif os(iOS)
 
 /// A wrapper to `UIApplicationDelegate`
-public protocol ApplicationDelegate: UIApplicationDelegate {
+open class ApplicationDelegate: NSObject, UIApplicationDelegate {
     
     /// Tells the delegate that the app is about to terminate.
-    func applicationWillTerminate()
+    open func applicationWillTerminate() {
+        
+    }
     
 }
 
 extension ApplicationDelegate {
     
-    public func applicationWillTerminate(_ application: UIApplication) {
+    open func applicationWillTerminate(_ application: UIApplication) {
         applicationWillTerminate()
     }
     
