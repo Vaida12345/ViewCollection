@@ -14,28 +14,15 @@ import SwiftUI
 ///
 /// On iPadOS, also pay attention to `horizontalSizeClass`. One should use iOS layouts when `compact`.
 public enum DesignPattern: Codable, Equatable {
-    case mac, phone, pad, tv, carPlay, vision, watch
+    case mac, tv, carPlay, vision, watch
+    @available(*, deprecated, renamed: "iPhone")
+    case phone
+    @available(*, deprecated, renamed: "iPad")
+    case pad
+    case iPad, iPhone
     
     /// The unspecified can be matched against any pattern
     case unspecified
-    
-    public var isMac:     Bool { self == .mac }
-    public var isPhone:   Bool { self == .phone }
-    public var isPad:     Bool { self == .pad }
-    public var isTV:      Bool { self == .tv }
-    public var isCarPlay: Bool { self == .carPlay }
-    public var isReality: Bool { self == .vision }
-    
-    /// Whether the pattern is `mac`, `pad`, `tv`, `reality` or `unspecified`.
-    @inlinable
-    public var isLargeScreen: Bool {
-        switch self {
-        case .mac, .pad, .tv, .vision, .unspecified:
-            true
-        default:
-            false
-        }
-    }
     
     /// The device name
     @inlinable
@@ -43,9 +30,9 @@ public enum DesignPattern: Codable, Equatable {
         switch self {
         case .mac:
             "Mac"
-        case .phone:
+        case .phone, .iPhone:
             "iPhone"
-        case .pad:
+        case .pad, .iPad:
             "iPad"
         case .tv:
             "Apple TV"
@@ -66,9 +53,9 @@ public enum DesignPattern: Codable, Equatable {
         switch self {
         case .mac:
             "macbook"
-        case .phone:
+        case .phone, .iPhone:
             "iphone.gen3"
-        case .pad:
+        case .pad, .iPad:
             "ipad.landscape"
         case .tv:
             "appletv.fill"
@@ -95,12 +82,12 @@ public enum DesignPattern: Codable, Equatable {
         case .unspecified:
             .unspecified
         case .phone:
-            .phone
+            .iPhone
         case .pad:
 #if targetEnvironment(macCatalyst)
             .mac
 #else
-            .pad
+            .iPad
 #endif
         case .tv:
             .tv
@@ -118,5 +105,10 @@ public enum DesignPattern: Codable, Equatable {
 #elseif os(watchOS)
         .watch
 #endif
+    }
+    
+    @MainActor
+    public static func == (lhs: DesignPattern.Type, rhs: DesignPattern) -> Bool {
+        DesignPattern.current == rhs
     }
 }
