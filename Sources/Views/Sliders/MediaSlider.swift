@@ -7,16 +7,10 @@
 
 import SwiftUI
 import Essentials
+import NativeImage
 
 
 /// A slider style that mimics iOS media playback.
-///
-/// The height for this view is mutable. To reserve vertical space for, set maximum height of `15`.
-/// ```swift
-/// MediaSlider(value: $value)
-///     .frame(height: 15)
-///     .padding()
-/// ```
 public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -34,7 +28,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     let scale: T
     
     
-    var gesture: some Gesture {
+    func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 transactionWidth = value.translation.width
@@ -44,9 +38,11 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                         backgroundHeight = 15
                     }
                 }
+                transactionUpdate(transactionWidth: transactionWidth, geometryWidth: size.width)
             }
-            .onEnded { _ in
+            .onEnded { value in
                 // finalize
+                transactionUpdate(transactionWidth: value.translation.width, geometryWidth: size.width)
                 transactionWidth = nil
                 progressOnStart = nil
                 playsSensoryFeedback = false
@@ -109,10 +105,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             }
             .offset(x: reshapeOffset)
             .scaleEffect(reshape)
-            .onChange(of: transactionWidth) { _, newValue in
-                transactionUpdate(transactionWidth: newValue, geometryWidth: geometry.size.width)
-            }
-            .gesture(gesture)
+            .gesture(gesture(size: geometry.size))
         }
         .frame(height: backgroundHeight)
         .environment(\.colorScheme, .light)
@@ -124,6 +117,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             newValue
         }
 #endif
+        .frame(height: 15)
     }
     
     private func transactionUpdate(transactionWidth: Double?, geometryWidth: Double) {

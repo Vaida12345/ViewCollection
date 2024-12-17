@@ -102,7 +102,7 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
         }
         .contentShape(Rectangle())
         .gesture(gesture)
-        .sensoryFeedback(.impact(flexibility: .rigid, intensity: 0.75), trigger: Int(value))
+        .sensoryFeedback(.selection, trigger: Int(value))
     }
     
     public init(value: Binding<T>) {
