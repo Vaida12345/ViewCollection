@@ -69,13 +69,14 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
                     Capsule()
                         .frame(width: 4)
                         .foregroundStyle(.regularMaterial)
-                        .position(x: normal, y: geometry.size.height / 2)
+                        .position(x: normal, y: 10)
                         .opacity(opacity)
                 }
             }
             .environment(\.colorScheme, .light)
             .frame(height: 20)
             .padding(.vertical)
+            .frame(height: 40)
             .contentShape(Rectangle())
             .gesture(gesture(dividerMaxGap: dividerMaxGap))
             .sensoryFeedback(.selection, trigger: Int(value))
