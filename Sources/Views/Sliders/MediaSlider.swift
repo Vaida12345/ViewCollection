@@ -15,11 +15,19 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
     
-    @State private var transactionWidth: Double? = nil
+    /// The absolute offset
+    var offset: Double {
+        initialOffset + (translation ?? 0)
+    }
     
-    @State private var progressOnStart: Double? = nil
+    /// The initial offset before the start of current gesture.
+    @State private var initialOffset = 0.0
     
-    @State private var playsSensoryFeedback = false
+    /// The translation for current gesture, or `nil` for no gesture.
+    @State private var translation: Double? = nil
+    
+    
+    @State private var playsSensoryFeedback: Bool = false
     
     let onDrag: (T) -> Void
     
@@ -31,20 +39,18 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                transactionWidth = value.translation.width
-                if progressOnStart == nil {
-                    progressOnStart = normalized
+                if translation == nil {
                     withAnimation {
                         backgroundHeight = 15
                     }
                 }
-                transactionUpdate(transactionWidth: transactionWidth, geometryWidth: size.width)
+                
+                self.translation = value.translation.width
+                self.transactionUpdate(translation: translation, geometryWidth: size.width)
             }
             .onEnded { value in
-                // finalize
-                transactionUpdate(transactionWidth: value.translation.width, geometryWidth: size.width)
-                transactionWidth = nil
-                progressOnStart = nil
+                self.initialOffset = clamp(self.offset, min: 0, max: size.width)
+                self.translation = nil
                 playsSensoryFeedback = false
                 
                 withAnimation {
@@ -91,12 +97,10 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     .shadow(radius: 10)
                 
-                let progressWidth = normalized * geometry.size.width
-                
                 Rectangle()
                     .fill(.white)
-                    .frame(width: progressWidth, height: backgroundHeight)
-                    .position(x: progressWidth / 2, y: geometry.size.height / 2)
+                    .frame(width: clamp(offset, min: 0, max: geometry.size.width), height: backgroundHeight)
+                    .position(x: offset / 2, y: geometry.size.height / 2)
                     .mask {
                         RoundedRectangle(cornerRadius: backgroundRadius)
                             .frame(height: backgroundHeight)
@@ -106,12 +110,23 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             .offset(x: reshapeOffset)
             .scaleEffect(reshape)
             .gesture(gesture(size: geometry.size))
+            .onChange(of: value) { oldValue, newValue in
+                if translation == nil {
+                    updateFrom(value: newValue, width: geometry.size.width)
+                }
+            }
+            .onChange(of: geometry.size.width) { _, newValue in
+                updateFrom(value: self.value, width: newValue)
+            }
+            .onAppear {
+                updateFrom(value: value, width: geometry.size.width)
+            }
         }
         .frame(height: backgroundHeight)
         .environment(\.colorScheme, .light)
 #if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
-            (newValue == 0 || newValue == 1) && transactionWidth != nil // ensure it is user initialized.
+            (newValue == 0 || newValue == 1) && translation != nil // ensure it is user initialized.
         }
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
@@ -120,10 +135,10 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         .frame(height: 15)
     }
     
-    private func transactionUpdate(transactionWidth: Double?, geometryWidth: Double) {
-        guard let transactionWidth, let progressOnStart else { return }
-        let delta = transactionWidth / geometryWidth
-        let raw = progressOnStart + delta
+    private func transactionUpdate(translation: Double?, geometryWidth: Double) {
+        guard let translation else { return }
+        let delta = translation / geometryWidth
+        let raw = initialOffset / geometryWidth + delta
         if (self.normalized == 0 && raw < 0) || (self.normalized == 1 && raw > 1) {
             playsSensoryFeedback = true
         }
@@ -136,6 +151,10 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             self.reshape = CGSize(width: 1 + normal * 0.1, height: 1)
             self.backgroundHeight = clamp(15 - normal * 15, min: 4)
         }
+    }
+    
+    func updateFrom(value: T, width: Double) {
+        self.initialOffset = Double((value - range.lowerBound) / scale) * width
     }
     
     public init(value: Binding<T>, in range: ClosedRange<T> = 0...1, onDrag: @escaping (T) -> Void = { _ in }) {
