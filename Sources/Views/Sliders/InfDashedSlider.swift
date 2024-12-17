@@ -15,44 +15,48 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
     
-    @State private var valueBase = 0.0
+    /// The absolute offset
+    var offset: Double {
+        initialOffset + (translation ?? 0)
+    }
     
-    let dividersCount = 35
+    /// The initial offset before the start of current gesture.
+    @State private var initialOffset = 0.0
     
-    @State private var offset = 0.0
+    /// The translation for current gesture, or `nil` for no gesture.
+    @State private var translation: Double? = nil
     
-    @State private var translate = 0.0
     
-    @State private var addition = 0.0
+    func minorOffset(dividerMaxGap: Double) -> Double {
+        offset.truncatingRemainder(dividingBy: dividerMaxGap)
+    }
     
-    @State private var isInitial = false
-    
-    @State private var isDragging = false
-    
-    var gesture: some Gesture {
+    func gesture(dividerMaxGap: Double) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                self.offset = value.translation.width + addition
-                if !self.isDragging {
-                    self.isInitial = true
-                    self.isDragging = true
-                }
+                self.translation = value.translation.width
+                
+                self.value = -T(self.offset / dividerMaxGap)
             }
             .onEnded { value in
-                self.addition = self.translate
-                self.isDragging = false
+                self.initialOffset = self.offset
+                self.translation = nil
             }
     }
     
     
+    let dividersCount = 35
+    
+    let scaleFactor = 8.0
+    
+    
     public var body: some View {
         GeometryReader { geometry in
-            let scaleFactor = 8.0
             let dividerMaxGap = tanh(1 / scaleFactor) * geometry.size.width / 2
             
             let _normalize: (_ i: Int) -> Double = { i in
                 let position = Double(i - dividersCount / 2) / scaleFactor
-                return tanh(position + translate / dividerMaxGap / scaleFactor) * geometry.size.width / 2 + geometry.size.width / 2
+                return tanh(position + minorOffset(dividerMaxGap: dividerMaxGap) / dividerMaxGap / scaleFactor) * geometry.size.width / 2 + geometry.size.width / 2
             }
             
             Group {
@@ -70,43 +74,26 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
                 }
             }
             .environment(\.colorScheme, .light)
-            .onChange(of: offset) { oldValue, newValue in
-                let oldTranslate = translate
-                translate = newValue.truncatingRemainder(dividingBy: dividerMaxGap)
-                
-                guard !isInitial else {
-                    self.isInitial = false
-                    return
+            .contentShape(Rectangle())
+            .gesture(gesture(dividerMaxGap: dividerMaxGap))
+            .sensoryFeedback(.selection, trigger: Int(value))
+            .onChange(of: value) { oldValue, newValue in
+                if translation == nil {
+                    updateFrom(value: Double(newValue), dividerMaxGap: dividerMaxGap)
                 }
-                // determine left right
-                let isIncreasing = newValue < oldValue
-                
-                let float = -(translate / dividerMaxGap)
-                
-                if isIncreasing {
-                    if oldTranslate > translate {
-                        // increasing, but not reach top
-                    } else {
-                        valueBase += 1
-                    }
-                } else {
-                    if oldTranslate < translate {
-                        
-                    } else {
-                        valueBase -= 1
-                    }
-                }
-                
-                self.value = T(float + valueBase)
+            }
+            .onAppear {
+                updateFrom(value: Double(value), dividerMaxGap: dividerMaxGap)
             }
         }
-        .contentShape(Rectangle())
-        .gesture(gesture)
-        .sensoryFeedback(.selection, trigger: Int(value))
     }
     
     public init(value: Binding<T>) {
         self._value = value
+    }
+    
+    func updateFrom(value: Double, dividerMaxGap: Double) {
+        initialOffset = -value * dividerMaxGap
     }
 }
 
