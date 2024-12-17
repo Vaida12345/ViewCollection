@@ -154,7 +154,8 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     }
     
     func updateFrom(value: T, width: Double) {
-        self.initialOffset = Double((value - range.lowerBound) / scale) * width
+        let normal = Double((value - range.lowerBound) / scale)
+        self.initialOffset = clamp(normal, min: 0, max: 1) * width
     }
     
     public init(value: Binding<T>, in range: ClosedRange<T> = 0...1, onDrag: @escaping (T) -> Void = { _ in }) {

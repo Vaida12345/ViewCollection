@@ -75,6 +75,8 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
             }
             .environment(\.colorScheme, .light)
             .contentShape(Rectangle())
+            .frame(height: 20)
+            .padding(.vertical)
             .gesture(gesture(dividerMaxGap: dividerMaxGap))
             .sensoryFeedback(.selection, trigger: Int(value))
             .onChange(of: value) { oldValue, newValue in
