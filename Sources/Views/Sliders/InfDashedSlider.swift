@@ -89,6 +89,7 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
                 updateFrom(value: Double(value), dividerMaxGap: dividerMaxGap)
             }
         }
+        .frame(height: 40)
     }
     
     public init(value: Binding<T>) {
