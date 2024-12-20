@@ -126,7 +126,6 @@ extension View {
                 .frame(width: 400)
         }
 }
-#endif
 
 extension EnvironmentValues {
     
@@ -134,3 +133,4 @@ extension EnvironmentValues {
     @Entry public var dismissFloatingSheet: () -> Void = { }
     
 }
+#endif
