@@ -44,6 +44,19 @@ extension Binding {
         }
     }
     
+    /// Returns `true` is `self` equals to `other`. Or, when the result binding is set to `false`, assign `self` to `falseValue`.
+    public func isEqual(to other: Value, or falseValue: Value) -> Binding<Bool> where Value: Equatable & Sendable {
+        Binding<Bool> {
+            self.wrappedValue == other
+        } set: { newValue in
+            if newValue {
+                self.wrappedValue = other
+            } else {
+                self.wrappedValue = falseValue
+            }
+        }
+    }
+    
 }
 
 

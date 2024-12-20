@@ -218,6 +218,14 @@ private extension Color {
         .imageScale(.medium)
 }
 
+#Preview("Disabled") {
+    @Previewable @State var color: Color = .pink
+    
+    ColorPaletteView(color: $color)
+        .showCustomColorPicker(true)
+        .disabled(true)
+}
+
 #Preview("Large") {
     @Previewable @State var color: Color = .pink
     
