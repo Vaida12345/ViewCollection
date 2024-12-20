@@ -5,8 +5,8 @@
 //  Created by Vaida on 12/1/24.
 //
 
-import SwiftUI
 #if !os(macOS) && !os(visionOS)
+import SwiftUI
 
 
 fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
@@ -76,6 +76,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                     .padding()
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                     .animation(.spring, value: isPresented) // animate no matter what
+                    .ignoresSafeArea()
                     .onSwipe(to: .bottom, progress: $dismissProgress) {
                         onDismiss?()
                         withAnimation {
