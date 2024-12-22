@@ -19,6 +19,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     
     private var title: String? = nil
     
+    private var undoManager: UndoManager? = nil
+    
     
     /// Open the view in a new window, or pop the exiting window if any.
     ///
@@ -44,8 +46,16 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// ```
     ///
     /// - Bug: In the current design, one window can only handle one view, and thats it. It cannot be changed.
-    @MainActor public func open(title: String, view: some View, styleMask: NSWindow.StyleMask, initialSize: CGSize? = nil, hiding: [NSWindow.ButtonType] = []) {
+    @MainActor public func open(
+        title: String,
+        view: some View,
+        styleMask: NSWindow.StyleMask,
+        initialSize: CGSize? = nil,
+        hiding: [NSWindow.ButtonType] = [],
+        undoManager: UndoManager? = nil
+    ) {
         self.title = title
+        self.undoManager = undoManager
         
         if let window, !isClosed {
             window.orderFront(nil)
@@ -96,9 +106,15 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///
     /// - Parameters:
     ///   - title: The window title, which is hidden. It is used to identify the view and restore window position.
-    @MainActor public func openPanel(title: String, view: some View, initialSize: CGSize? = nil) {
+    @MainActor public func openPanel(
+        title: String,
+        view: some View,
+        initialSize: CGSize? = nil,
+        undoManager: UndoManager? = nil
+    ) {
         self.isPanel = true
         self.title = title
+        self.undoManager = undoManager
         
         if let window, !isClosed {
             window.orderFront(nil)
@@ -155,5 +171,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         self.isPanel = true
     }
     
+    public func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
+        self.undoManager
+    }
 }
 #endif
