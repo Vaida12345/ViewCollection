@@ -13,9 +13,11 @@
 public final class Untracked<Value> {
     
     /// The underlying value referenced by the untracked variable.
+    nonisolated(unsafe)
     public var wrappedValue: Value
     
     @inlinable
+    nonisolated(unsafe)
     public init(wrappedValue: Value) {
         self.wrappedValue = wrappedValue
     }
