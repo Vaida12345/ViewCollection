@@ -56,8 +56,8 @@ The stand-alone views.
 ### Modifiers
 A set of view modifiers.
 
-- ``SwiftUI/View/animatedAppearing(_:)``
-- ``SwiftUI/View/onSwipe(to:sensitivity:maxDistance:progress:disabled:handler:)``
+- ``SwiftUICore/View/animatedAppearing(_:)``
+- ``SwiftUICore/View/onSwipe(to:sensitivity:maxDistance:progress:disabled:handler:)``
 
 
 ### Styles

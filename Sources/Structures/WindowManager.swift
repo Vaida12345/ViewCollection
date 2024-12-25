@@ -26,6 +26,11 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///
     /// - Parameters:
     ///   - title: The window title, which is hidden. It is used to identify the view and restore window position.
+    ///   - view: The view body of the window.
+    ///   - styleMask: The window stye.
+    ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
+    ///   - hiding: Choose which window buttons to hide.
+    ///   - undoManager: The undo manager associated with the resulting window.
     ///
     /// > Example:
     /// > ```swift
@@ -106,6 +111,9 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///
     /// - Parameters:
     ///   - title: The window title, which is hidden. It is used to identify the view and restore window position.
+    ///   - view: The view body of the window.
+    ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
+    ///   - undoManager: The undo manager associated with the resulting window.
     @MainActor public func openPanel(
         title: String,
         view: some View,

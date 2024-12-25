@@ -16,8 +16,9 @@ import SwiftUI
 ///
 /// ## Topics
 /// ### Creates the binding
-/// - ``SwiftUI/Binding/mutable``
+/// - ``SwiftUICore/Binding/mutable``
 @MainActor
+@available(*, deprecated, message: "Find ways to put the state in a model instead.")
 public final class MutableBinding<T>: Sendable {
     
     private let content: Binding<T>
@@ -52,6 +53,7 @@ extension Binding {
     /// Applied to a `Binding` to obtain the mutable binding.
     ///
     /// - SeeAlso: ``MutableBinding``
+    @available(*, deprecated, message: "Find ways to put the state in a model instead.")
     @MainActor
     public var mutable: MutableBinding<Value> {
         MutableBinding(content: self)

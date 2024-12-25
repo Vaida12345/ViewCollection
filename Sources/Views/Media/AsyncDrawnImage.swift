@@ -115,6 +115,7 @@ public struct AsyncDrawnImage: View {
     /// Creates the image with the given image and the size of presentation.
     ///
     /// - Parameters:
+    ///   - cgImage: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(cgImage: CGImage, frame: CGSize) {
         self.init(frame: frame, contentMode: .fit, source: .image(cgImage), cornerRadius: 0)
@@ -123,6 +124,7 @@ public struct AsyncDrawnImage: View {
     /// Creates the image with the given image and the size of presentation.
     ///
     /// - Parameters:
+    ///   - nativeImage: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(nativeImage: NativeImage, frame: CGSize) {
         self.init(frame: frame, contentMode: .fit, source: .image(nativeImage.cgImage!), cornerRadius: 0)
@@ -131,6 +133,7 @@ public struct AsyncDrawnImage: View {
     /// Creates the image with the given image and the size of presentation.
     ///
     /// - Parameters:
+    ///   - generator: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(generator: @escaping @Sendable () async -> CGImage?, frame: CGSize) {
         self.init(frame: frame, contentMode: .fit, source: .generator(generator), cornerRadius: 0)

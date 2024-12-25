@@ -34,6 +34,7 @@ public struct ContainerView<Content: View>: View {
     ///
     /// - Parameters:
     ///   - alignment: The placement for `content`.
+    ///   - content: The content view embed in a `ZStack`.
     public init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.alignment = alignment
