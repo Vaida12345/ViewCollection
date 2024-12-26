@@ -110,14 +110,16 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
 
 nonisolated
 private func _updates<Success>(resultGenerator: @Sendable () async throws -> Success?) async -> Success? {
-    do {
-        return try await resultGenerator()
-    } catch is CancellationError {
-        return nil
-    } catch {
-        AlertManager(error).present()
+    let result = await withErrorPresented("Failed to update view state") { () -> Success? in
+        do {
+            return try await resultGenerator()
+        } catch is CancellationError {
+            return nil
+        } catch {
+            throw error
+        }
     }
-    return nil
+    return result?.flatMap(\.self)
 }
 
 
