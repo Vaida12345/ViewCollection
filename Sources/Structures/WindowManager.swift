@@ -31,6 +31,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
     ///   - hiding: Choose which window buttons to hide.
     ///   - undoManager: The undo manager associated with the resulting window.
+    ///   - titleVisibility: A value that indicates the visibility of the window’s title and title bar buttons.
     ///
     /// > Example:
     /// > ```swift
@@ -51,13 +52,16 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// ```
     ///
     /// - Bug: In the current design, one window can only handle one view, and thats it. It cannot be changed.
+    ///
+    /// In the current design, the title bar appears transparent, and the title bar separator is none.
     @MainActor public func open(
         title: String,
         view: some View,
         styleMask: NSWindow.StyleMask,
         initialSize: CGSize? = nil,
         hiding: [NSWindow.ButtonType] = [],
-        undoManager: UndoManager? = nil
+        undoManager: UndoManager? = nil,
+        titleVisibility: NSWindow.TitleVisibility = .hidden
     ) {
         self.title = title
         self.undoManager = undoManager
@@ -75,7 +79,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         window.delegate = self
         
         window.titlebarSeparatorStyle = .none
-        window.titleVisibility = .hidden
+        window.titleVisibility = titleVisibility
         
         window.styleMask = styleMask
         window.titlebarAppearsTransparent = true
