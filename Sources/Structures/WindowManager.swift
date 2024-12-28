@@ -60,8 +60,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         styleMask: NSWindow.StyleMask,
         initialSize: CGSize? = nil,
         hiding: [NSWindow.ButtonType] = [],
-        undoManager: UndoManager? = nil,
-        titleVisibility: NSWindow.TitleVisibility = .hidden
+        undoManager: UndoManager? = nil
     ) {
         self.title = title
         self.undoManager = undoManager
@@ -79,7 +78,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         window.delegate = self
         
         window.titlebarSeparatorStyle = .none
-        window.titleVisibility = titleVisibility
+        window.titleVisibility = .hidden
         
         window.styleMask = styleMask
         window.titlebarAppearsTransparent = true

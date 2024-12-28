@@ -6,6 +6,7 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
+import Essentials
 import Foundation
 import SwiftUI
 
@@ -192,7 +193,7 @@ extension UndoTracking {
     /// Replace the value indicated by the `keyPath` with the `newValue`
     ///
     /// - Precondition: You need to ensure the `T` is a `struct`.
-    public func replace<T>(_ keyPath: ReferenceWritableKeyPath<Self, T>, with newValue: T, undoManager: UndoManager?, actionName: (@Sendable (T) -> String)? = nil) {
+    public func replace<T>(_ keyPath: ReferenceWritableKeyPath<Self, T>, with newValue: T, undoManager: UndoManager?, actionName: LocalizedStringResource? = nil) {
         nonisolated(unsafe) let undoManager = undoManager
         nonisolated(unsafe) let keyPath = keyPath
         
@@ -200,7 +201,7 @@ extension UndoTracking {
         self[keyPath: keyPath] = newValue
         
         if let actionName {
-            undoManager?.setActionName(actionName(newValue))
+            undoManager?.setActionName(actionName.localized())
         }
         
         undoManager?.registerUndo(withTarget: self) { document in
