@@ -89,6 +89,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                 }
             }
         }
+        .id(isPresented)
     }
 }
 
