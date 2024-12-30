@@ -5,6 +5,7 @@
 //  Created by Vaida on 12/1/24.
 //
 
+#if os(iOS)
 import SwiftUI
 
 @available(iOS 17, *)
@@ -55,7 +56,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(UIColor.systemBackground))
+                                .fill(Color(NativeColor.systemBackground))
                                 .shadow(radius: 10)
                         )
                         .overlay(alignment: .topTrailing) {
@@ -121,7 +122,6 @@ extension View {
     }
 }
 
-#if os(iOS)
 #Preview {
     @Previewable @State var width: Double = 100
     
@@ -134,7 +134,7 @@ extension View {
                 .frame(width: 400)
         }
 }
-#endif
+
 
 @available(iOS 17, *)
 @available(macOS, unavailable)
@@ -147,3 +147,4 @@ extension EnvironmentValues {
     @Entry public var dismissFloatingSheet: () -> Void = { }
     
 }
+#endif
