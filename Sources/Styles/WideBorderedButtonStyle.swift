@@ -8,6 +8,11 @@
 import SwiftUI
 
 
+@available(iOS 17, *)
+@available(macOS 14, *)
+@available(visionOS 1, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct WideBorderedButtonStyle: ButtonStyle {
     
     @Environment(\.keyboardShortcut) private var keyboardShortcut
@@ -63,7 +68,7 @@ public struct WideBorderedButtonStyle: ButtonStyle {
             .foregroundStyle(foregroundColor(for: configuration))
             .padding(.vertical, 10)
             .padding(.horizontal, 20)
-            .background(configuration.isPressed ? maskColor(for: configuration) : Color.clear)
+            .background(configuration.isPressed ? maskColor(for: configuration) : Color.clear, in: RoundedRectangle(cornerRadius: 5))
             .background(backgroundColor(for: configuration), in: RoundedRectangle(cornerRadius: 5))
             .compositingGroup()
             .shadow(radius: configuration.isPressed ? 1.5 : 2)
@@ -71,6 +76,10 @@ public struct WideBorderedButtonStyle: ButtonStyle {
 }
 
 
+@available(iOS 17, *)
+@available(macOS 14, *)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 extension ButtonStyle where Self == WideBorderedButtonStyle {
     
     /// A large button style, designed for macOS.
@@ -86,6 +95,7 @@ extension ButtonStyle where Self == WideBorderedButtonStyle {
 }
 
 
+#if os(macOS) || os(iOS) || os(visionOS)
 #Preview {
     Button("Hello") {
         
@@ -100,3 +110,4 @@ extension ButtonStyle where Self == WideBorderedButtonStyle {
     }
     .padding()
 }
+#endif

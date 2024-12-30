@@ -11,6 +11,11 @@ import SwiftUI
 /// A Inf Dashed Slider.
 ///
 /// - term `value`: The length of dividers is assigned value `1`.
+@available(iOS 17, *)
+@available(visionOS 1, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -102,6 +107,7 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
 }
 
 
+#if os(iOS) || os(visionOS)
 #Preview(traits: .landscapeLeft) {
     @Previewable @State var value = 0.0
     
@@ -115,3 +121,4 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
             .padding(.bottom)
     }
 }
+#endif

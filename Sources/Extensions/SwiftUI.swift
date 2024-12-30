@@ -82,7 +82,7 @@ extension Color: @retroactive Animatable {
             return Vector([color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent])
 #elseif canImport(UIKit)
             let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
-            return Vector(color.components!.map { Double($0) } + [color.alpha])
+            return Vector(color.components!.map { Double($0) })
 #endif
         }
         set(newValue) {

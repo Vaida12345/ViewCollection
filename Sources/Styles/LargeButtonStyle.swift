@@ -6,93 +6,130 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-#if os(iOS) || os(macOS)
-
 import SwiftUI
-#if os(iOS)
 import CoreHaptics
-#endif
 
 /// The large button style with the haptic feedback on iOS.
-public struct LargeButtonStyle: ButtonStyle {
+@available(iOS 17, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
+public struct LargeCapsuleButtonStyle: ButtonStyle {
     
-    private let color: Color?
-#if os(iOS)
-    private let engine = try? CHHapticEngine()
-#endif
+    @Environment(\.keyboardShortcut) private var keyboardShortcut
+    @Environment(\.colorScheme) private var colorScheme
     
-    @State private var startDate = Date()
+    let color: Color?
     
-    public func makeBody(configuration: Configuration) -> some View {
-#if os(iOS)
-        configuration.label
-            .font(.headline)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(configuration.isPressed ? _color(configuration: configuration).opacity(0.9) : _color(configuration: configuration))
-            .cornerRadius(20)
-            .foregroundStyle(.white)
-            .onChange(of: configuration.isPressed) { _, value in
-                if !value && (startDate.distance(to: Date()) < 5) { return }
-                if value { self.startDate = Date() }
-                
-                do {
-                    try playHaptic(isPressed: value)
-                } catch let error as CHHapticError {
-                    guard error.code.rawValue == -4805 else { return }
-                    try? engine?.start()
-                    try? playHaptic(isPressed: value)
-                } catch {  } // consume error
+    
+    private func foregroundColor(for configuration: Configuration) -> Color {
+        if let color {
+            let components = color.animatableData
+            let max = [components[0] * components[3], components[1] * components[3], components[2] * components[3]].mean!
+            if max >= 0.65 {
+                return Color.black
+            } else {
+                return Color.white
             }
-            .onAppear {
-                try? engine?.start()
-            }
-#elseif os(macOS)
-        configuration.label
-            .padding(.horizontal, 20)
-            .padding(.vertical, 8)
-            .background(configuration.isPressed ? _color(configuration: configuration).opacity(0.9) : _color(configuration: configuration))
-            .cornerRadius(10)
-#endif
-    }
-    
-#if os(iOS)
-    private func playHaptic(isPressed: Bool) throws {
-        if isPressed {
-            try engine?.play(pattern: .init(intensity: 1, sharpness: 1))
         } else {
-            try engine?.play(pattern: .init(intensity: 0.5, sharpness: 0.5))
+            if keyboardShortcut == .defaultAction || configuration.role == .destructive {
+                return Color.white
+            } else if colorScheme == .light {
+                return Color.black
+            } else {
+                return Color.white
+            }
         }
     }
-#endif
     
-    private func _color(configuration: Configuration) -> Color {
-        color != nil ? color! : configuration.role == .destructive ? .red : .accentColor
+    private func backgroundColor(for configuration: Configuration) -> Color {
+        if let color {
+            color
+        } else {
+            switch colorScheme {
+            case .light:
+                if keyboardShortcut == .defaultAction {
+                    Color(red: 2 / 255, green: 123 / 255, blue: 1)
+                } else if configuration.role == .destructive {
+                    Color.red
+                } else {
+                    Color.white
+                }
+            case .dark:
+                if keyboardShortcut == .defaultAction {
+                    Color(red: 22 / 255, green: 95 / 255, blue: 208 / 255)
+                } else if configuration.role == .destructive {
+                    Color.red
+                } else {
+                    Color(white: 94 / 255)
+                }
+            @unknown default:
+                fatalError()
+            }
+        }
     }
     
-    fileprivate init(color: Color? = nil) {
-        self.color = color
+    private func maskColor(for configuration: Configuration) -> Color {
+        switch colorScheme {
+        case .light:
+            Color.black.opacity(0.1)
+        case .dark:
+            Color.white.opacity(0.1)
+        @unknown default:
+            fatalError()
+        }
+    }
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.headline)
+            .foregroundStyle(foregroundColor(for: configuration))
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background(configuration.isPressed ? maskColor(for: configuration) : Color.clear, in: RoundedRectangle(cornerRadius: 20))
+            .background(backgroundColor(for: configuration), in: RoundedRectangle(cornerRadius: 20))
+            .compositingGroup()
+            .shadow(radius: configuration.isPressed ? 1.5 : 2)
+            .sensoryFeedback(.selection, trigger: configuration.isPressed)
     }
     
 }
 
 
-extension ButtonStyle where Self == LargeButtonStyle {
+@available(iOS 17, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
+extension ButtonStyle where Self == LargeCapsuleButtonStyle {
     
     /// A large button style, designed for iPhones.
-    ///
-    /// This view also comes with a haptic feed back.
-    ///
-    /// - Parameters:
-    ///   - color: The background color that occupies most of the view.
     ///
     /// ## Topics
     ///
     /// ### Returned Style
     /// - ``LargeButtonStyle``
-    public static func large(color: Color? = nil) -> LargeButtonStyle {
-        LargeButtonStyle(color: color)
+    public static func largeCapsule(color: Color? = nil) -> LargeCapsuleButtonStyle {
+        LargeCapsuleButtonStyle(color: color)
     }
     
+}
+
+#if os(iOS)
+#Preview {
+    ScrollView {
+        VStack {
+            Spacer()
+            
+            ForEach(Color.allColors) { color in
+                Button("Hello") {
+                    
+                }
+                .buttonStyle(.largeCapsule(color: color))
+                .padding()
+            }
+        }
+    }
 }
 #endif

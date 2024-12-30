@@ -11,6 +11,11 @@ import NativeImage
 
 
 /// A slider style that mimics iOS media playback.
+@available(iOS 17, *)
+@available(visionOS 1, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -167,6 +172,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
 }
 
 
+#if os(iOS) || os(visionOS)
 #Preview {
     @Previewable @State var value: Double = 0
     
@@ -174,3 +180,4 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         .frame(width: 200, height: 15)
         .padding(.vertical)
 }
+#endif

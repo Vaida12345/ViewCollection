@@ -10,6 +10,11 @@ import Essentials
 
 
 /// A plain slider designed for macOS.
+@available(macOS 14.0, *)
+@available(iOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
 public struct PlainSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding private var value: T
@@ -98,6 +103,7 @@ private extension Color {
 }
 
 
+#if os(macOS)
 #Preview {
     @Previewable @State var value: Double = 0
     
@@ -105,3 +111,4 @@ private extension Color {
         .frame(width: 200, height: 10)
         .padding(.vertical)
 }
+#endif

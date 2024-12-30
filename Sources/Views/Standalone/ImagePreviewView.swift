@@ -6,7 +6,7 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-#if !os(macOS) && !os(visionOS)
+#if os(iOS)
 import Foundation
 import SwiftUI
 import NativeImage

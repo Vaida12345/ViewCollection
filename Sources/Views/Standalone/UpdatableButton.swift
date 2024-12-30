@@ -6,7 +6,6 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-#if os(iOS)
 import SwiftUI
 
 
@@ -96,7 +95,4 @@ public struct UpdatableButton<Label>: View where Label: View {
     } label: {
         Text("Tap me")
     }
-
-    
 }
-#endif

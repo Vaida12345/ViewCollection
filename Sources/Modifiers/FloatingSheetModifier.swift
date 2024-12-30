@@ -5,10 +5,13 @@
 //  Created by Vaida on 12/1/24.
 //
 
-#if !os(macOS) && !os(visionOS)
 import SwiftUI
 
-
+@available(iOS 17, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
 fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
@@ -93,7 +96,10 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     }
 }
 
+@available(iOS 17, *)
 @available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
 @available(visionOS, unavailable)
 extension View {
     
@@ -115,6 +121,7 @@ extension View {
     }
 }
 
+#if os(iOS)
 #Preview {
     @Previewable @State var width: Double = 100
     
@@ -127,11 +134,16 @@ extension View {
                 .frame(width: 400)
         }
 }
+#endif
 
+@available(iOS 17, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
 extension EnvironmentValues {
     
     /// Dismiss a ``SwiftUICore/View/floatingSheet(isPresented:onDismiss:content:)``.
     @Entry public var dismissFloatingSheet: () -> Void = { }
     
 }
-#endif
