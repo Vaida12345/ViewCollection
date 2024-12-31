@@ -12,7 +12,6 @@ import NativeImage
 /// A view that crossfades when `nativeImage` changes.
 ///
 /// This is different from the default `opacity` transaction as during `opacity` transaction, the image could be semi-transparent.
-@available(*, deprecated, message: "Find ways to inline this.")
 public struct CrossFadeImage: View {
     
     let image: NativeImage

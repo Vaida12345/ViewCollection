@@ -89,14 +89,14 @@ fileprivate struct FloatingSheetOverlay<Overlay: View>: View {
                 }
             }
             .padding()
-            .transition(.move(edge: .bottom).combined(with: .opacity))
-            .animation(.spring, value: isPresented) // animate no matter what
-            .ignoresSafeArea()
-            .onSwipe(to: .bottom, progress: $dismissProgress) {
-                onDismiss?()
-                withAnimation {
-                    isPresented = false
-                }
+        }
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        .animation(.spring, value: isPresented) // animate no matter what
+        .ignoresSafeArea()
+        .onSwipe(to: .bottom, progress: $dismissProgress) {
+            onDismiss?()
+            withAnimation {
+                isPresented = false
             }
         }
     }
