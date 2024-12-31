@@ -14,20 +14,18 @@ import SwiftUI
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 @available(visionOS, unavailable)
-private struct OnSwipeAction: ViewModifier {
+private struct OnSwipeAction: ViewModifier, @preconcurrency Equatable {
     
     private let edge: Edge
     
-    private let handler: () -> Void
+    private let handler: @MainActor () -> Void
     
     private let sensitivity: Double
-    
     private let maxDistance: Double
     
     private let disabled: Bool
     
     @State private var offset = CGSize.zero
-    
     @Binding private var progress: Double
     
     
@@ -81,14 +79,12 @@ private struct OnSwipeAction: ViewModifier {
             }
     }
     
+    @MainActor
     private func handleOnEnd(satisfied: Bool) {
         if satisfied {
             withAnimation(.interpolatingSpring) {
                 progress = 1
                 handler()
-            } completion: {
-                offset = .zero
-                progress = 0
             }
         } else {
             withAnimation(.interpolatingSpring) {
@@ -120,7 +116,7 @@ private struct OnSwipeAction: ViewModifier {
     ///   - progress: The value between 0 and 1 indicating the swap progress.
     ///   - disabled: Whether the swap action is disabled. Useful when gesture hierarchy is chaotic.
     ///   - handler: The handler called when the moved distance is greater than `maxDistance`.
-    fileprivate init(to edge: Edge, sensitivity: Double, maxDistance: Double, progress: Binding<Double>? = nil, disabled: Bool = false, handler: @escaping () -> Void) {
+    fileprivate init(to edge: Edge, sensitivity: Double, maxDistance: Double, progress: Binding<Double>? = nil, disabled: Bool = false, handler: @MainActor @escaping () -> Void) {
         precondition(maxDistance > 0)
         precondition(sensitivity > 0)
         self.edge = edge
@@ -129,6 +125,15 @@ private struct OnSwipeAction: ViewModifier {
         self._progress = progress ?? .constant(0)
         self.disabled = disabled
         self.handler = handler
+    }
+    
+    static func == (lhs: OnSwipeAction, rhs: OnSwipeAction) -> Bool {
+        lhs.edge == rhs.edge &&
+        lhs.sensitivity == rhs.sensitivity &&
+        lhs.maxDistance == rhs.maxDistance &&
+        lhs.disabled == rhs.disabled &&
+        lhs.offset == rhs.offset &&
+        lhs.progress == rhs.progress
     }
     
 }
@@ -151,7 +156,16 @@ extension View {
     ///   - disabled: Whether the swap action is disabled. Useful when gesture hierarchy is chaotic.
     ///   - progress: The value between 0 and 1 indicating the swap progress.
     ///   - handler: The handler called when the moved distance is greater than `maxDistance`.
-    public func onSwipe(to edge: Edge, sensitivity: Double = 2, maxDistance: Double = 50, progress: Binding<Double>? = nil, disabled: Bool = false, handler: @escaping () -> Void) -> some View {
+    ///
+    /// - Bug: Summon the view immediately after dismissing will break the View, as `onDisappear`, which can be used as an indicator of identity lifetime, is called significantly after `handler`.
+    public func onSwipe(
+        to edge: Edge,
+        sensitivity: Double = 2,
+        maxDistance: Double = 50,
+        progress: Binding<Double>? = nil,
+        disabled: Bool = false,
+        handler: @MainActor @escaping () -> Void
+    ) -> some View {
         self.modifier(OnSwipeAction(to: edge, sensitivity: sensitivity, maxDistance: maxDistance, progress: progress, disabled: disabled, handler: handler))
     }
     

@@ -51,53 +51,49 @@ fileprivate struct FloatingSheetOverlay<Overlay: View>: View {
     
     
     var body: some View {
-        ZStack {
-            // Dimmed background
-            Rectangle()
-                .fill(.regularMaterial)
-                .ignoresSafeArea()
-                .transition(.opacity)
-                .opacity(1 - dismissProgress)
-            
-            // Floating sheet
+        // Dimmed background
+        Rectangle()
+            .fill(.regularMaterial)
+            .ignoresSafeArea()
+            .opacity(1 - dismissProgress)
+            .transition(.opacity)
+        
+        // Floating sheet
+        VStack {
             VStack {
-                VStack {
-                    self.content()
-                        .environment(\.dismissFloatingSheet, {
-                            withAnimation {
-                                self.isPresented = false
-                            }
-                        })
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.background)
-                        .shadow(radius: 10)
-                )
-                .overlay(alignment: .topTrailing) {
-                    Button {
-                        onDismiss?()
+                self.content()
+                    .environment(\.dismissFloatingSheet, {
                         withAnimation {
-                            isPresented = false
+                            self.isPresented = false
                         }
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                    .buttonStyle(.circular)
-                    .padding([.top, .trailing], 10)
-                }
+                    })
             }
             .padding()
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(.background)
+                    .shadow(radius: 10)
+            )
+            .overlay(alignment: .topTrailing) {
+                Button {
+                    onDismiss?()
+                    withAnimation {
+                        isPresented = false
+                    }
+                } label: {
+                    Image(systemName: "xmark")
+                }
+                .buttonStyle(.circular)
+                .padding([.top, .trailing], 10)
+            }
         }
+        .padding()
         .transition(.move(edge: .bottom).combined(with: .opacity))
         .animation(.spring, value: isPresented) // animate no matter what
         .ignoresSafeArea()
         .onSwipe(to: .bottom, progress: $dismissProgress) {
             onDismiss?()
-            withAnimation {
-                isPresented = false
-            }
+            isPresented = false
         }
     }
 }
@@ -135,6 +131,7 @@ extension View {
     @Previewable @State var showsSheet: Bool = true
     
     Toggle("Show Sheet", isOn: $showsSheet.animation())
+        .padding(.horizontal)
         .floatingSheet(isPresented: $showsSheet) {
             Text("Sheet")
                 .padding(.horizontal)
@@ -144,11 +141,13 @@ extension View {
 }
 
 #Preview("FloatingSheetOverlay") {
-    FloatingSheetOverlay(isPresented: .constant(true), onDismiss: nil) {
-        Text("Sheet")
-            .padding(.horizontal)
-            .frame(maxWidth: .infinity)
-            .frame(height: 100)
+    ZStack {
+        FloatingSheetOverlay(isPresented: .constant(true), onDismiss: nil) {
+            Text("Sheet")
+                .padding(.horizontal)
+                .frame(maxWidth: .infinity)
+                .frame(height: 100)
+        }
     }
 }
 
