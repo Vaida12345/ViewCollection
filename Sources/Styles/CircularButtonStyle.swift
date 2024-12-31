@@ -1,0 +1,68 @@
+//
+//  CircularButtonStyle.swift
+//  ViewCollection
+//
+//  Created by Vaida on 12/31/24.
+//
+
+import SwiftUI
+
+
+@available(iOS 17, *)
+@available(visionOS 1, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+public struct CircularButtonStyle: ButtonStyle {
+    
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .symbolVariant(.circle)
+            .symbolVariant(.fill)
+            .foregroundStyle(.regularMaterial)
+            .shadow(radius: 1)
+            .fontWeight(.semibold)
+            .imageScale(.large)
+            .transformEnvironment(\.colorScheme) {
+                $0 = $0 == .dark ? .light : .dark
+            }
+            .shadow(radius: configuration.isPressed ? 0.5 : 1)
+    }
+}
+
+
+@available(iOS 17, *)
+@available(visionOS 1, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+extension ButtonStyle where Self == CircularButtonStyle {
+    
+    /// A circular button style.
+    ///
+    /// The button material is always the opposite of foregroundColor.
+    ///
+    /// ![preview](floatingSheet)
+    ///
+    /// ## Topics
+    ///
+    /// ### Returned Style
+    /// - ``CircularButtonStyle``
+    public static var circular: CircularButtonStyle {
+        CircularButtonStyle()
+    }
+    
+}
+
+
+#if os(iOS) || os(visionOS)
+#Preview {
+    Button {
+        
+    } label: {
+        Image(systemName: "xmark")
+    }
+    .buttonStyle(.circular)
+    .padding()
+}
+#endif

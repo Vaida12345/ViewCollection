@@ -109,7 +109,7 @@ extension ButtonStyle where Self == LargeCapsuleButtonStyle {
     /// ## Topics
     ///
     /// ### Returned Style
-    /// - ``LargeButtonStyle``
+    /// - ``LargeCapsuleButtonStyle``
     public static func largeCapsule(color: Color? = nil) -> LargeCapsuleButtonStyle {
         LargeCapsuleButtonStyle(color: color)
     }

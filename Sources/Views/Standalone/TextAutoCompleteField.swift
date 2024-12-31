@@ -12,6 +12,7 @@ import AppKit
 
 
 /// A text field that would autocomplete using the given `options`.
+@available(*, deprecated, message: "Use SwiftUI instead.")
 public struct TextAutoCompleteField: View {
     
     private let titleKey: LocalizedStringKey

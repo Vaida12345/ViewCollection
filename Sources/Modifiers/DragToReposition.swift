@@ -12,6 +12,7 @@ extension View {
     
 #if os(macOS)
     /// When the view is dragged, reposition the window.
+    @available(macOS, deprecated: 15, message: "Use `gesture(WindowDragGesture())` in combination with `allowsWindowActivationEvents()` instead")
     public func dragToRepositionWindow() -> some View {
         gesture(
             DragGesture()

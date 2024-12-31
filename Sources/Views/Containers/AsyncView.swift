@@ -57,22 +57,19 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     @State private var result: Success?
     
     public var body: some View {
-        Group {
-            if let result {
-                viewGenerator(result)
-            } else {
-                Group {
-                    let placeHolder = placeHolder()
-                    if !(placeHolder is EmptyView) {
-                        placeHolder
-                    } else {
-                        Rectangle()
-                            .frame(width: 0, height: 0) // do not change to empty view. Must be here for `task` to work.
-                    }
+        if let result {
+            viewGenerator(result)
+        } else {
+            Group {
+                if PlaceHolder.self != EmptyView.self {
+                    placeHolder()
+                } else {
+                    Rectangle()
+                        .frame(width: 0, height: 0) // do not change to empty view. Must be here for `task` to work.
                 }
-                .task {
-                    await self.update()
-                }
+            }
+            .task {
+                await self.update()
             }
         }
     }
@@ -106,18 +103,18 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
         }
     }
     
-}
-
-nonisolated
-private func _updates<Success>(resultGenerator: @Sendable () async throws -> Success?) async -> Success? {
-    do {
-        return try await resultGenerator()
-    } catch is CancellationError {
+    nonisolated
+    private func _updates(resultGenerator: @Sendable () async throws -> Success?) async -> Success? {
+        do {
+            return try await resultGenerator()
+        } catch is CancellationError {
+            return nil
+        } catch {
+            AlertManager("Failed to update view state", error: error).present()
+        }
         return nil
-    } catch {
-        AlertManager("Failed to update view state", error: error).present()
     }
-    return nil
+    
 }
 
 
@@ -131,6 +128,8 @@ private struct AsyncViewPreview: View {
                 await state
             } content: { result in
                 Text("\(result)")
+            } placeHolder: {
+                Text("Loading...")
             }
             .id(state)
             

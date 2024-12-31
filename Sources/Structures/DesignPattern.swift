@@ -111,4 +111,21 @@ public enum DesignPattern: Codable, Equatable {
     public static func == (lhs: DesignPattern.Type, rhs: DesignPattern) -> Bool {
         DesignPattern.current == rhs
     }
+    
+    /// Returns `true` if the device is *wide* is the current orientation.
+    ///
+    /// Depend on the device type, the device is wide when
+    /// - On iPhone, landscape mode (`verticalSizeClass == .compact`)
+    /// - On iPad, `horizontalSizeClass == .regular`
+    /// - `true` otherwise.
+    public func isExtendedHorizontal(verticalSizeClass: UserInterfaceSizeClass, horizontalSizeClass: UserInterfaceSizeClass) -> Bool {
+        switch self {
+        case .iPhone:
+            verticalSizeClass == .compact // only show in landscape mode.
+        case .iPad:
+            horizontalSizeClass == .regular
+        default:
+            true // always show extended.
+        }
+    }
 }

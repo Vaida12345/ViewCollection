@@ -21,20 +21,15 @@ public struct ContainerView<Content: View>: View {
     let alignment: Alignment
     
     public var body: some View {
-        ZStack(alignment: alignment) {
-            Rectangle()
-                .fill(.clear)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            
-            content()
-        }
+        content()
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment)
     }
     
     /// Creates the container view.
     ///
     /// - Parameters:
     ///   - alignment: The placement for `content`.
-    ///   - content: The content view embed in a `ZStack`.
+    ///   - content: The content view.
     public init(alignment: Alignment = .center, @ViewBuilder content: @escaping () -> Content) {
         self.content = content
         self.alignment = alignment

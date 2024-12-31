@@ -63,7 +63,17 @@ extension Binding {
 extension Binding where Value == CGFloat {
     
     /// Access the binding as a `Double`.
+    @available(*, deprecated, renamed: "double")
     public var float: Binding<Double> {
+        Binding<Double> {
+            self.wrappedValue
+        } set: {
+            self.wrappedValue = $0
+        }
+    }
+    
+    /// Access the binding as a `Double`.
+    public var double: Binding<Double> {
         Binding<Double> {
             self.wrappedValue
         } set: {

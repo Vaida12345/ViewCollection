@@ -11,11 +11,13 @@ import NativeImage
 
 
 /// A slider style that mimics iOS media playback.
+///
+/// ![Preview](MediaSlider)
 @available(iOS 17, *)
-@available(visionOS 1, *)
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
+@available(visionOS, unavailable)
 public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -172,12 +174,17 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
 }
 
 
-#if os(iOS) || os(visionOS)
+#if os(iOS)
 #Preview {
     @Previewable @State var value: Double = 0
     
-    MediaSlider(value: $value, in: 0...2)
-        .frame(width: 200, height: 15)
-        .padding(.vertical)
+    VStack {
+        Spacer()
+        
+        MediaSlider(value: $value, in: 0...2)
+            .padding(.vertical)
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+    }
 }
 #endif

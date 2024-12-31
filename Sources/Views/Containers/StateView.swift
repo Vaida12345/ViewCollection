@@ -11,17 +11,23 @@ import Foundation
 import SwiftUI
 
 
-private struct StateView<Value, ContentView: View>: View {
+private struct StateView<Value: Equatable, ContentView: View>: View {
     
     @State var value: Value
+    
+    let initialValue: Value
     
     let handler: (_ state: Binding<Value>) -> ContentView
     
     var body: some View {
         handler($value)
+            .onChange(of: initialValue) { oldValue, newValue in
+                self.value = newValue
+            }
     }
     
     init(value: Value, handler: @escaping (_: Binding<Value>) -> ContentView) {
+        self.initialValue = value
         self._value = State(initialValue: value)
         self.handler = handler
     }
@@ -56,7 +62,6 @@ private struct StateView<Value, ContentView: View>: View {
 @MainActor 
 public func withStateObserved<Value: Hashable>(initial initialValue: Value, @ViewBuilder handler: @escaping (_ state: Binding<Value>) -> some View) -> some View {
     StateView(value: initialValue, handler: handler)
-        .id(initialValue)
 }
 
 

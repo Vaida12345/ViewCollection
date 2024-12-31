@@ -156,3 +156,15 @@ extension View {
     }
     
 }
+
+
+#Preview {
+    Text("Hello, World!")
+        .padding()
+        .background(.background, in: RoundedRectangle(cornerRadius: 10))
+        .compositingGroup()
+        .shadow(radius: 2)
+        .onSwipe(to: .bottom) {
+            
+        }
+}

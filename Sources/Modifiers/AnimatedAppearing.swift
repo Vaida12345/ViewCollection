@@ -9,20 +9,18 @@
 import SwiftUI
 
 
-private struct AnimatedAppearView<Content>: View where Content: View {
-    
-    let view: Content
+private struct AnimatedAppearView: ViewModifier {
     
     let animation: Animation
     
     @State private var isShown = false
     
-    var body: some View {
+    func body(content: Content) -> some View {
         Group {
             if isShown {
-                view
+                content
             } else {
-                view
+                content
                     .hidden()
             }
         }
@@ -48,8 +46,19 @@ public extension View {
     ///
     /// - Parameters:
     ///   - animation: The animation used for appearing.
+    @available(*, deprecated, message: "Please avoid using this method.")
     func animatedAppearing(_ animation: Animation = .default) -> some View {
-        AnimatedAppearView(view: self, animation: animation)
+        self.modifier(AnimatedAppearView(animation: animation))
     }
     
+}
+
+
+#Preview {
+    @Previewable @State var showLabel: Bool = false
+    
+    Text("Hello")
+        .transition(.slide.combined(with: .opacity))
+        .modifier(AnimatedAppearView(animation: .default))
+        .padding()
 }

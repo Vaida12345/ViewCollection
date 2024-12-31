@@ -17,13 +17,8 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     
     @Binding var isPresented: Bool
     
-    @State private var dismissProgress: Double = 0
-    
     let onDismiss: (() -> Void)?
-    
     let content: () -> Overlay
-    
-    @Environment(\.colorScheme) private var colorScheme
     
     
     func body(content: Content) -> some View {
@@ -32,68 +27,78 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
                 .zIndex(-1)
                 .disabled(isPresented)
             
-            Group {
-                // Dimmed background
-                if isPresented {
-                    Rectangle()
-                        .fill(.regularMaterial)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                        .opacity(1 - dismissProgress)
-                }
-                
-                // Floating sheet
-                if isPresented {
-                    VStack {
-                        VStack {
-                            self.content()
-                                .environment(\.dismissFloatingSheet, {
-                                    withAnimation {
-                                        self.isPresented = false
-                                    }
-                                })
-                        }
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(Color(NativeColor.systemBackground))
-                                .shadow(radius: 10)
-                        )
-                        .overlay(alignment: .topTrailing) {
-                            Button {
-                                onDismiss?()
-                                withAnimation {
-                                    isPresented = false
-                                }
-                            } label: {
-                                ZStack {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(colorScheme == .dark ? .white.opacity(0.7) : .black.opacity(0.6))
-                                        .shadow(radius: 1)
-                                        .fontWeight(.semibold)
-                                        .imageScale(.large)
-                                }
+            if isPresented {
+                // Use a new view to create a new identity on the conditional branch. In this case, when `isPresented` is set to `false`, the view, along with its states, is deallocated.
+                // This can be used to reset the states.
+                FloatingSheetOverlay(isPresented: $isPresented, onDismiss: onDismiss, content: self.content)
+            }
+        }
+    }
+}
+
+@available(iOS 17, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
+fileprivate struct FloatingSheetOverlay<Overlay: View>: View {
+    
+    @State private var dismissProgress: Double = 0
+    @Binding var isPresented: Bool
+    
+    let onDismiss: (() -> Void)?
+    let content: () -> Overlay
+    
+    
+    var body: some View {
+        ZStack {
+            // Dimmed background
+            Rectangle()
+                .fill(.regularMaterial)
+                .ignoresSafeArea()
+                .transition(.opacity)
+                .opacity(1 - dismissProgress)
+            
+            // Floating sheet
+            VStack {
+                VStack {
+                    self.content()
+                        .environment(\.dismissFloatingSheet, {
+                            withAnimation {
+                                self.isPresented = false
                             }
-                            .padding()
-                        }
-                    }
-                    .padding()
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .animation(.spring, value: isPresented) // animate no matter what
-                    .ignoresSafeArea()
-                    .onSwipe(to: .bottom, progress: $dismissProgress) {
+                        })
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: 16)
+                        .fill(.background)
+                        .shadow(radius: 10)
+                )
+                .overlay(alignment: .topTrailing) {
+                    Button {
                         onDismiss?()
                         withAnimation {
                             isPresented = false
                         }
+                    } label: {
+                        Image(systemName: "xmark")
                     }
-                    .onAppear {
-                        self.dismissProgress = 0
-                    }
+                    .buttonStyle(.circular)
+                    .padding([.top, .trailing], 10)
+                }
+            }
+            .padding()
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .animation(.spring, value: isPresented) // animate no matter what
+            .ignoresSafeArea()
+            .onSwipe(to: .bottom, progress: $dismissProgress) {
+                onDismiss?()
+                withAnimation {
+                    isPresented = false
                 }
             }
         }
-        .id(isPresented)
     }
 }
 
@@ -107,6 +112,8 @@ extension View {
     /// A floating sheet on iOS.
     ///
     /// To dismiss a floating sheet, use the ``SwiftUICore/EnvironmentValues/dismissFloatingSheet`` environment key.
+    ///
+    /// ![preview](floatingSheet)
     public func floatingSheet<Content: View>(
         isPresented: Binding<Bool>,
         onDismiss: (() -> Void)? = nil,
@@ -122,7 +129,7 @@ extension View {
     }
 }
 
-#Preview {
+#Preview("Floating Sheet") {
     @Previewable @State var width: Double = 100
     
     @Previewable @State var showsSheet: Bool = true
@@ -131,8 +138,18 @@ extension View {
         .floatingSheet(isPresented: $showsSheet) {
             Text("Sheet")
                 .padding(.horizontal)
-                .frame(width: 400)
+                .frame(maxWidth: .infinity)
+                .frame(height: 100)
         }
+}
+
+#Preview("FloatingSheetOverlay") {
+    FloatingSheetOverlay(isPresented: .constant(true), onDismiss: nil) {
+        Text("Sheet")
+            .padding(.horizontal)
+            .frame(maxWidth: .infinity)
+            .frame(height: 100)
+    }
 }
 
 
