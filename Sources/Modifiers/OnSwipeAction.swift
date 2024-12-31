@@ -158,6 +158,7 @@ extension View {
 }
 
 
+#if os(iOS)
 #Preview {
     Text("Hello, World!")
         .padding()
@@ -168,3 +169,4 @@ extension View {
             
         }
 }
+#endif
