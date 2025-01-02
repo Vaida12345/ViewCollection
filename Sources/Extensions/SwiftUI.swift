@@ -100,3 +100,24 @@ extension Color: @retroactive Identifiable {
     }
     
 }
+
+
+extension GraphicsContext {
+    
+    /// Draws a path into the context and fills the outlined region.
+    ///
+    /// The current drawing state of the context defines the
+    /// full drawing operation. For example, the current transformation and
+    /// clip shapes, and any styles applied to the result, affect the final
+    /// result.
+    ///
+    /// - Parameters:
+    ///   - rect: The outline of the region to fill.
+    ///   - shading: The color or pattern to use when filling the region
+    ///     bounded by `path`.
+    ///   - style: A style that indicates how to rasterize the path.
+    public func fill(_ rect: CGRect, with shading: GraphicsContext.Shading, style: FillStyle = FillStyle()) {
+        self.fill(Path(rect), with: shading, style: style)
+    }
+    
+}
