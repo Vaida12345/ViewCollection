@@ -118,7 +118,7 @@ public enum DesignPattern: Codable, Equatable {
     /// - On iPhone, landscape mode (`verticalSizeClass == .compact`)
     /// - On iPad, `horizontalSizeClass == .regular`
     /// - `true` otherwise.
-    public func isExtendedHorizontal(verticalSizeClass: UserInterfaceSizeClass, horizontalSizeClass: UserInterfaceSizeClass) -> Bool {
+    public func isExtendedHorizontal(verticalSizeClass: UserInterfaceSizeClass?, horizontalSizeClass: UserInterfaceSizeClass?) -> Bool {
         switch self {
         case .iPhone:
             verticalSizeClass == .compact // only show in landscape mode.
