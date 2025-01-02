@@ -13,7 +13,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     
     private var isClosed: Bool = false
     
-    private var window: NSWindow? = nil
+    /// The underlying window.
+    public private(set) var window: NSWindow? = nil
     
     private var isPanel: Bool? = nil
     

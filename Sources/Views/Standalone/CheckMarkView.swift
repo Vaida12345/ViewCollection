@@ -57,6 +57,7 @@ public struct CheckMarkView: View {
                 isShown = true
             }
         }
+        .allowsHitTesting(false) // allow gesture to pass through to the view beneath
     }
     
     
