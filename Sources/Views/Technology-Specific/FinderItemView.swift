@@ -13,11 +13,13 @@ import NativeImage
 
 
 /// A preview image of a `FinderItem`.
-public struct FinderItemView: View {
+public struct FinderItemView<Placeholder: View>: View {
     
     // MARK: - Instance Stored Properties
     
     private let item: FinderItem
+    
+    private let placeholder: Placeholder
     
     @State private var preview: Image? = nil
     
@@ -28,18 +30,20 @@ public struct FinderItemView: View {
         Group {
             if let preview {
                 preview
+            } else if !(placeholder is EmptyView) {
+                placeholder
             } else {
                 Image(systemName: item.isDirectory ? "folder" : "doc")
                     .imageScale(.large)
             }
         }
-            .aspectRatio(contentMode: .fit)
-            .onAppear {
-                update(url: item.url)
-            }
-            .onChange(of: item) { _, newValue in
-                update(url: newValue.url)
-            }
+        .aspectRatio(contentMode: .fit)
+        .onAppear {
+            update(url: item.url)
+        }
+        .onChange(of: item) { _, newValue in
+            update(url: newValue.url)
+        }
     }
     
     
@@ -64,8 +68,14 @@ public struct FinderItemView: View {
     // MARK: - Designated Initializers
     
     /// Creates a view for the item.
-    public init(item: FinderItem) {
+    public init(item: FinderItem, @ViewBuilder placeholder: () -> Placeholder) {
         self.item = item
+        self.placeholder = placeholder()
+    }
+    
+    public init(item: FinderItem) where Placeholder == EmptyView {
+        self.item = item
+        self.placeholder = EmptyView()
     }
     
 }
