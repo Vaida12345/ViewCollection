@@ -11,8 +11,6 @@ import SwiftUI
 
 public final class WindowManager: NSObject, NSWindowDelegate {
     
-    private var isClosed: Bool = false
-    
     /// The underlying window.
     public private(set) var window: NSWindow? = nil
     
@@ -33,6 +31,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///   - hiding: Choose which window buttons to hide.
     ///   - undoManager: The undo manager associated with the resulting window.
     ///   - titleVisibility: A value that indicates the visibility of the window’s title and title bar buttons.
+    ///
+    /// - Warning: The window won’t appear correctly if neither `initialSize` nor SwiftUI size constraints are set.
     ///
     /// > Example:
     /// > ```swift
@@ -55,10 +55,12 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// - Bug: In the current design, one window can only handle one view, and thats it. It cannot be changed.
     ///
     /// In the current design, the title bar appears transparent, and the title bar separator is none.
+    ///
+    /// - Note: When a window is closed, either by user or by calling `window.close()`, a window manager is reset. This ensures SwiftUI will call `onDisappear`.
     @MainActor public func open(
         title: String,
         view: some View,
-        styleMask: NSWindow.StyleMask,
+        styleMask: NSWindow.StyleMask = [.fullSizeContentView, .titled, .closable, .resizable, .miniaturizable],
         initialSize: CGSize? = nil,
         hiding: [NSWindow.ButtonType] = [],
         undoManager: UndoManager? = nil
@@ -66,7 +68,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         self.title = title
         self.undoManager = undoManager
         
-        if let window, !isClosed {
+        if let window {
             window.orderFront(nil)
             window.becomeKey()
             return
@@ -128,7 +130,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         self.title = title
         self.undoManager = undoManager
         
-        if let window, !isClosed {
+        if let window {
             window.orderFront(nil)
             window.becomeKey()
             return
@@ -170,21 +172,26 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     }
     
     public func windowWillClose(_ notification: Notification) {
-        isClosed = true
-        
         if let title, let window {
             UserDefaults.standard.set(NSStringFromRect(window.frame), forKey: "NSWindow Frame \(title)")
         }
+        self.reset()
     }
     
     public func windowDidResignKey(_ notification: Notification) {
         guard self.isPanel ?? false else { return }
         self.window?.close()
-        self.isPanel = true
     }
     
     public func windowWillReturnUndoManager(_ window: NSWindow) -> UndoManager? {
         self.undoManager
+    }
+    
+    private func reset() {
+        self.window = nil
+        self.isPanel = nil
+        self.title = nil
+        self.undoManager = nil
     }
 }
 #endif
