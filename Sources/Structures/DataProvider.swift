@@ -17,7 +17,7 @@ import SwiftUI
 /// Create a `final class` that inherits from this protocol, and add `instance` to the class declaration.
 ///
 /// ```swift
-/// @Obsersable
+/// @Observable
 /// final class <#Model#>: DataProvider {
 ///     static var instance = <#Model#>.load()
 /// }
