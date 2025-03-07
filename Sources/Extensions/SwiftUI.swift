@@ -30,7 +30,7 @@ extension GridItem {
 public extension Color {
     
     /// The system-defined colors.
-    static let allColors: [Color] = [.red, .orange, .yellow, .green, .mint, .teal, .cyan, .blue, .indigo, .purple, .pink, .brown, .white, .gray, .black]
+    static let allColors: [Color] = [.red, .orange, .yellow, .green, .mint, .teal, .cyan, .blue, .indigo, .purple, .pink, .brown, .gray]
     
 }
 
@@ -74,16 +74,20 @@ extension Color: Codable {
 
 extension Color: @retroactive Animatable {
     
+    public var components: [Double] {
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
+        let color = NSColor(self).usingColorSpace(.displayP3)!
+        return [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent]
+#elseif canImport(UIKit)
+        let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
+        return color.components!.map { Double($0) }
+#endif
+    }
+    
     @inlinable
     public var animatableData: Vector<Double> {
         get {
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-            let color = NSColor(self).usingColorSpace(.sRGB)!
-            return Vector([color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent])
-#elseif canImport(UIKit)
-            let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
-            return Vector(color.components!.map { Double($0) })
-#endif
+            Vector(self.components)
         }
         set(newValue) {
             self = .init(.displayP3, red: newValue[0], green: newValue[1], blue: newValue[2], opacity: newValue[3])
