@@ -6,9 +6,9 @@ import PackageDescription
 let package = Package (
     name: "ViewCollection",
     platforms: [
-        .macOS(.v14),
-        .iOS(.v17),
-        .visionOS(.v1)
+        .macOS(.v15),
+        .iOS(.v18),
+        .visionOS(.v2)
     ], products: [
         .library(name: "ViewCollection", targets: ["ViewCollection", "SoftUI"]),
     ], dependencies: [

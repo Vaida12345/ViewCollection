@@ -14,24 +14,16 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
     
     
     public func makeBody(configuration: Configuration) -> some View {
-        let offset = configuration.isPressed ? 1.0 : 4
+        let radius = configuration.isPressed ? 1.0 : 4
         
         configuration.label
-            .foregroundStyle(Color.soft.secondary)
-            .padding()
-            .background {
-                background
-                    .fill(Color.soft.main)
-                    .opacity(1)
-                    .shadow(color: .soft.lightShadow, radius: offset, x: -offset, y: -offset)
-                    .shadow(color: .soft.darkShadow, radius: offset, x: offset, y: offset)
-                    .transaction { transaction in
-                        if configuration.isPressed {
-                            transaction.animation = .spring.speed(3)
-                        } else {
-                            transaction.animation = .spring
-                        }
-                    }
+            .modifier(SoftOuterShadow(shape: background, radius: radius))
+            .transaction { transaction in
+                if configuration.isPressed {
+                    transaction.animation = .spring.speed(4)
+                } else {
+                    transaction.animation = .spring
+                }
             }
     }
     
