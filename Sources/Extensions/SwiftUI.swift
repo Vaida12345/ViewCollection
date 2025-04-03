@@ -69,6 +69,40 @@ extension Color: Codable {
         case red, green, blue, alpha
     }
     
+    /// Creates a context-dependent color with different values for light and dark appearances.
+    /// 
+    /// - Parameters:
+    ///   - light: The light appearance color value.
+    ///   - dark: The dark appearance color value.
+    public init(light: @escaping () -> Color, dark: @escaping () -> Color) {
+#if os(watchOS)
+        self = dark()
+#elseif canImport(UIKit)
+        self.init(
+            uiColor: .init { traitCollection in
+                switch traitCollection.userInterfaceStyle {
+                case .unspecified, .light:
+                    return UIColor(light())
+                case .dark:
+                    return UIColor(dark())
+                @unknown default:
+                    return UIColor(light())
+                }
+            }
+        )
+#elseif canImport(AppKit)
+        self.init(
+            nsColor: .init(name: nil) { appearance in
+                if appearance.bestMatch(from: [.aqua, .darkAqua]) == .aqua {
+                    return NSColor(light())
+                } else {
+                    return NSColor(dark())
+                }
+            }
+        )
+#endif
+    }
+    
 }
 
 
