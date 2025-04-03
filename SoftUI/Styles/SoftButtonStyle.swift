@@ -12,21 +12,25 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
     
     let background: S
     
-    let shadowRadius: CGFloat = 4
-    
-    let shadowOffset: CGFloat = 4
-    
     
     public func makeBody(configuration: Configuration) -> some View {
+        let offset = configuration.isPressed ? 1.0 : 4
+        
         configuration.label
             .padding()
             .background {
                 background
                     .fill(Color.soft.main)
                     .opacity(1)
-                    .shadow(color: .soft.lightShadow, radius: shadowRadius, x: -shadowOffset, y: -shadowOffset)
-                    .shadow(color: .soft.darkShadow, radius: shadowRadius, x: shadowOffset, y: shadowOffset)
-                    .padding()
+                    .shadow(color: .soft.lightShadow, radius: offset, x: -offset, y: -offset)
+                    .shadow(color: .soft.darkShadow, radius: offset, x: offset, y: offset)
+                    .transaction { transaction in
+                        if configuration.isPressed {
+                            transaction.animation = .spring.speed(3)
+                        } else {
+                            transaction.animation = .spring
+                        }
+                    }
             }
     }
     
