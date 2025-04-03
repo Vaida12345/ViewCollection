@@ -17,6 +17,7 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
         let offset = configuration.isPressed ? 1.0 : 4
         
         configuration.label
+            .foregroundStyle(Color.soft.secondary)
             .padding()
             .background {
                 background
