@@ -9,40 +9,31 @@ import Essentials
 import SwiftUI
 
 
-struct SoftProgressStyle: ProgressViewStyle {
+public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
     
     
-    func makeBody(configuration: Configuration) -> some View {
+    public func makeBody(configuration: Configuration) -> some View {
         GeometryReader { geometry in
             ZStack {
-                Capsule()
-                    .fill(.clear)
-                    .modifier(
-                        SoftInnerShadow(
-                            shape: Capsule(),
-                            radius: radius
-                        )
-                    )
-                
-                Capsule()
-                    .fill(foregroundColor.opacity(0.2))
+                SoftInnerShadow(
+                    shape: Capsule(),
+                    radius: radius,
+                    foregroundColor: foregroundColor.mix(with: Color.soft.main, by: 0.95)
+                )
                 
                 let maxWidth = geometry.size.width - progressPadding * 2
                 let minWidth = geometry.size.height - progressPadding * 2
                 
                 if let fractionCompleted = configuration.fractionCompleted {
-                    EmptyView()
-                        .modifier(
-                            SoftOuterShadow(
-                                shape: Capsule(),
-                                radius: radius,
-                                foregroundColor: foregroundColor
-                            )
-                        )
-                        .padding(.trailing, maxWidth - linear(fractionCompleted, domain: 1, min: minWidth, max: maxWidth))
-                        .padding(.all, progressPadding)
+                    SoftOuterShadow(
+                        shape: Capsule(),
+                        radius: radius,
+                        foregroundColor: foregroundColor
+                    )
+                    .padding(.trailing, maxWidth - linear(fractionCompleted, domain: 1, min: minWidth, max: maxWidth))
+                    .padding(.all, progressPadding)
                 }
             }
         }
@@ -58,11 +49,21 @@ struct SoftProgressStyle: ProgressViewStyle {
         radius * 2
     }
     
-    let radius: Double = 3
+    let radius: Double = 4
     
     private func linear(_ x: Double, domain: Double, min: Double, max: Double) -> Double {
         let gradient = (max - min) / domain
         return min + gradient * x
+    }
+    
+}
+
+
+extension ProgressViewStyle where Self == SoftProgressStyle {
+    
+    /// A Soft UI style progress view.
+    public static func soft(foregroundColor: Color = .accentColor) -> SoftProgressStyle {
+        SoftProgressStyle(foregroundColor: foregroundColor)
     }
     
 }
@@ -74,14 +75,14 @@ struct SoftProgressStyle: ProgressViewStyle {
         
         VStack(spacing: 20) {
             ProgressView()
-                .progressViewStyle(SoftProgressStyle())
+                .progressViewStyle(.soft())
             
             ProgressView(value: 0)
-                .progressViewStyle(SoftProgressStyle())
+                .progressViewStyle(.soft())
             
             KeyframeAnimator(initialValue: 0.0, repeating: true) { value in
                 ProgressView(value: value)
-                    .progressViewStyle(SoftProgressStyle())
+                    .progressViewStyle(.soft())
             } keyframes: { _ in
                 KeyframeTrack(\.self) {
                     LinearKeyframe(1.0, duration: 5)
@@ -94,4 +95,5 @@ struct SoftProgressStyle: ProgressViewStyle {
         }
         .padding()
     }
+    .colorScheme(.dark)
 }

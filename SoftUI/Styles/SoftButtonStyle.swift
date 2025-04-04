@@ -10,21 +10,36 @@ import SwiftUI
 
 public struct SoftButtonStyle<S: Shape>: ButtonStyle {
     
-    let background: S
+    let shape: S
+    
+    @Environment(\.isEnabled) private var isEnabled: Bool
     
     
     public func makeBody(configuration: Configuration) -> some View {
-        let radius = configuration.isPressed ? 1.0 : 4
+        let radius = !isEnabled ? 2 : configuration.isPressed ? 1.0 : 4
         
         configuration.label
-            .modifier(SoftOuterShadow(shape: background, radius: radius))
-            .transaction { transaction in
-                if configuration.isPressed {
-                    transaction.animation = .spring.speed(4)
-                } else {
-                    transaction.animation = .spring
-                }
+            .foregroundColor(Color.soft.secondary)
+            .background {
+                SoftOuterShadow(shape: shape, radius: radius)
+                    .transaction { transaction in
+                        if configuration.isPressed {
+                            transaction.animation = .spring.speed(4)
+                        } else {
+                            transaction.animation = .spring
+                        }
+                    }
             }
+    }
+    
+}
+
+
+extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
+    
+    /// A Soft UI style button
+    public static func soft<S: Shape>(shape: S) -> SoftButtonStyle<S> {
+        SoftButtonStyle(shape: shape)
     }
     
 }
@@ -32,16 +47,15 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
 
 #Preview {
     ZStack {
-        Color(red: 0.925, green: 0.941, blue: 0.953)
-            .ignoresSafeArea(.all)
+        Color.soft.main.ignoresSafeArea(.all)
         
         Button {
             
         } label: {
-            Text("         ")
+            Text("Hit Me!")
                 .padding()
         }
-        .buttonStyle(SoftButtonStyle(background: .rect(cornerRadius: 10)))
-        .frame(width: 120, height: 60)
+        .buttonStyle(.soft(shape: .capsule))
     }
+    .colorScheme(.dark)
 }
