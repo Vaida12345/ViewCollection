@@ -84,7 +84,9 @@ public struct InfDashedSlider<T>: View where T: BinaryFloatingPoint {
             .frame(height: 40)
             .contentShape(Rectangle())
             .gesture(gesture(dividerMaxGap: dividerMaxGap))
+#if !os(visionOS)
             .sensoryFeedback(.selection, trigger: Int(value))
+#endif
             .onChange(of: value) { oldValue, newValue in
                 if translation == nil {
                     updateFrom(value: Double(newValue), dividerMaxGap: dividerMaxGap)

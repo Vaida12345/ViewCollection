@@ -9,10 +9,10 @@ import SwiftUI
 import FinderItem
 
 
-#if os(macOS)
+#if os(macOS) && !targetEnvironment(macCatalyst)
 /// A wrapper to `NSApplicationDelegateAdaptor`
 public typealias ApplicationDelegateAdaptor = NSApplicationDelegateAdaptor
-#elseif os(iOS)
+#elseif os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 /// A wrapper to `UIApplicationDelegateAdaptor`
 public typealias ApplicationDelegateAdaptor = UIApplicationDelegateAdaptor
 #endif
