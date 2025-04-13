@@ -43,7 +43,7 @@ extension ApplicationDelegate {
     
 }
 
-#elseif os(iOS)
+#elseif os(iOS) || os(tvOS) || os(visionOS) || targetEnvironment(macCatalyst)
 
 /// A wrapper to `UIApplicationDelegate`
 open class ApplicationDelegate: NSObject, UIApplicationDelegate {
