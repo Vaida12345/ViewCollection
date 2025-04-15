@@ -14,7 +14,7 @@ let package = Package (
     ], dependencies: [
         .package(url: "https://www.github.com/Vaida12345/NativeImage", from: "1.0.0"),
         .package(url: "https://www.github.com/Vaida12345/FinderItem", from: "1.0.7"),
-        .package(url: "https://github.com/Vaida12345/Matrix", branch: "main")
+        .package(url: "https://www.github.com/Vaida12345/Matrix", branch: "main")
     ], targets: [
         .target(name: "ViewCollection", dependencies: ["NativeImage", "Matrix", "FinderItem"], path: "Sources"),
         .target(name: "SoftUI", dependencies: ["ViewCollection"], path: "SoftUI")

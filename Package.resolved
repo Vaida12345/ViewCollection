@@ -1,5 +1,5 @@
 {
-  "originHash" : "0f5ae12109286a237671acb232250b68db57ebf0f79af722e3d147f8b50cfb2b",
+  "originHash" : "9fd61d502be853275c221d0d889f210beca9d3d1ad342724986e8f3b9d8a6cdf",
   "pins" : [
     {
       "identity" : "essentials",
@@ -22,7 +22,7 @@
     {
       "identity" : "matrix",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Vaida12345/Matrix",
+      "location" : "https://www.github.com/Vaida12345/Matrix",
       "state" : {
         "branch" : "main",
         "revision" : "a7399053e8b4a6538db8e3778dc13e7dc1403f14"
