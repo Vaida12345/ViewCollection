@@ -165,7 +165,7 @@ extension EnvironmentValues {
     
     /// Whether the horizontal menu bar is extended.
     ///
-    /// This environment value aims to differentiate whether the iPhone is landscape or portrait, and if the iPad is in split screen.
+    /// This environment value aims to tell if you can put more content in the menu bar.
     ///
     /// ---
     ///
@@ -174,7 +174,7 @@ extension EnvironmentValues {
     /// - iPad is not in split screen
     /// - any other device
     @MainActor
-    var showsExtendedMenubar: Bool {
+    public var showsExtendedMenubar: Bool {
         switch DesignPattern.current {
         case .iPhone:
             verticalSizeClass == .compact // only show in landscape mode.
