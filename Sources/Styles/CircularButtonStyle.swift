@@ -28,7 +28,8 @@ public struct CircularButtonStyle: ButtonStyle {
             }
             .shadow(radius: configuration.isPressed ? 0.5 : 1)
             .scaleEffect(configuration.isPressed ? 0.9 : 1)
-            .animation(.spring, value: configuration.isPressed)
+            .opacity(configuration.isPressed ? 0.5 : 1)
+            .animation(.spring.speed(2), value: configuration.isPressed)
     }
 }
 
