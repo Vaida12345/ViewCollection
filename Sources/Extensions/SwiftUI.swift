@@ -159,3 +159,30 @@ extension GraphicsContext {
     }
     
 }
+
+
+extension EnvironmentValues {
+    
+    /// Whether the horizontal menu bar is extended.
+    ///
+    /// This environment value aims to differentiate whether the iPhone is landscape or portrait, and if the iPad is in split screen.
+    ///
+    /// ---
+    ///
+    /// This value returns `true` when
+    /// - iPhone is in landscape mode
+    /// - iPad is not in split screen
+    /// - any other device
+    @MainActor
+    var showsExtendedMenubar: Bool {
+        switch DesignPattern.current {
+        case .iPhone:
+            verticalSizeClass == .compact // only show in landscape mode.
+        case .iPad:
+            horizontalSizeClass == .regular
+        default:
+            true // always show extended.
+        }
+    }
+    
+}
