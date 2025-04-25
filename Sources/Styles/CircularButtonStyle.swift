@@ -27,7 +27,7 @@ public struct CircularButtonStyle: ButtonStyle {
                 $0 = $0 == .dark ? .light : .dark
             }
             .shadow(radius: configuration.isPressed ? 0.5 : 1)
-            .scaleEffect(configuration.isPressed ? 0.9 : 1)
+            .scaleEffect(configuration.isPressed ? 1.3 : 1.4)
             .opacity(configuration.isPressed ? 0.5 : 1)
             .animation(.spring.speed(2), value: configuration.isPressed)
     }
