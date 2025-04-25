@@ -8,7 +8,7 @@
 #if os(iOS)
 import SwiftUI
 
-@available(iOS 17, *)
+@available(iOS, deprecated: 17, message: "Use `floatingSheetLayout` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -36,7 +36,7 @@ fileprivate struct FloatingSheetModifier<Overlay: View>: ViewModifier {
     }
 }
 
-@available(iOS 17, *)
+@available(iOS, deprecated: 17, message: "Use `floatingSheetLayout` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -98,7 +98,7 @@ fileprivate struct FloatingSheetOverlay<Overlay: View>: View {
     }
 }
 
-@available(iOS 17, *)
+@available(iOS, deprecated: 17, message: "Use `floatingSheetLayout` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -125,34 +125,7 @@ extension View {
     }
 }
 
-#Preview("Floating Sheet") {
-    @Previewable @State var width: Double = 100
-    
-    @Previewable @State var showsSheet: Bool = true
-    
-    Toggle("Show Sheet", isOn: $showsSheet.animation())
-        .padding(.horizontal)
-        .floatingSheet(isPresented: $showsSheet) {
-            Text("Sheet")
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity)
-                .frame(height: 100)
-        }
-}
-
-#Preview("FloatingSheetOverlay") {
-    ZStack {
-        FloatingSheetOverlay(isPresented: .constant(true), onDismiss: nil) {
-            Text("Sheet")
-                .padding(.horizontal)
-                .frame(maxWidth: .infinity)
-                .frame(height: 100)
-        }
-    }
-}
-
-
-@available(iOS 17, *)
+@available(iOS, deprecated: 17, message: "Use `floatingSheetLayout` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
