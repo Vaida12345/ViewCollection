@@ -64,7 +64,7 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
                                     with: .style(.background)
                                 )
                             }
-                            .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.2), radius: 40)
+                            .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.25), radius: 40)
                         }
                 }
                 .ignoresSafeArea()
@@ -79,13 +79,15 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
     }
 }
 
+#if os(iOS)
 #Preview(traits: .landscapeLeft) {
     Text("Content")
         .sheet(isPresented: .constant(true)) {
             Text("Sheet")
-                .floatingSheetLayout()
+                .floatingSheetLayout(horizontal: .max(500), vertical: .max(300))
         }
 }
+#endif
 
 
 
@@ -151,6 +153,10 @@ extension View {
     /// The layout is only activated when an iPhone is in landscape mode, at which point it displays the sheet in a manner similar to that on an iPad.
     ///
     /// ![Preview](floatingSheetLayout)
+    ///
+    /// - Warning: `presentationDetents` must support `large` when landscape, otherwise crash.
+    ///
+    /// - Bug: Currently does not support `ViewThatFits`, can crash.
     ///
     /// - Parameters:
     ///   - horizontal: Specifies the horizontal constrains.
