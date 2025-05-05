@@ -92,3 +92,27 @@ public extension View {
     }
     
 }
+
+
+extension View {
+    
+    /// Calls `action(date)` every `interval` seconds for as long as this view is in the hierarchy.
+    public func onTimer(
+        every interval: Duration,
+        tolerance: TimeInterval? = nil,
+        scheduler: RunLoop = .main,
+        in runLoopMode: RunLoop.Mode = .common,
+        perform action: @escaping (Date) -> Void
+    ) -> some View {
+        // create a Timer publisher that emits a Date every `interval` seconds …
+        let publisher = Timer
+            .publish(every: interval.seconds, tolerance: tolerance, on: scheduler, in: runLoopMode)
+            .autoconnect()
+        
+        // … and hook it up to this view
+        return self.onReceive(publisher) { date in
+            action(date)
+        }
+    }
+    
+}
