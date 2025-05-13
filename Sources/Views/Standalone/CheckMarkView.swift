@@ -26,8 +26,12 @@ import SwiftUI
 public struct CheckMarkView: View {
     
     @State private var isShown = false
+    @State private var initialFeedback = false
+    @State private var secondaryFeedback = false
     
     @Environment(\.isPresented) private var isPresented
+    
+    let strokeWidthFraction: Double
     
     
     public var body: some View {
@@ -46,23 +50,30 @@ public struct CheckMarkView: View {
             .trim(from: 0, to: isShown ? 1 : 0)
             .stroke(
                 style: StrokeStyle(
-                    lineWidth: size / 10,
+                    lineWidth: size * strokeWidthFraction,
                     lineCap: .round,
                     lineJoin: .round
                 )
             )
         }
-        .onAppear {
+        .sensoryFeedback(.impact(flexibility: .solid, intensity: 0.9), trigger: initialFeedback)
+        .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.9), trigger: secondaryFeedback)
+        .task {
+            initialFeedback.toggle()
             withAnimation(.easeInOut(duration: 0.5)) {
                 isShown = true
+            }
+            Task {
+                try await Task.sleep(for: .seconds(0.2))
+                secondaryFeedback.toggle()
             }
         }
         .allowsHitTesting(false) // allow gesture to pass through to the view beneath
     }
     
     
-    public init() {
-        
+    public init(strokeWidthFraction: Double = 1 / 10) {
+        self.strokeWidthFraction = strokeWidthFraction
     }
     
 }
@@ -76,6 +87,7 @@ private struct PreviewDriver: View {
         Group {
             if isShown {
                 CheckMarkView()
+                    .foregroundStyle(.green)
             } else {
                 Rectangle()
                     .fill(.clear)

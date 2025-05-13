@@ -28,6 +28,7 @@ extension ProgressViewStyle where Self == SimpleCircularProgressViewStyle {
     ///
     /// ### Returned Style
     /// - ``SimpleCircularProgressViewStyle``
+    @available(*, deprecated, renamed: "circular()", message: "Please use `circular()` instead.")
     public static var simpleCircular: SimpleCircularProgressViewStyle {
         SimpleCircularProgressViewStyle()
     }
