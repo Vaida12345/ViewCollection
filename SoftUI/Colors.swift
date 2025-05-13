@@ -33,7 +33,7 @@ extension Color {
             Color {
                 Color(red: 0.482, green: 0.502, blue: 0.549)
             } dark: {
-                Color(red: 0.910, green: 0.910, blue: 0.910)
+                Color(red: 0.582, green: 0.602, blue: 0.649)
             }
         }
         
