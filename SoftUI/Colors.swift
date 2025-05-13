@@ -20,7 +20,7 @@ extension Color {
     public enum Soft {
         
         /// The main foreground and background color.
-        static var main: Color {
+        public static var main: Color {
             Color {
                 Color(red: 0.925, green: 0.941, blue: 0.953)
             } dark: {
@@ -29,7 +29,7 @@ extension Color {
         }
         
         /// The secondary color, often used as text color.
-        static var secondary: Color {
+        public static var secondary: Color {
             Color {
                 Color(red: 0.482, green: 0.502, blue: 0.549)
             } dark: {
@@ -38,7 +38,7 @@ extension Color {
         }
         
         /// The light shadow
-        static var lightShadow: Color {
+        public static var lightShadow: Color {
             Color {
                 Color.white
             } dark: {
@@ -47,7 +47,7 @@ extension Color {
         }
         
         /// The dark shadow
-        static var darkShadow: Color {
+        public static var darkShadow: Color {
             Color {
                 Color(red: 0.820, green: 0.851, blue: 0.902)
             } dark: {
