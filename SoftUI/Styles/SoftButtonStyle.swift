@@ -22,16 +22,11 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
             .foregroundColor(Color.soft.secondary)
             .background {
                 SoftOuterShadow(shape: shape, radius: radius)
-                    .transaction { transaction in
-                        if configuration.isPressed {
-                            transaction.animation = .spring.speed(4)
-                        } else {
-                            transaction.animation = .spring
-                        }
-                    }
+                    .animation(.spring.speed(configuration.isPressed ? 4 : 1), value: configuration.isPressed)
             }
-            .sensoryFeedback(.impact(weight: .medium, intensity: 0.8), trigger: configuration.isPressed) { $1 }
-            .sensoryFeedback(.impact(weight: .light, intensity: 0.7), trigger: configuration.isPressed) { !$1 }
+            .sensoryFeedback(trigger: configuration.isPressed) { oldValue, newValue in
+                    .impact(flexibility: .soft, intensity: newValue ? 1.0 : 0.7)
+            }
     }
     
 }
