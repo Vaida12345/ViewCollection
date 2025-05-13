@@ -30,6 +30,8 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
                         }
                     }
             }
+            .sensoryFeedback(.impact(weight: .medium, intensity: 0.8), trigger: configuration.isPressed) { $1 }
+            .sensoryFeedback(.impact(weight: .light, intensity: 0.7), trigger: configuration.isPressed) { !$1 }
     }
     
 }

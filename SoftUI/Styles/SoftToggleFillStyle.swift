@@ -18,32 +18,33 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     
     
     public func makeBody(configuration: Configuration) -> some View {
-        switch self.style {
-        case .indicator:
-            Button {
-                configuration.isOn.toggle()
-            } label: {
-                HStack(spacing: 20) {
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(configuration.isOn ? foregroundColor : Color.soft.lightShadow)
-                        .frame(width: 4, height: 20)
-                    
-                    configuration.label
-                        .foregroundStyle(Color.soft.secondary)
+        Group {
+            switch self.style {
+            case .indicator:
+                Button {
+                    configuration.isOn.toggle()
+                } label: {
+                    HStack(spacing: 20) {
+                        RoundedRectangle(cornerRadius: 5)
+                            .fill(configuration.isOn ? foregroundColor : Color.soft.lightShadow)
+                            .frame(width: 4, height: 20)
+                        
+                        configuration.label
+                            .foregroundStyle(Color.soft.secondary)
+                    }
+                    .padding()
                 }
-                .padding()
+                
+            case .fill:
+                Button {
+                    configuration.isOn.toggle()
+                } label: {
+                    configuration.label
+                        .foregroundStyle(configuration.isOn ? foregroundColor : Color.soft.secondary)
+                }
             }
-            .buttonStyle(SoftButtonStyle(shape: shape))
-            
-        case .fill:
-            Button {
-                configuration.isOn.toggle()
-            } label: {
-                configuration.label
-                    .foregroundStyle(configuration.isOn ? foregroundColor : Color.soft.secondary)
-            }
-            .buttonStyle(SoftButtonStyle(shape: shape))
         }
+        .buttonStyle(SoftButtonStyle(shape: shape))
     }
     
     
@@ -86,5 +87,5 @@ extension ToggleStyle where Self == SoftToggleStyle<AnyShape> {
         }
         .toggleStyle(.soft(.fill, shape: .rect(cornerRadius: 10)))
     }
-    .colorScheme(.dark)
+    .colorScheme(.light)
 }
