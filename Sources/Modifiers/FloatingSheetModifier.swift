@@ -125,7 +125,7 @@ extension View {
     }
 }
 
-@available(iOS, deprecated: 17, message: "Use `floatingSheetLayout` instead.")
+@available(iOS, deprecated: 17, message: "Use `dismiss` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)

@@ -152,6 +152,12 @@ extension View {
     ///
     /// The layout is only activated when an iPhone is in landscape mode, at which point it displays the sheet in a manner similar to that on an iPad.
     ///
+    /// > Tip:
+    /// > To have iPadOS sheet fit to the content, use the SwiftUI modifier,
+    /// > ```swift
+    /// > .presentationSizing(.fitted.sticky(horizontal: true))
+    /// > ```
+    ///
     /// ![Preview](floatingSheetLayout)
     ///
     /// - Warning: `presentationDetents` must support `large` when landscape, otherwise crash.
