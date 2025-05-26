@@ -36,7 +36,7 @@ public struct PlainSlider<T>: View where T: BinaryFloatingPoint {
     }
     
     private var gesture: some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 0)
             .onChanged { value in
                 location = value.location.x
             }

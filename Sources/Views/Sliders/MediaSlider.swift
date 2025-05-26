@@ -14,7 +14,7 @@ import NativeImage
 ///
 /// ![Preview](MediaSlider)
 @available(iOS 17, *)
-@available(macOS, unavailable)
+@available(macOS 14, *)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 @available(visionOS, unavailable)
@@ -43,6 +43,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     let scale: T
     
     
+#if os(iOS)
     func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
@@ -59,6 +60,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                 self.initialOffset = clamp(self.offset, min: 0, max: size.width)
                 self.translation = nil
                 playsSensoryFeedback = false
+                self.transactionUpdate(translation: 0, geometryWidth: size.width)
                 
                 withAnimation {
                     backgroundHeight = 10
@@ -66,6 +68,15 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                 }
             }
     }
+#else
+    func gesture(size: CGSize) -> some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                print(value.location.x, size.width)
+                self.normalized = clamp(value.location.x / size.width, min: 0, max: 1)
+            }
+    }
+#endif
     
     /// The normalized value within 0...1
     var normalized: Double {
@@ -83,11 +94,14 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         self.backgroundHeight / 2
     }
     
+#if os(iOS)
     @State private var reshape = CGSize(width: 1, height: 1)
+#endif
     
     
     public var body: some View {
         GeometryReader { geometry in
+#if os(iOS)
             var reshapeOffset: Double {
                 let newWidth = geometry.size.width * reshape.width
                 if normalized == 0 {
@@ -96,13 +110,16 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                     return (newWidth - geometry.size.width)
                 }
             }
+#endif
             
             ZStack {
                 RoundedRectangle(cornerRadius: backgroundRadius)
                     .fill(.ultraThinMaterial)
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+#if os(iOS)
                     .shadow(radius: 10)
+#endif
                 
                 Rectangle()
                     .fill(.white)
@@ -114,8 +131,10 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     }
             }
+#if os(iOS)
             .offset(x: reshapeOffset)
             .scaleEffect(reshape)
+#endif
             .gesture(gesture(size: geometry.size))
             .onChange(of: value) { oldValue, newValue in
                 if translation == nil {
@@ -131,7 +150,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         }
         .frame(height: backgroundHeight)
         .environment(\.colorScheme, .light)
-#if !os(visionOS)
+#if os(iOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
             (newValue == 0 || newValue == 1) && translation != nil // ensure it is user initialized.
         }
@@ -142,6 +161,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         .frame(height: 15)
     }
     
+#if os(iOS)
     private func transactionUpdate(translation: Double?, geometryWidth: Double) {
         guard let translation else { return }
         let delta = translation / geometryWidth
@@ -159,6 +179,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             self.backgroundHeight = clamp(15 - normal * 15, min: 4)
         }
     }
+#endif
     
     func updateFrom(value: T, width: Double) {
         let normal = Double((value - range.lowerBound) / scale)
@@ -174,7 +195,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
 }
 
 
-#if os(iOS)
+#if os(iOS) || os(macOS)
 #Preview {
     @Previewable @State var value: Double = 0
     

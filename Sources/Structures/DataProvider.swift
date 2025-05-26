@@ -36,6 +36,7 @@ import SwiftUI
 /// ```swift
 /// final class AppDelegate: ApplicationDelegate {
 ///     override func applicationWillTerminate() {
+///         super.applicationWillTerminate()
 ///         try? <#Model#>.instance.save()
 ///     }
 /// }
