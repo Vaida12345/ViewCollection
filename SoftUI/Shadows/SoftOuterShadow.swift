@@ -14,11 +14,13 @@ internal struct SoftOuterShadow<S: Shape>: View {
     
     let shape: S
     
-    let radius: Double
+    @Environment(\.softUIShadowRadius) private var radius
     
     let foregroundColor: Color
     
     var body: some View {
+        let radius = radius ?? 4
+        
         shape
             .fill(foregroundColor)
             .shadow(
@@ -31,9 +33,8 @@ internal struct SoftOuterShadow<S: Shape>: View {
     }
     
     
-    init(shape: S, radius: Double = 4, foregroundColor: Color = .soft.main) {
+    init(shape: S, foregroundColor: Color = .soft.main) {
         self.shape = shape
-        self.radius = radius
         self.foregroundColor = foregroundColor
     }
     

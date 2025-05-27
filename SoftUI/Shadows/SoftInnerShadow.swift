@@ -14,7 +14,7 @@ internal struct SoftInnerShadow<S: Shape>: View {
     
     let shape: S
     
-    let radius: Double
+    @Environment(\.softUIShadowRadius) private var radius
     
     let foregroundColor: Color
     
@@ -39,16 +39,15 @@ internal struct SoftInnerShadow<S: Shape>: View {
             
             shape
                 .fill(foregroundColor)
-                .blur(radius: radius)
-                .padding(.all, radius)
+                .blur(radius: radius ?? 4)
+                .padding(.all, radius ?? 4)
         }
         .clipShape(shape)
     }
     
     
-    init(shape: S, radius: Double = 4, foregroundColor: Color = .soft.main) {
+    init(shape: S, foregroundColor: Color = .soft.main) {
         self.shape = shape
-        self.radius = radius
         self.foregroundColor = foregroundColor
     }
     
@@ -56,11 +55,18 @@ internal struct SoftInnerShadow<S: Shape>: View {
 
 
 #Preview {
+    @Previewable @State var progress = 0.0
+    
     ZStack {
         Color.soft.main.ignoresSafeArea(.all)
         
-        SoftInnerShadow(shape: RoundedRectangle(cornerRadius: 10))
-            .frame(width: 120, height: 30)
+        VStack {
+            SoftInnerShadow(shape: RoundedRectangle(cornerRadius: 10))
+                .frame(width: 120, height: 30)
+                .softShadowRadius(4 * progress)
+            
+            Slider(value: $progress)
+        }
     }
     .colorScheme(.dark)
 }

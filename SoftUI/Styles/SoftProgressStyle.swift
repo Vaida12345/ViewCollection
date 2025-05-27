@@ -12,16 +12,20 @@ import SwiftUI
 public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
+    @Environment(\.transitionPhase) private var transitionPhase
+    
+    let isAnimated: Bool
+    
+    var phaseMultiplier: Double {
+        guard let transitionPhase else { return isAnimated ? 0 : 1 }
+        return transitionPhase == .identity ? 1 : 0
+    }
     
     
     public func makeBody(configuration: Configuration) -> some View {
         GeometryReader { geometry in
             ZStack {
-                SoftInnerShadow(
-                    shape: Capsule(),
-                    radius: radius,
-                    foregroundColor: foregroundColor.mix(with: Color.soft.main, by: 0.95)
-                )
+                SoftInnerShadow(shape: Capsule())
                 
                 let maxWidth = geometry.size.width - progressPadding * 2
                 let minWidth = geometry.size.height - progressPadding * 2
@@ -29,19 +33,23 @@ public struct SoftProgressStyle: ProgressViewStyle {
                 if let fractionCompleted = configuration.fractionCompleted {
                     SoftOuterShadow(
                         shape: Capsule(),
-                        radius: radius,
                         foregroundColor: foregroundColor
                     )
                     .padding(.trailing, maxWidth - linear(fractionCompleted, domain: 1, min: minWidth, max: maxWidth))
                     .padding(.all, progressPadding)
                 }
             }
+            .softShadowRadius(radius * phaseMultiplier)
+            .animation(.default, value: phaseMultiplier)
         }
         .frame(maxHeight: 30)
     }
     
-    init(foregroundColor: Color = .accentColor) {
-        self.foregroundColor = foregroundColor
+    /// Indicates that transitions should be shown on view appear.
+    ///
+    /// - Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    public func animated(_ animated: Bool = true) -> SoftProgressStyle {
+        SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: animated)
     }
     
     
@@ -63,26 +71,32 @@ extension ProgressViewStyle where Self == SoftProgressStyle {
     
     /// A Soft UI style progress view.
     public static func soft(foregroundColor: Color = .accentColor) -> SoftProgressStyle {
-        SoftProgressStyle(foregroundColor: foregroundColor)
+        SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: false)
     }
     
 }
 
 
 #Preview {
+    @Previewable @State var showProgress = false
+    
     ZStack {
         Color.soft.main.ignoresSafeArea(.all)
         
         VStack(spacing: 20) {
-            ProgressView()
-                .progressViewStyle(.soft())
+            if showProgress {
+                ProgressView()
+                    .progressViewStyle(.soft().animated())
+                    .transitionPhaseExposing()
+            } else {
+                ProgressView()
+                    .hidden()
+            }
             
             ProgressView(value: 0)
-                .progressViewStyle(.soft())
             
             KeyframeAnimator(initialValue: 0.0, repeating: true) { value in
                 ProgressView(value: value)
-                    .progressViewStyle(.soft())
             } keyframes: { _ in
                 KeyframeTrack(\.self) {
                     LinearKeyframe(1.0, duration: 5)
@@ -91,9 +105,14 @@ extension ProgressViewStyle where Self == SoftProgressStyle {
             }
             
             ProgressView(value: 1)
-                .progressViewStyle(SoftProgressStyle())
+            
+            Toggle(isOn: $showProgress) {
+                Text("Progress")
+            }
+            .toggleStyle(.soft(.indicator, shape: .rect(cornerRadius: 10)))
         }
         .padding()
+        .progressViewStyle(.soft())
     }
     .colorScheme(.dark)
 }

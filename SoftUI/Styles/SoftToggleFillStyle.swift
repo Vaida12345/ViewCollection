@@ -16,6 +16,8 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     
     let style: Style
     
+    let isAnimated: Bool
+    
     
     public func makeBody(configuration: Configuration) -> some View {
         Group {
@@ -44,7 +46,15 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
                 }
             }
         }
-        .buttonStyle(SoftButtonStyle(shape: shape))
+        .buttonStyle(.soft(shape: shape).animated(isAnimated))
+    }
+    
+    
+    /// Indicates that transitions should be shown on view appear.
+    ///
+    /// - Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    public func animated(_ animated: Bool = true) -> SoftToggleStyle {
+        SoftToggleStyle(style: style, shape: shape, foregroundColor: foregroundColor, isAnimated: animated)
     }
     
     
@@ -56,10 +66,11 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     }
     
     
-    init(style: Style, shape: S, foregroundColor: Color = .accentColor) {
+    init(style: Style, shape: S, foregroundColor: Color = .accentColor, isAnimated: Bool = false) {
         self.style = style
         self.shape = shape
         self.foregroundColor = foregroundColor
+        self.isAnimated = isAnimated
     }
     
 }
