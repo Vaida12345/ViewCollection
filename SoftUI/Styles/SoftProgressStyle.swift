@@ -47,7 +47,12 @@ public struct SoftProgressStyle: ProgressViewStyle {
     
     /// Indicates that transitions should be shown on view appear.
     ///
-    /// - Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > ```swift
+    /// > ProgressView(...)
+    /// >     .progressViewStyle(.soft().animated())
+    /// >     .transitionPhaseExposing()
+    /// > ```
     public func animated(_ animated: Bool = true) -> SoftProgressStyle {
         SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: animated)
     }

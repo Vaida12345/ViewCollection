@@ -47,7 +47,12 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
     
     /// Indicates that transitions should be shown on view appear.
     ///
-    /// - Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > ```swift
+    /// > Button(...)
+    /// >     .buttonStyle(.soft(shape: .capsule).animated())
+    /// >     .transitionPhaseExposing()
+    /// > ```
     public func animated(_ animated: Bool = true) -> SoftButtonStyle {
         SoftButtonStyle(shape: shape, isAnimated: animated)
     }

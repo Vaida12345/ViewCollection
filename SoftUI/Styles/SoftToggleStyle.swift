@@ -52,7 +52,12 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     
     /// Indicates that transitions should be shown on view appear.
     ///
-    /// - Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > ```swift
+    /// > Toggle(...)
+    /// >     .progressViewStyle(.soft(.fill, shape: .rect).animated())
+    /// >     .transitionPhaseExposing()
+    /// > ```
     public func animated(_ animated: Bool = true) -> SoftToggleStyle {
         SoftToggleStyle(style: style, shape: shape, foregroundColor: foregroundColor, isAnimated: animated)
     }
