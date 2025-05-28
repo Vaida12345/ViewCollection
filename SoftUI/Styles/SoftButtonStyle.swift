@@ -30,7 +30,7 @@ public struct SoftButtonStyle: ButtonStyle {
             .foregroundColor(Color.soft.secondary)
             .fontWeight(.medium)
             .fontDesign(.rounded)
-            .padding(.all, softButtonPaddingDisabled ? nil : 0)
+            .padding(.all, softButtonPaddingDisabled ? 0 : nil)
             .animation(.spring) {
                 $0.opacity(phaseMultiplier)
             }
