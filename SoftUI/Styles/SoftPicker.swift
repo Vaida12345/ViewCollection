@@ -125,7 +125,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
 
 
 #Preview {
-    @Previewable @State var selection = 1
+    @Previewable @State var selection = 3
     @Previewable @State var phase = 0
     
     VStack {

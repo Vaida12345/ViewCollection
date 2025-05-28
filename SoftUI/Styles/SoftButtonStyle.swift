@@ -15,6 +15,7 @@ public struct SoftButtonStyle: ButtonStyle {
     
     @Environment(\.isEnabled) private var isEnabled: Bool
     @Environment(\.softUIShape) private var shape
+    @Environment(\.softButtonPaddingDisabled) private var softButtonPaddingDisabled
     
     @Environment(\.transitionPhase) private var transitionPhase
     var phaseMultiplier: Double {
@@ -29,7 +30,7 @@ public struct SoftButtonStyle: ButtonStyle {
             .foregroundColor(Color.soft.secondary)
             .fontWeight(.medium)
             .fontDesign(.rounded)
-            .padding()
+            .padding(.all, softButtonPaddingDisabled ? nil : 0)
             .animation(.spring) {
                 $0.opacity(phaseMultiplier)
             }
