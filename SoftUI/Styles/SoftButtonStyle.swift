@@ -14,9 +14,9 @@ public struct SoftButtonStyle: ButtonStyle {
     let isAnimated: Bool
     
     @Environment(\.isEnabled) private var isEnabled: Bool
-    @Environment(\.transitionPhase) private var transitionPhase
     @Environment(\.softUIShape) private var shape
     
+    @Environment(\.transitionPhase) private var transitionPhase
     var phaseMultiplier: Double {
         guard let transitionPhase else { return isAnimated ? 0 : 1 }
         return transitionPhase == .identity ? 1 : 0

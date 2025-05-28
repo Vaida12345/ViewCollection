@@ -19,10 +19,19 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
     
     let label: (_ option: SelectionValue) -> Label
     
+    let isAnimated: Bool
+    
+    @Environment(\.transitionPhase) private var transitionPhase
+    var phaseMultiplier: Double {
+        guard let transitionPhase else { return isAnimated ? 0 : 1 }
+        return transitionPhase == .identity ? 1 : 0
+    }
+    
     
     public var body: some View {
         ZStack(alignment: .leading) {
             SoftInnerShadow()
+                .softShadowRadius(4 * phaseMultiplier)
             
             GeometryReader { geometry in
                 let selectionWidth = geometry.size.width / Double(options.count)
@@ -49,18 +58,36 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
                     }
                 }
             }
+            .opacity(phaseMultiplier)
         }
         .frame(height: 30)
+        .animation(.spring, value: phaseMultiplier)
     }
+    
+    
+    /// Indicates that transitions should be shown on view appear.
+    ///
+    /// > Warning: When `animated`, the view must attach `transitionPhaseExposing()`
+    /// > ```swift
+    /// > Button(...)
+    /// >     .buttonStyle(.soft(shape: .capsule).animated())
+    /// >     .transitionPhaseExposing()
+    /// > ```
+    public func animated(_ animated: Bool = true) -> SoftPicker {
+        SoftPicker(selection: $selection, options: options, isAnimated: animated, label: label)
+    }
+    
     
     public init(
         selection: Binding<SelectionValue>,
         options: [SelectionValue],
+        isAnimated: Bool = false,
         @ViewBuilder label: @escaping (_ option: SelectionValue) -> Label
     ) {
         self._selection = selection
         self.options = options
         self.label = label
+        self.isAnimated = isAnimated
     }
     
     public init(
@@ -70,6 +97,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
         self._selection = selection
         self.options = Array(SelectionValue.allCases)
         self.label = label
+        self.isAnimated = false
     }
     
     public init(
@@ -80,6 +108,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
         self._selection = selection
         self.options = options
         self.label = label
+        self.isAnimated = false
     }
     
     public init(
@@ -89,6 +118,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
         self._selection = selection
         self.options = Array(SelectionValue.allCases)
         self.label = label
+        self.isAnimated = false
     }
     
 }
@@ -96,11 +126,18 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
 
 #Preview {
     @Previewable @State var selection = 1
+    @Previewable @State var phase = 0
     
-    SoftPicker(selection: $selection, options: [1, 2, 3, 4]) {
-        Text("\($0)++")
+    VStack {
+        SoftPicker(selection: $selection, options: [1, 2, 3, 4]) {
+            Text("\($0)++")
+        }
+        .padding()
+        .environment(\.transitionPhase, phase == 0 ? .didDisappear : .identity)
+        
+        SoftPicker(selection: $phase, options: [0, 1])
+        .padding()
     }
-    .padding()
     .background(Color.soft.main.ignoresSafeArea())
 }
 
