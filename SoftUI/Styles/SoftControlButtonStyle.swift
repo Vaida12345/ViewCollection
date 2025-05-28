@@ -1,5 +1,5 @@
 //
-//  SoftButtonStyle.swift
+//  SoftControlButtonStyle.swift
 //  ViewCollection
 //
 //  Created by Vaida on 4/2/25.
@@ -9,7 +9,7 @@ import SwiftUI
 import ViewCollection
 
 
-public struct SoftButtonStyle: ButtonStyle {
+public struct SoftControlButtonStyle: ButtonStyle {
     
     let isAnimated: Bool
     
@@ -26,6 +26,7 @@ public struct SoftButtonStyle: ButtonStyle {
         let radius = (!isEnabled ? 2 : configuration.isPressed ? 1.0 : 4) * phaseMultiplier
         
         configuration.label
+            .symbolVariant(.fill)
             .foregroundColor(Color.soft.secondary)
             .fontWeight(.medium)
             .fontDesign(.rounded)
@@ -33,16 +34,14 @@ public struct SoftButtonStyle: ButtonStyle {
             .animation(.spring) {
                 $0.opacity(phaseMultiplier)
             }
-            .background {
-                SoftOuterShadow()
-                    .softShadowRadius(radius)
-                    .transaction { transaction in
-                        if configuration.isPressed {
-                            transaction.animation = transaction.animation?.speed(4)
-                        }
-                    }
-                    .animation(.spring, value: radius)
+            .modifier(SoftOuterShadowBackground())
+            .softShadowRadius(radius)
+            .transaction { transaction in
+                if configuration.isPressed {
+                    transaction.animation = transaction.animation?.speed(4)
+                }
             }
+            .animation(.spring, value: radius)
             .sensoryFeedback(trigger: configuration.isPressed) { oldValue, newValue in
                     .impact(flexibility: .soft, intensity: newValue ? 1.0 : 0.7)
             }
@@ -63,11 +62,11 @@ public struct SoftButtonStyle: ButtonStyle {
 }
 
 
-extension ButtonStyle where Self == SoftButtonStyle {
+extension ButtonStyle where Self == SoftControlButtonStyle {
     
     /// A Soft UI style button
-    public static var soft: SoftButtonStyle {
-        SoftButtonStyle(isAnimated: false)
+    public static var softControl: SoftControlButtonStyle {
+        SoftControlButtonStyle(isAnimated: false)
     }
     
 }
@@ -79,31 +78,18 @@ extension ButtonStyle where Self == SoftButtonStyle {
     ZStack {
         Color.soft.main.ignoresSafeArea(.all)
         
-        VStack {
-            Button {
-                withAnimation {
-                    showSecondary.toggle()
-                }
-            } label: {
-                Text("Hit Me!")
+        Button {
+            withAnimation {
+                showSecondary.toggle()
             }
-            .buttonStyle(.soft)
-            .padding()
-            
-            if showSecondary {
-                Button {
-                    
-                } label: {
-                    Text("Secondary")
-                }
-                .buttonStyle(.soft.animated())
-                .transitionPhaseExposing()
-                
-                Spacer()
-            } else {
-                Spacer()
-            }
+        } label: {
+            Image(systemName: showSecondary ? "play" : "pause")
+                .resizable()
+                .frame(width: 20, height: 23)
+                .contentTransition(.symbolEffect)
         }
+        .buttonStyle(.softControl)
+        .padding()
     }
     .colorScheme(.dark)
 }

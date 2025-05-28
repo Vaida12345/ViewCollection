@@ -13,7 +13,6 @@ public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
     @Environment(\.transitionPhase) private var transitionPhase
-    @Environment(\.softUIShape) private var shape
     
     let isAnimated: Bool
     

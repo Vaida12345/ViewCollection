@@ -29,23 +29,26 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
     @State private var playsSensoryFeedback: Bool = false
     
     private let onDrag: (T) -> Void
+    private let onEnd: (T) -> Void
     
     private let range: ClosedRange<T>
     
     private let scale: T
+    
+    @Environment(\.softUIShape) private var shape
     
     
     private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 self.translation = value.translation.width
-                self.transactionUpdate(translation: translation, geometryWidth: size.width)
+                self.transactionUpdate(translation: translation, geometryWidth: size.width, isEnd: false)
             }
             .onEnded { value in
                 self.initialOffset = clamp(self.offset, min: 0, max: size.width)
                 self.translation = nil
                 playsSensoryFeedback = false
-                self.transactionUpdate(translation: 0, geometryWidth: size.width)
+                self.transactionUpdate(translation: 0, geometryWidth: size.width, isEnd: true)
             }
     }
     
@@ -60,7 +63,7 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
     }
     
     private var backgroundHeight: Double {
-        15
+        20
     }
     
     private var backgroundRadius: Double {
@@ -76,12 +79,12 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 
-                Rectangle()
+                shape
                     .fill(.background)
                     .frame(width: offset, height: backgroundHeight)
                     .position(x: offset / 2, y: geometry.size.height / 2)
                     .mask {
-                        RoundedRectangle(cornerRadius: backgroundRadius)
+                        shape
                             .frame(height: backgroundHeight)
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     }
@@ -109,7 +112,11 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
         .frame(height: 15)
     }
     
-    private func transactionUpdate(translation: Double?, geometryWidth: Double) {
+    private func transactionUpdate(
+        translation: Double?,
+        geometryWidth: Double,
+        isEnd: Bool
+    ) {
         guard let translation else { return }
         let delta = translation / geometryWidth
         let raw = initialOffset / geometryWidth + delta
@@ -119,6 +126,10 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
         let normalized = clamp(raw, min: 0, max: 1)
         onDrag(T(normalized) * scale + range.lowerBound)
         self.normalized = normalized
+        
+        if isEnd {
+            onEnd(T(normalized) * scale + range.lowerBound)
+        }
     }
     
     func updateFrom(value: T, width: Double) {
@@ -126,11 +137,17 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
         self.initialOffset = clamp(normal, min: 0, max: 1) * width
     }
     
-    public init(value: Binding<T>, in range: ClosedRange<T> = 0...1, onDrag: @escaping (T) -> Void = { _ in }) {
+    public init(
+        value: Binding<T>,
+        in range: ClosedRange<T> = 0...1,
+        onDrag: @escaping (T) -> Void = { _ in },
+        onEnd: @escaping (T) -> Void = { _ in }
+    ) {
         self._value = value
         self.range = range
         self.scale = range.upperBound - range.lowerBound
         self.onDrag = onDrag
+        self.onEnd = onEnd
     }
 }
 
@@ -143,6 +160,7 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
             .padding(.vertical)
             .padding(.horizontal)
             .padding(.bottom, 20)
+            .softUIShape(.rect(cornerRadius: 10))
         
         Spacer()
     }
