@@ -16,7 +16,7 @@ extension EnvironmentValues {
 extension View {
     
     /// Disables the padding defined by soft button style, allowing the user to customize the padding.
-    public func softButtonPaddingDisabled(_ disabled: Bool) -> some View {
+    public func softButtonPaddingDisabled(_ disabled: Bool = true) -> some View {
         environment(\.softButtonPaddingDisabled, disabled)
     }
     

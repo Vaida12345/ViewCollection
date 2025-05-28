@@ -1,8 +1,8 @@
 //
-//  MediaSlider.swift
+//  SoftSlider.swift
 //  ViewCollection
 //
-//  Created by Vaida on 12/2/24.
+//  Created by Vaida on 2025-05-28.
 //
 
 import SwiftUI
@@ -10,20 +10,12 @@ import Essentials
 import NativeImage
 
 
-/// A slider style that mimics iOS media playback.
-///
-/// ![Preview](MediaSlider)
-@available(iOS 17, *)
-@available(macOS 14, *)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
-@available(visionOS, unavailable)
-public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
+public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
     
     /// The absolute offset
-    var offset: Double {
+    private var offset: Double {
         initialOffset + (translation ?? 0)
     }
     
@@ -36,23 +28,16 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @State private var playsSensoryFeedback: Bool = false
     
-    let onDrag: (T) -> Void
+    private let onDrag: (T) -> Void
     
-    let range: ClosedRange<T>
+    private let range: ClosedRange<T>
     
-    let scale: T
+    private let scale: T
     
     
-#if os(iOS)
-    func gesture(size: CGSize) -> some Gesture {
+    private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                if translation == nil {
-                    withAnimation {
-                        backgroundHeight = 15
-                    }
-                }
-                
                 self.translation = value.translation.width
                 self.transactionUpdate(translation: translation, geometryWidth: size.width)
             }
@@ -61,25 +46,11 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                 self.translation = nil
                 playsSensoryFeedback = false
                 self.transactionUpdate(translation: 0, geometryWidth: size.width)
-                
-                withAnimation {
-                    backgroundHeight = 10
-                    reshape = CGSize(width: 1, height: 1)
-                }
             }
     }
-#else
-    func gesture(size: CGSize) -> some Gesture {
-        DragGesture(minimumDistance: 0)
-            .onChanged { value in
-                print(value.location.x, size.width)
-                self.normalized = clamp(value.location.x / size.width, min: 0, max: 1)
-            }
-    }
-#endif
     
     /// The normalized value within 0...1
-    var normalized: Double {
+    private var normalized: Double {
         get {
             Double((value - range.lowerBound) / scale)
         }
@@ -88,41 +59,25 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         }
     }
     
-    @State private var backgroundHeight: Double = 10
-    
-    var backgroundRadius: Double {
-        self.backgroundHeight / 2
+    private var backgroundHeight: Double {
+        15
     }
     
-#if os(iOS)
-    @State private var reshape = CGSize(width: 1, height: 1)
-#endif
+    private var backgroundRadius: Double {
+        self.backgroundHeight / 2
+    }
     
     
     public var body: some View {
         GeometryReader { geometry in
-#if os(iOS)
-            var reshapeOffset: Double {
-                let newWidth = geometry.size.width * reshape.width
-                if normalized == 0 {
-                    return -(newWidth - geometry.size.width)
-                } else {
-                    return (newWidth - geometry.size.width)
-                }
-            }
-#endif
             
             ZStack {
-                RoundedRectangle(cornerRadius: backgroundRadius)
-                    .fill(.ultraThinMaterial)
+                SoftInnerShadow()
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-#if os(iOS)
-                    .shadow(radius: 10)
-#endif
                 
                 Rectangle()
-                    .fill(.white)
+                    .fill(.background)
                     .frame(width: offset, height: backgroundHeight)
                     .position(x: offset / 2, y: geometry.size.height / 2)
                     .mask {
@@ -131,10 +86,6 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     }
             }
-#if os(iOS)
-            .offset(x: reshapeOffset)
-            .scaleEffect(reshape)
-#endif
             .gesture(gesture(size: geometry.size))
             .onChange(of: value) { oldValue, newValue in
                 if translation == nil {
@@ -149,23 +100,15 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             }
         }
         .frame(height: backgroundHeight)
-#if os(iOS)
-        .environment(\.colorScheme, .light)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
             (newValue == 0 || newValue == 1) && translation != nil // ensure it is user initialized.
         }
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
         }
-#else
-        .transformEnvironment(\.colorScheme) {
-            $0 = $0 == .dark ? .light : .dark
-        }
-#endif
         .frame(height: 15)
     }
     
-#if os(iOS)
     private func transactionUpdate(translation: Double?, geometryWidth: Double) {
         guard let translation else { return }
         let delta = translation / geometryWidth
@@ -173,17 +116,10 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         if (self.normalized == 0 && raw < 0) || (self.normalized == 1 && raw > 1) {
             playsSensoryFeedback = true
         }
-        self.normalized = clamp(raw, min: 0, max: 1)
-        onDrag(value)
-        
-        // handle overflow
-        if raw < 0 || raw > 1 {
-            let normal = abs(tanh(raw > 1 ? raw - 1 : raw))
-            self.reshape = CGSize(width: 1 + normal * 0.1, height: 1)
-            self.backgroundHeight = clamp(15 - normal * 15, min: 4)
-        }
+        let normalized = clamp(raw, min: 0, max: 1)
+        onDrag(T(normalized) * scale + range.lowerBound)
+        self.normalized = normalized
     }
-#endif
     
     func updateFrom(value: T, width: Double) {
         let normal = Double((value - range.lowerBound) / scale)
@@ -199,17 +135,16 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
 }
 
 
-#if os(iOS) || os(macOS)
 #Preview {
     @Previewable @State var value: Double = 0
     
     VStack {
-        Spacer()
-        
-        MediaSlider(value: $value, in: 0...2)
+        SoftSlider(value: $value, in: 0...2)
             .padding(.vertical)
             .padding(.horizontal)
             .padding(.bottom, 20)
+        
+        Spacer()
     }
+    .background(Color.soft.main)
 }
-#endif
