@@ -10,14 +10,14 @@ import ViewCollection
 
 
 /// The inner shadows building block.
-internal struct SoftInnerShadow: View {
+public struct SoftInnerShadow: View {
     
     @Environment(\.softUIShape) private var shape
     @Environment(\.softUIShadowRadius) private var radius
     
     let foregroundColor: Color
     
-    var body: some View {
+    public var body: some View {
         ZStack {
             MeshGradient(
                 width: 2,
@@ -45,7 +45,7 @@ internal struct SoftInnerShadow: View {
     }
     
     
-    init(foregroundColor: Color = .soft.main) {
+    public init(foregroundColor: Color = .soft.main) {
         self.foregroundColor = foregroundColor
     }
     
