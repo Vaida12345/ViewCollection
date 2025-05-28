@@ -27,6 +27,9 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
         
         configuration.label
             .foregroundColor(Color.soft.secondary)
+            .fontWeight(.medium)
+            .fontDesign(.rounded)
+            .padding()
             .animation(.spring) {
                 $0.opacity(phaseMultiplier)
             }
@@ -83,7 +86,6 @@ extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
                 }
             } label: {
                 Text("Hit Me!")
-                    .padding()
             }
             .buttonStyle(.soft(shape: .capsule))
             .padding()
@@ -93,7 +95,6 @@ extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
                     
                 } label: {
                     Text("Secondary")
-                        .padding()
                 }
                 .buttonStyle(.soft(shape: .capsule).animated())
                 .transitionPhaseExposing()
