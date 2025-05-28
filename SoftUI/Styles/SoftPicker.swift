@@ -9,13 +9,15 @@ import SwiftUI
 import ViewCollection
 
 
-public struct SoftPicker<SelectionValue: Hashable>: View {
+public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
     
     @Binding private var selection: SelectionValue
     
     private let options: [SelectionValue]
     
     @Environment(\.softUIShape) private var shape
+    
+    let label: (_ option: SelectionValue) -> Label
     
     
     public var body: some View {
@@ -36,7 +38,7 @@ public struct SoftPicker<SelectionValue: Hashable>: View {
                         Button {
                             selection = option
                         } label: {
-                            Text("\(option)")
+                            label(option)
                                 .frame(width: selectionWidth, height: 30)
                                 .foregroundStyle(Color.soft.secondary)
                                 .fontWeight(.medium)
@@ -51,14 +53,42 @@ public struct SoftPicker<SelectionValue: Hashable>: View {
         .frame(height: 30)
     }
     
-    public init(selection: Binding<SelectionValue>, options: [SelectionValue]) {
+    public init(
+        selection: Binding<SelectionValue>,
+        options: [SelectionValue],
+        @ViewBuilder label: @escaping (_ option: SelectionValue) -> Label
+    ) {
         self._selection = selection
         self.options = options
+        self.label = label
     }
     
-    public init(selection: Binding<SelectionValue>) where SelectionValue: CaseIterable {
+    public init(
+        selection: Binding<SelectionValue>,
+        @ViewBuilder label: @escaping (_ option: SelectionValue) -> Label
+    ) where SelectionValue: CaseIterable {
         self._selection = selection
         self.options = Array(SelectionValue.allCases)
+        self.label = label
+    }
+    
+    public init(
+        selection: Binding<SelectionValue>,
+        options: [SelectionValue],
+        @ViewBuilder label: @escaping (_ option: SelectionValue) -> Label = { (option: SelectionValue) in Text("\(option)") }
+    ) where Label == Text {
+        self._selection = selection
+        self.options = options
+        self.label = label
+    }
+    
+    public init(
+        selection: Binding<SelectionValue>,
+        @ViewBuilder label: @escaping (_ option: SelectionValue) -> Label = { (option: SelectionValue) in Text("\(option)") }
+    ) where SelectionValue: CaseIterable, Label == Text {
+        self._selection = selection
+        self.options = Array(SelectionValue.allCases)
+        self.label = label
     }
     
 }
@@ -67,8 +97,10 @@ public struct SoftPicker<SelectionValue: Hashable>: View {
 #Preview {
     @Previewable @State var selection = 1
     
-    SoftPicker(selection: $selection, options: [1, 2, 3, 4])
-        .padding()
-        .background(Color.soft.main.ignoresSafeArea())
+    SoftPicker(selection: $selection, options: [1, 2, 3, 4]) {
+        Text("\($0)++")
+    }
+    .padding()
+    .background(Color.soft.main.ignoresSafeArea())
 }
 
