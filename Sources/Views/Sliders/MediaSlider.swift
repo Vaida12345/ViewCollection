@@ -23,7 +23,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     @Binding var value: T
     
     /// The absolute offset
-    var offset: Double {
+    private var offset: Double {
         initialOffset + (translation ?? 0)
     }
     
@@ -36,15 +36,16 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @State private var playsSensoryFeedback: Bool = false
     
-    let onDrag: (T) -> Void
+    private let onDrag: (T) -> Void
+    private let onEnd: (T) -> Void
     
-    let range: ClosedRange<T>
+    private let range: ClosedRange<T>
     
-    let scale: T
+    private let scale: T
     
     
 #if os(iOS)
-    func gesture(size: CGSize) -> some Gesture {
+    private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 if translation == nil {
@@ -61,6 +62,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
                 self.translation = nil
                 playsSensoryFeedback = false
                 self.transactionUpdate(translation: 0, geometryWidth: size.width)
+                onEnd(self.value)
                 
                 withAnimation {
                     backgroundHeight = 10
@@ -69,17 +71,20 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
             }
     }
 #else
-    func gesture(size: CGSize) -> some Gesture {
+    private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 print(value.location.x, size.width)
                 self.normalized = clamp(value.location.x / size.width, min: 0, max: 1)
             }
+            .onEnded { _ in
+                onEnd(self.value)
+            }
     }
 #endif
     
     /// The normalized value within 0...1
-    var normalized: Double {
+    private var normalized: Double {
         get {
             Double((value - range.lowerBound) / scale)
         }
@@ -90,7 +95,7 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     
     @State private var backgroundHeight: Double = 10
     
-    var backgroundRadius: Double {
+    private var backgroundRadius: Double {
         self.backgroundHeight / 2
     }
     
@@ -185,16 +190,22 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     }
 #endif
     
-    func updateFrom(value: T, width: Double) {
+    private func updateFrom(value: T, width: Double) {
         let normal = Double((value - range.lowerBound) / scale)
         self.initialOffset = clamp(normal, min: 0, max: 1) * width
     }
     
-    public init(value: Binding<T>, in range: ClosedRange<T> = 0...1, onDrag: @escaping (T) -> Void = { _ in }) {
+    public init(
+        value: Binding<T>,
+        in range: ClosedRange<T> = 0...1,
+        onDrag: @escaping (T) -> Void = { _ in },
+        onEnd: @escaping (T) -> Void = { _ in }
+    ) {
         self._value = value
         self.range = range
         self.scale = range.upperBound - range.lowerBound
         self.onDrag = onDrag
+        self.onEnd = onEnd
     }
 }
 
