@@ -162,12 +162,13 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
         }
+        .frame(height: 15)
 #else
         .transformEnvironment(\.colorScheme) {
             $0 = $0 == .dark ? .light : .dark
         }
+        .frame(height: 10)
 #endif
-        .frame(height: 15)
     }
     
 #if os(iOS)
