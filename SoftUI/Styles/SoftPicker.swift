@@ -9,18 +9,18 @@ import SwiftUI
 import ViewCollection
 
 
-public struct SoftPicker<SelectionValue: Hashable, S: Shape>: View {
+public struct SoftPicker<SelectionValue: Hashable>: View {
     
     @Binding private var selection: SelectionValue
     
     private let options: [SelectionValue]
     
-    private let shape: S
+    @Environment(\.softUIShape) private var shape
     
     
     public var body: some View {
         ZStack(alignment: .leading) {
-            SoftInnerShadow(shape: shape)
+            SoftInnerShadow()
             
             GeometryReader { geometry in
                 let selectionWidth = geometry.size.width / Double(options.count)
@@ -28,7 +28,8 @@ public struct SoftPicker<SelectionValue: Hashable, S: Shape>: View {
                 shape
                     .frame(width: selectionWidth, height: 30)
                     .offset(x: selectionWidth * Double(options.firstIndex(of: selection) ?? 0))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(.background)
+                    .animation(.spring, value: selection)
                 
                 HStack(spacing: 0) {
                     ForEach(options, id: \.self) { option in
@@ -50,10 +51,14 @@ public struct SoftPicker<SelectionValue: Hashable, S: Shape>: View {
         .frame(height: 30)
     }
     
-    public init(selection: Binding<SelectionValue>, options: [SelectionValue], shape: S) {
+    public init(selection: Binding<SelectionValue>, options: [SelectionValue]) {
         self._selection = selection
         self.options = options
-        self.shape = shape
+    }
+    
+    public init(selection: Binding<SelectionValue>) where SelectionValue: CaseIterable {
+        self._selection = selection
+        self.options = Array(SelectionValue.allCases)
     }
     
 }
@@ -62,7 +67,7 @@ public struct SoftPicker<SelectionValue: Hashable, S: Shape>: View {
 #Preview {
     @Previewable @State var selection = 1
     
-    SoftPicker(selection: $selection.animation(), options: [1, 2, 3, 4], shape: .rect(cornerRadius: 10))
+    SoftPicker(selection: $selection, options: [1, 2, 3, 4])
         .padding()
         .background(Color.soft.main.ignoresSafeArea())
 }

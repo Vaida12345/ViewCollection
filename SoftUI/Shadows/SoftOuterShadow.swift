@@ -10,10 +10,9 @@ import ViewCollection
 
 
 /// The inner shadows building block.
-internal struct SoftOuterShadow<S: Shape>: View {
+internal struct SoftOuterShadow: View {
     
-    let shape: S
-    
+    @Environment(\.softUIShape) private var shape
     @Environment(\.softUIShadowRadius) private var radius
     
     let foregroundColor: Color
@@ -33,8 +32,7 @@ internal struct SoftOuterShadow<S: Shape>: View {
     }
     
     
-    init(shape: S, foregroundColor: Color = .soft.main) {
-        self.shape = shape
+    init(foregroundColor: Color = .soft.main) {
         self.foregroundColor = foregroundColor
     }
     
@@ -46,7 +44,6 @@ internal struct SoftOuterShadow<S: Shape>: View {
         Color.soft.main.ignoresSafeArea(.all)
         
         SoftOuterShadow(
-            shape: RoundedRectangle(cornerRadius: 10),
             foregroundColor: .blue
         )
         .frame(width: 120, height: 40)

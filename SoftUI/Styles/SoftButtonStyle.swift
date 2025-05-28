@@ -9,13 +9,13 @@ import SwiftUI
 import ViewCollection
 
 
-public struct SoftButtonStyle<S: Shape>: ButtonStyle {
+public struct SoftButtonStyle: ButtonStyle {
     
-    let shape: S
     let isAnimated: Bool
     
     @Environment(\.isEnabled) private var isEnabled: Bool
     @Environment(\.transitionPhase) private var transitionPhase
+    @Environment(\.softUIShape) private var shape
     
     var phaseMultiplier: Double {
         guard let transitionPhase else { return isAnimated ? 0 : 1 }
@@ -34,7 +34,7 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
                 $0.opacity(phaseMultiplier)
             }
             .background {
-                SoftOuterShadow(shape: shape)
+                SoftOuterShadow()
                     .softShadowRadius(radius)
                     .transaction { transaction in
                         if configuration.isPressed {
@@ -57,17 +57,17 @@ public struct SoftButtonStyle<S: Shape>: ButtonStyle {
     /// >     .transitionPhaseExposing()
     /// > ```
     public func animated(_ animated: Bool = true) -> SoftButtonStyle {
-        SoftButtonStyle(shape: shape, isAnimated: animated)
+        SoftButtonStyle(isAnimated: animated)
     }
     
 }
 
 
-extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
+extension ButtonStyle where Self == SoftButtonStyle {
     
     /// A Soft UI style button
-    public static func soft<S: Shape>(shape: S) -> SoftButtonStyle<S> {
-        SoftButtonStyle(shape: shape, isAnimated: false)
+    public static var soft: SoftButtonStyle {
+        SoftButtonStyle(isAnimated: false)
     }
     
 }
@@ -87,7 +87,7 @@ extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
             } label: {
                 Text("Hit Me!")
             }
-            .buttonStyle(.soft(shape: .capsule))
+            .buttonStyle(.soft)
             .padding()
             
             if showSecondary {
@@ -96,7 +96,7 @@ extension ButtonStyle where Self == SoftButtonStyle<AnyShape> {
                 } label: {
                     Text("Secondary")
                 }
-                .buttonStyle(.soft(shape: .capsule).animated())
+                .buttonStyle(.soft.animated())
                 .transitionPhaseExposing()
                 
                 Spacer()

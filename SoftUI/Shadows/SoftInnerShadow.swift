@@ -10,10 +10,9 @@ import ViewCollection
 
 
 /// The inner shadows building block.
-internal struct SoftInnerShadow<S: Shape>: View {
+internal struct SoftInnerShadow: View {
     
-    let shape: S
-    
+    @Environment(\.softUIShape) private var shape
     @Environment(\.softUIShadowRadius) private var radius
     
     let foregroundColor: Color
@@ -46,8 +45,7 @@ internal struct SoftInnerShadow<S: Shape>: View {
     }
     
     
-    init(shape: S, foregroundColor: Color = .soft.main) {
-        self.shape = shape
+    init(foregroundColor: Color = .soft.main) {
         self.foregroundColor = foregroundColor
     }
     
@@ -55,13 +53,13 @@ internal struct SoftInnerShadow<S: Shape>: View {
 
 
 #Preview {
-    @Previewable @State var progress = 0.0
+    @Previewable @State var progress = 1.0
     
     ZStack {
         Color.soft.main.ignoresSafeArea(.all)
         
         VStack {
-            SoftInnerShadow(shape: RoundedRectangle(cornerRadius: 10))
+            SoftInnerShadow()
                 .frame(width: 120, height: 30)
                 .softShadowRadius(4 * progress)
             

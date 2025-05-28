@@ -8,9 +8,7 @@
 import SwiftUI
 
 
-public struct SoftToggleStyle<S: Shape>: ToggleStyle {
-    
-    let shape: S
+public struct SoftToggleStyle: ToggleStyle {
     
     let foregroundColor: Color
     
@@ -34,7 +32,6 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
                         configuration.label
                             .foregroundStyle(Color.soft.secondary)
                     }
-                    .padding()
                 }
                 
             case .fill:
@@ -46,7 +43,7 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
                 }
             }
         }
-        .buttonStyle(.soft(shape: shape).animated(isAnimated))
+        .buttonStyle(.soft.animated(isAnimated))
     }
     
     
@@ -59,7 +56,7 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     /// >     .transitionPhaseExposing()
     /// > ```
     public func animated(_ animated: Bool = true) -> SoftToggleStyle {
-        SoftToggleStyle(style: style, shape: shape, foregroundColor: foregroundColor, isAnimated: animated)
+        SoftToggleStyle(style: style, foregroundColor: foregroundColor, isAnimated: animated)
     }
     
     
@@ -71,9 +68,8 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
     }
     
     
-    init(style: Style, shape: S, foregroundColor: Color = .accentColor, isAnimated: Bool = false) {
+    init(style: Style, foregroundColor: Color = .accentColor, isAnimated: Bool = false) {
         self.style = style
-        self.shape = shape
         self.foregroundColor = foregroundColor
         self.isAnimated = isAnimated
     }
@@ -81,11 +77,16 @@ public struct SoftToggleStyle<S: Shape>: ToggleStyle {
 }
 
 
-extension ToggleStyle where Self == SoftToggleStyle<AnyShape> {
+extension ToggleStyle where Self == SoftToggleStyle {
     
     /// A Soft UI style toggle.
-    public static func soft<S: Shape>(_ style: SoftToggleStyle<S>.Style, shape: S, foregroundColor: Color = .accentColor) -> SoftToggleStyle<S> {
-        SoftToggleStyle(style: style, shape: shape, foregroundColor: foregroundColor)
+    public static var soft: SoftToggleStyle {
+        soft(.fill)
+    }
+    
+    /// A Soft UI style toggle.
+    public static func soft(_ style: SoftToggleStyle.Style, foregroundColor: Color = .accentColor) -> SoftToggleStyle {
+        SoftToggleStyle(style: style, foregroundColor: foregroundColor)
     }
     
 }
@@ -99,9 +100,7 @@ extension ToggleStyle where Self == SoftToggleStyle<AnyShape> {
         
         Toggle(isOn: $state) {
             Image(systemName: "car")
-                .padding()
         }
-        .toggleStyle(.soft(.fill, shape: .rect(cornerRadius: 10)))
+        .toggleStyle(.soft(.indicator))
     }
-    .colorScheme(.light)
 }

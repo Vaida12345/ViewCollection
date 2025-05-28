@@ -13,6 +13,7 @@ public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
     @Environment(\.transitionPhase) private var transitionPhase
+    @Environment(\.softUIShape) private var shape
     
     let isAnimated: Bool
     
@@ -25,14 +26,13 @@ public struct SoftProgressStyle: ProgressViewStyle {
     public func makeBody(configuration: Configuration) -> some View {
         GeometryReader { geometry in
             ZStack {
-                SoftInnerShadow(shape: Capsule())
+                SoftInnerShadow()
                 
                 let maxWidth = geometry.size.width - progressPadding * 2
                 let minWidth = geometry.size.height - progressPadding * 2
                 
                 if let fractionCompleted = configuration.fractionCompleted {
                     SoftOuterShadow(
-                        shape: Capsule(),
                         foregroundColor: foregroundColor
                     )
                     .padding(.trailing, maxWidth - linear(fractionCompleted, domain: 1, min: minWidth, max: maxWidth))
@@ -75,6 +75,11 @@ public struct SoftProgressStyle: ProgressViewStyle {
 extension ProgressViewStyle where Self == SoftProgressStyle {
     
     /// A Soft UI style progress view.
+    public static var soft: SoftProgressStyle {
+        soft()
+    }
+    
+    /// A Soft UI style progress view.
     public static func soft(foregroundColor: Color = .accentColor) -> SoftProgressStyle {
         SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: false)
     }
@@ -114,10 +119,11 @@ extension ProgressViewStyle where Self == SoftProgressStyle {
             Toggle(isOn: $showProgress) {
                 Text("Progress")
             }
-            .toggleStyle(.soft(.indicator, shape: .rect(cornerRadius: 10)))
+            .toggleStyle(.soft(.indicator))
         }
         .padding()
-        .progressViewStyle(.soft())
+        .progressViewStyle(.soft)
+        .softUIShape(.rect(cornerRadius: 10))
     }
     .colorScheme(.dark)
 }
