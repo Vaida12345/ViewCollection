@@ -15,7 +15,7 @@ extension EnvironmentValues {
 
 extension View {
     
-    func softShadowRadius(_ radius: Double?) -> some View {
+    public func softShadowRadius(_ radius: Double?) -> some View {
         environment(\.softUIShadowRadius, radius)
     }
     
