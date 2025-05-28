@@ -23,7 +23,7 @@ public struct HeavyProgressViewStyle: ProgressViewStyle {
 #endif
                 
                 if let offset = configuration.fractionCompleted.map({ geometry.size.width * $0 }) {
-                    Rectangle()
+                    Capsule()
                         .fill(.white)
                         .frame(width: offset, height: 10)
                         .position(x: offset / 2, y: geometry.size.height / 2)
