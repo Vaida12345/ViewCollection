@@ -39,7 +39,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
                 shape
                     .frame(width: selectionWidth, height: 30)
                     .offset(x: selectionWidth * Double(options.firstIndex(of: selection) ?? 0))
-                    .foregroundStyle(.background)
+                    .foregroundStyle(Color.soft.fill)
                     .animation(.spring, value: selection)
                 
                 HStack(spacing: 0) {
@@ -137,7 +137,11 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
         
         SoftPicker(selection: $phase, options: [0, 1])
         .padding()
+        
+        Spacer()
     }
+    .padding()
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(Color.soft.main.ignoresSafeArea())
 }
 

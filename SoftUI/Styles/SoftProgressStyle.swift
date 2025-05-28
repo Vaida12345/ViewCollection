@@ -27,21 +27,21 @@ public struct SoftProgressStyle: ProgressViewStyle {
             ZStack {
                 SoftInnerShadow()
                 
-                let maxWidth = geometry.size.width - progressPadding * 2
-                let minWidth = geometry.size.height - progressPadding * 2
-                
                 if let fractionCompleted = configuration.fractionCompleted {
-                    SoftOuterShadow(
-                        foregroundColor: foregroundColor
-                    )
-                    .padding(.trailing, maxWidth - linear(fractionCompleted, domain: 1, min: minWidth, max: maxWidth))
-                    .padding(.all, progressPadding)
+                    Capsule()
+                        .fill(Color.soft.fill)
+                        .frame(width: geometry.size.width * fractionCompleted)
+                        .frame(width: geometry.size.width, alignment: .leading)
+                        .mask {
+                            Capsule()
+                        }
+                        .animation(.spring, value: fractionCompleted)
                 }
             }
-            .softShadowRadius(radius * phaseMultiplier)
+            .softShadowRadius(4 * phaseMultiplier)
             .animation(.default, value: phaseMultiplier)
         }
-        .frame(maxHeight: 30)
+        .frame(maxHeight: 20)
     }
     
     /// Indicates that transitions should be shown on view appear.
@@ -54,18 +54,6 @@ public struct SoftProgressStyle: ProgressViewStyle {
     /// > ```
     public func animated(_ animated: Bool = true) -> SoftProgressStyle {
         SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: animated)
-    }
-    
-    
-    var progressPadding: CGFloat {
-        radius * 2
-    }
-    
-    let radius: Double = 4
-    
-    private func linear(_ x: Double, domain: Double, min: Double, max: Double) -> Double {
-        let gradient = (max - min) / domain
-        return min + gradient * x
     }
     
 }
@@ -104,14 +92,7 @@ extension ProgressViewStyle where Self == SoftProgressStyle {
             
             ProgressView(value: 0)
             
-            KeyframeAnimator(initialValue: 0.0, repeating: true) { value in
-                ProgressView(value: value)
-            } keyframes: { _ in
-                KeyframeTrack(\.self) {
-                    LinearKeyframe(1.0, duration: 5)
-                    LinearKeyframe(0, duration: 5)
-                }
-            }
+            ProgressView(value: showProgress ? 0 : 1)
             
             ProgressView(value: 1)
             

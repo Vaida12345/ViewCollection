@@ -35,8 +35,6 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
     
     private let scale: T
     
-    @Environment(\.softUIShape) private var shape
-    
     
     private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
@@ -78,13 +76,14 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
                 SoftInnerShadow()
                     .frame(height: backgroundHeight)
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
+                    .softUIShape(.capsule)
                 
-                shape
-                    .fill(.background)
+                Capsule()
+                    .fill(Color.soft.fill)
                     .frame(width: offset, height: backgroundHeight)
                     .position(x: offset / 2, y: geometry.size.height / 2)
                     .mask {
-                        shape
+                        Capsule()
                             .frame(height: backgroundHeight)
                             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                     }
@@ -109,7 +108,7 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
         }
-        .frame(height: 15)
+        .frame(height: 20)
     }
     
     private func transactionUpdate(
@@ -160,7 +159,6 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
             .padding(.vertical)
             .padding(.horizontal)
             .padding(.bottom, 20)
-            .softUIShape(.rect(cornerRadius: 10))
         
         Spacer()
     }

@@ -37,6 +37,15 @@ extension Color {
             }
         }
         
+        /// The fill color, differentiated from the main color
+        public static var fill: Color {
+            Color {
+                Color(red: 0.96, green: 0.96, blue: 0.96)
+            } dark: {
+                Color(red: 0.15, green: 0.15, blue: 0.15)
+            }
+        }
+        
         /// The light shadow
         public static var lightShadow: Color {
             Color {
