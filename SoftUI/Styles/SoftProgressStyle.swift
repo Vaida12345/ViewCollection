@@ -13,6 +13,7 @@ public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
     @Environment(\.transitionPhase) private var transitionPhase
+    @Environment(\.softUIShadowRadius) private var softUIShadowRadius
     
     let isAnimated: Bool
     
@@ -38,7 +39,7 @@ public struct SoftProgressStyle: ProgressViewStyle {
                         .animation(.spring, value: fractionCompleted)
                 }
             }
-            .softShadowRadius(4 * phaseMultiplier)
+            .softShadowRadius((softUIShadowRadius ?? 4) * phaseMultiplier)
             .animation(.default, value: phaseMultiplier)
         }
         .frame(maxHeight: 20)

@@ -16,6 +16,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
     private let options: [SelectionValue]
     
     @Environment(\.softUIShape) private var shape
+    @Environment(\.softUIShadowRadius) private var softUIShadowRadius
     
     let label: (_ option: SelectionValue) -> Label
     
@@ -31,7 +32,7 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
     public var body: some View {
         ZStack(alignment: .leading) {
             SoftInnerShadow()
-                .softShadowRadius(4 * phaseMultiplier)
+                .softShadowRadius((softUIShadowRadius ?? 4) * phaseMultiplier)
             
             GeometryReader { geometry in
                 let selectionWidth = geometry.size.width / Double(options.count)

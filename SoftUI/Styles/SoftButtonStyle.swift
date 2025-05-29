@@ -15,6 +15,7 @@ public struct SoftButtonStyle: ButtonStyle {
     
     @Environment(\.isEnabled) private var isEnabled: Bool
     @Environment(\.softButtonPaddingDisabled) private var softButtonPaddingDisabled
+    @Environment(\.softUIShadowRadius) private var softUIShadowRadius
     
     @Environment(\.transitionPhase) private var transitionPhase
     var phaseMultiplier: Double {
@@ -23,7 +24,7 @@ public struct SoftButtonStyle: ButtonStyle {
     }
     
     public func makeBody(configuration: Configuration) -> some View {
-        let radius = (!isEnabled ? 2 : configuration.isPressed ? 1.0 : 4) * phaseMultiplier
+        let radius = (!isEnabled ? 2 : configuration.isPressed ? 1 : softUIShadowRadius ?? 4) * phaseMultiplier
         
         configuration.label
             .foregroundColor(Color.soft.secondary)
