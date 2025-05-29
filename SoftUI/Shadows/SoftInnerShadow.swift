@@ -10,6 +10,14 @@ import ViewCollection
 
 
 /// The inner shadows building block.
+///
+/// ```swift
+/// SoftInnerShadow()
+///     .frame(width: 120, height: 30)
+///     .softShadowRadius(4 * progress)
+/// ```
+///
+/// ![Preview](SoftInnerShadow)
 public struct SoftInnerShadow: View {
     
     @Environment(\.softUIShape) private var shape
@@ -62,9 +70,27 @@ public struct SoftInnerShadow: View {
             SoftInnerShadow()
                 .frame(width: 120, height: 30)
                 .softShadowRadius(4 * progress)
-            
-            Slider(value: $progress)
         }
     }
     .colorScheme(.dark)
+}
+
+
+#Preview {
+    @Previewable @State var value = 0.25
+    
+    HStack {
+        ProgressView(value: value)
+            .progressViewStyle(.soft)
+            .padding()
+        
+        Toggle(isOn: .constant(true)) {
+            Image(systemName: "plus")
+        }
+        .toggleStyle(.soft)
+        .padding()
+    }
+    .softUIShape(.rect(cornerRadius: 10))
+    .padding()
+    .background(Color.soft.main)
 }

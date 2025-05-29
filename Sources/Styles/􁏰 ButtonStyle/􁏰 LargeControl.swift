@@ -8,6 +8,9 @@
 import SwiftUI
 
 
+/// The style that brings forward the label.
+///
+/// ![Preview](LargeControlButtonStyle)
 public struct LargeControlButtonStyle: ButtonStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
@@ -30,7 +33,9 @@ public struct LargeControlButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == LargeControlButtonStyle {
     
-    /// A large control button style.
+    /// The style that brings forward the label.
+    ///
+    /// ![Preview](LargeControlButtonStyle)
     public static var largeControl: LargeControlButtonStyle {
         LargeControlButtonStyle()
     }
@@ -45,7 +50,7 @@ extension ButtonStyle where Self == LargeControlButtonStyle {
         Image(systemName: "play")
             .resizable()
             .aspectRatio(contentMode: .fit)
-            .frame(width: 40)
+            .frame(width: 30)
     }
     .buttonStyle(.largeControl)
     .padding()

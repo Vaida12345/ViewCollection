@@ -9,7 +9,16 @@ import SwiftUI
 import ViewCollection
 
 
-/// The inner shadows building block.
+/// The outer shadows building modifier.
+///
+/// Unlike ``SoftOuterShadow``, this modifier does not have a background shape.
+///
+/// ```swift
+/// Image(systemName: "play.fill")
+///     .modifier(SoftOuterShadowBackground())
+/// ```
+/// 
+/// ![Preview](SoftOuterShadowBackground)
 public struct SoftOuterShadowBackground: ViewModifier {
     
     @Environment(\.softUIShape) private var shape

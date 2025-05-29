@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-
+/// A Soft UI style toggle.
+///
+/// ![Preview](SoftToggleStyle)
 public struct SoftToggleStyle: ToggleStyle {
     
     let foregroundColor: Color
@@ -80,11 +82,15 @@ public struct SoftToggleStyle: ToggleStyle {
 extension ToggleStyle where Self == SoftToggleStyle {
     
     /// A Soft UI style toggle.
+    ///
+    /// ![Preview](SoftToggleStyle)
     public static var soft: SoftToggleStyle {
         soft(.fill)
     }
     
     /// A Soft UI style toggle.
+    ///
+    /// ![Preview](SoftToggleStyle)
     public static func soft(_ style: SoftToggleStyle.Style, foregroundColor: Color = .accentColor) -> SoftToggleStyle {
         SoftToggleStyle(style: style, foregroundColor: foregroundColor)
     }
@@ -101,6 +107,7 @@ extension ToggleStyle where Self == SoftToggleStyle {
         Toggle(isOn: $state) {
             Image(systemName: "car")
         }
-        .toggleStyle(.soft(.indicator))
+        .toggleStyle(.soft(.fill))
+        .softUIShape(.rect(cornerRadius: 10))
     }
 }

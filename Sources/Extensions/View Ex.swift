@@ -78,22 +78,6 @@ public extension View {
 }
 
 
-public extension View {
-    
-    
-    /// Updates the hovering state of cursor to `state`.
-    @inlinable
-    func onHover(_ state: Binding<Bool>, animation: Animation = .default.speed(2)) -> some View {
-        self.onHover { hover in
-            withAnimation(animation) {
-                state.wrappedValue = hover
-            }
-        }
-    }
-    
-}
-
-
 extension View {
     
     /// Calls `action(date)` every `interval` seconds for as long as this view is in the hierarchy.

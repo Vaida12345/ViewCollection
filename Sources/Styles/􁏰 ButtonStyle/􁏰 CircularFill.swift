@@ -8,12 +8,17 @@
 import SwiftUI
 
 
+/// A circular button style.
+///
+/// The button material is always the opposite of foregroundColor.
+///
+/// ![preview](floatingSheet)
 @available(iOS 17, *)
 @available(visionOS 1, *)
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
-public struct CircularButtonStyle: ButtonStyle {
+public struct CircularFillButtonStyle: ButtonStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -39,20 +44,25 @@ public struct CircularButtonStyle: ButtonStyle {
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
-extension ButtonStyle where Self == CircularButtonStyle {
+extension ButtonStyle where Self == CircularFillButtonStyle {
     
     /// A circular button style.
     ///
     /// The button material is always the opposite of foregroundColor.
     ///
     /// ![preview](floatingSheet)
+    @available(*, deprecated, renamed: "circularFill")
+    public static var circular: CircularFillButtonStyle {
+        CircularFillButtonStyle()
+    }
+    
+    /// A circular button style.
     ///
-    /// ## Topics
+    /// The button material is always the opposite of foregroundColor.
     ///
-    /// ### Returned Style
-    /// - ``CircularButtonStyle``
-    public static var circular: CircularButtonStyle {
-        CircularButtonStyle()
+    /// ![preview](floatingSheet)
+    public static var circularFill: CircularFillButtonStyle {
+        CircularFillButtonStyle()
     }
     
 }

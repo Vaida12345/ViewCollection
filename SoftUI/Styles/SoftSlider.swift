@@ -10,6 +10,9 @@ import Essentials
 import NativeImage
 
 
+/// A slider with SoftUI style
+///
+/// ![Preview](SoftProgressStyle)
 public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
     
     @Binding var value: T
@@ -152,9 +155,11 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
 
 
 #Preview {
-    @Previewable @State var value: Double = 0
+    @Previewable @State var value: Double = 0.5
     
     VStack {
+        Spacer()
+        
         SoftSlider(value: $value, in: 0...2)
             .padding(.vertical)
             .padding(.horizontal)

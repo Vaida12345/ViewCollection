@@ -9,6 +9,20 @@
 import SwiftUI
 
 
+/// macOS explicit manager for `NSWindow`.
+///
+/// ## Topics
+/// ### Open Windows
+/// - ``open(title:view:styleMask:initialSize:hiding:undoManager:)``
+/// - ``openPanel(title:view:initialSize:undoManager:)``
+///
+/// ### Properties
+/// - ``window``
+///
+/// ### Inheritance
+/// - ``windowWillClose(_:)``
+/// - ``windowDidResignKey(_:)``
+/// - ``windowWillReturnUndoManager(_:)``
 public final class WindowManager: NSObject, NSWindowDelegate {
     
     /// The underlying window.
@@ -30,7 +44,6 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
     ///   - hiding: Choose which window buttons to hide.
     ///   - undoManager: The undo manager associated with the resulting window.
-    ///   - titleVisibility: A value that indicates the visibility of the window’s title and title bar buttons.
     ///
     /// - Warning: The window won’t appear correctly if neither `initialSize` nor SwiftUI size constraints are set.
     ///

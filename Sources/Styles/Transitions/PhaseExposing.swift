@@ -54,5 +54,10 @@ extension View {
 
 
 extension EnvironmentValues {
+    /// Transition phase of the the view.
+    ///
+    /// This value is non-`nil` when the parent exposes the phase by ``SwiftUICore/View/transitionPhaseExposing()``, or by explicitly setting this environment value.
+    ///
+    /// Child views can observe this value to draw desired transitions.
     @Entry public var transitionPhase: TransitionPhase?
 }

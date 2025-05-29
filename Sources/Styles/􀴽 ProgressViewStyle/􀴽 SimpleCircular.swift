@@ -23,11 +23,6 @@ public struct SimpleCircularProgressViewStyle: ProgressViewStyle {
 extension ProgressViewStyle where Self == SimpleCircularProgressViewStyle {
     
     /// A simple circular progress style, without labels.
-    ///
-    /// ## Topics
-    ///
-    /// ### Returned Style
-    /// - ``SimpleCircularProgressViewStyle``
     @available(*, deprecated, renamed: "circular()", message: "Please use `circular()` instead.")
     public static var simpleCircular: SimpleCircularProgressViewStyle {
         SimpleCircularProgressViewStyle()

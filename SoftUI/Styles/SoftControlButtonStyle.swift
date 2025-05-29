@@ -9,6 +9,9 @@ import SwiftUI
 import ViewCollection
 
 
+/// A Soft style that brings forward the button
+///
+/// ![Preview](SoftControlButtonStyle)
 public struct SoftControlButtonStyle: ButtonStyle {
     
     let isAnimated: Bool
@@ -65,7 +68,9 @@ public struct SoftControlButtonStyle: ButtonStyle {
 
 extension ButtonStyle where Self == SoftControlButtonStyle {
     
-    /// A Soft UI style button
+    /// A Soft style that brings forward the button
+    ///
+    /// ![Preview](SoftControlButtonStyle)
     public static var softControl: SoftControlButtonStyle {
         SoftControlButtonStyle(isAnimated: false)
     }

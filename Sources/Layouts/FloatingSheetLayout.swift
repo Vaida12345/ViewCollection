@@ -92,6 +92,11 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
 
 
 /// The layout constrains.
+@available(iOS 18, *)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
 public enum DimensionConstrain {
     /// Specifies a fixed length.
     case fixed(CGFloat)

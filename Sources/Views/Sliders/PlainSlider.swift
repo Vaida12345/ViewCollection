@@ -10,6 +10,8 @@ import Essentials
 
 
 /// A plain slider designed for macOS.
+///
+/// ![Preview](PlainSlider)
 @available(macOS 14.0, *)
 @available(iOS, unavailable)
 @available(tvOS, unavailable)
@@ -110,5 +112,6 @@ private extension Color {
     PlainSlider(value: $value, in: 0...2)
         .frame(width: 200, height: 10)
         .padding(.vertical)
+        .padding()
 }
 #endif

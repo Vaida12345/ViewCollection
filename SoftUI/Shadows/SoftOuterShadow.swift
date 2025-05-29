@@ -9,7 +9,15 @@ import SwiftUI
 import ViewCollection
 
 
-/// The inner shadows building block.
+/// The outer shadows building block.
+///
+/// ```swift
+/// Text("12345")
+///     .padding()
+///     .background(SoftOuterShadow())
+/// ```
+///
+/// ![Preview](SoftOuterShadow)
 public struct SoftOuterShadow: View {
     
     @Environment(\.softUIShape) private var shape
@@ -45,8 +53,8 @@ public struct SoftOuterShadow: View {
         
         Text("12345")
             .padding()
+            .padding(.horizontal)
             .background(SoftOuterShadow())
-            .frame(width: 120, height: 40)
     }
     .colorScheme(.dark)
 }

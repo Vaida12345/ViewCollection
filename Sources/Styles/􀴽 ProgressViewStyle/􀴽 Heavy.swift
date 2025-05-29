@@ -10,6 +10,8 @@ import SwiftUI
 
 
 /// A simple default progress view styles, showing only the `fractionCompleted`.
+///
+/// ![Preview](MediaSlider)
 public struct HeavyProgressViewStyle: ProgressViewStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
@@ -49,10 +51,7 @@ extension ProgressViewStyle where Self == HeavyProgressViewStyle {
     
     /// A heavy progress style, without labels.
     ///
-    /// ## Topics
-    ///
-    /// ### Returned Style
-    /// - ``HeavyProgressViewStyle``
+    /// ![Preview](MediaSlider)
     public static var heavy: HeavyProgressViewStyle {
         HeavyProgressViewStyle()
     }
@@ -66,8 +65,6 @@ extension ProgressViewStyle where Self == HeavyProgressViewStyle {
     VStack {
         ProgressView(value: progress)
             .progressViewStyle(.heavy)
-        
-        Slider(value: $progress)
     }
     .padding()
 }

@@ -8,6 +8,9 @@
 import SwiftUI
 
 
+/// A bordered wide button style for iOS
+///
+/// ![Preview](WideBorderedButtonStyle)
 @available(iOS 17, *)
 @available(macOS 14, *)
 @available(visionOS 1, *)
@@ -84,10 +87,7 @@ extension ButtonStyle where Self == WideBorderedButtonStyle {
     
     /// A large button style, designed for macOS.
     ///
-    /// ## Topics
-    ///
-    /// ### Returned Style
-    /// - ``WideBorderedButtonStyle``
+    /// ![Preview](WideBorderedButtonStyle)
     public static var borderedWide: WideBorderedButtonStyle {
         WideBorderedButtonStyle()
     }
@@ -108,6 +108,7 @@ extension ButtonStyle where Self == WideBorderedButtonStyle {
     Button("Hell o", role: .destructive) {
         
     }
+    .buttonStyle(.borderedWide)
     .padding()
 }
 #endif

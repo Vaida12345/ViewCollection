@@ -6,7 +6,6 @@
 //  Copyright © 2019 - 2024 Vaida. All rights reserved.
 //
 
-#if os(iOS)
 import Foundation
 import SwiftUI
 import NativeImage
@@ -52,19 +51,26 @@ import NativeImage
 /// ```
 ///
 /// ![Example View](imagePreviewView)
+@available(iOS, introduced: 18.0)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
 public struct ImagePreviewView: View {
     
-    private let image: UIImage
+    private let image: NativeImage
     
     private let onDelete: (() -> Void)?
     
     private let nameSpace: Namespace.ID
     
+#if os(iOS)
     @StateObject private var scrollCoordinator: ScrollController.Coordinator
+#endif
     
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
-    
+#if os(iOS)
     private var imageView: some View {
         ScrollController(image: image, coordinator: scrollCoordinator)
             .ignoresSafeArea()
@@ -72,11 +78,14 @@ public struct ImagePreviewView: View {
             .matchedGeometryEffect(id: ImagePreviewView.nameSpaceID, in: nameSpace)
             .matchedGeometryEffect(id: "ImagePreviewView.imageView", in: nameSpace)
     }
+#endif
     
     private var controls: some View {
         Group {
             Button {
+#if os(iOS)
                 scrollCoordinator.onReturn()
+#endif
             } label: {
                 Label("Return", systemImage: "arrow.down")
                     .padding(.horizontal)
@@ -93,9 +102,11 @@ public struct ImagePreviewView: View {
                     }
             }
             .matchedGeometryEffect(id: "ImagePreviewView.controls.return", in: nameSpace)
+#if os(iOS)
             .onChange(of: scrollCoordinator.zoomScale) { oldValue, newValue in
                 print(newValue)
             }
+#endif
             
             if let onDelete {
                 Button {
@@ -121,14 +132,18 @@ public struct ImagePreviewView: View {
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
         .transition(.offset(y: 100).combined(with: .opacity).combined(with: .scale))
+#if os(iOS)
         .opacity(0.25 + (1 - scrollCoordinator.swapProgress) * 0.75)
+#endif
     }
     
     
     public var body: some View {
         ZStack(alignment: verticalSizeClass == .regular ? .bottom : .trailing) {
+#if os(iOS)
             imageView
                 .zIndex(-1)
+#endif
             
             let layout = verticalSizeClass == .regular ? AnyLayout(EqualWidthHStack(spacing: 25)) : AnyLayout(EqualWidthVStack(spacing: 25))
             
@@ -138,14 +153,18 @@ public struct ImagePreviewView: View {
             .padding(.all, 5)
         }
         .animation(.interpolatingSpring, value: verticalSizeClass)
+#if os(iOS)
         .onSwipe(to: .bottom, progress: $scrollCoordinator.swapProgress, disabled: scrollCoordinator.zoomScale != 1) {
             scrollCoordinator.onReturn()
         }
+#endif
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background {
             Rectangle()
                 .fill(.regularMaterial)
+#if os(iOS)
                 .opacity(0.5 + (1 - scrollCoordinator.swapProgress) * 0.5)
+#endif
                 .ignoresSafeArea()
         }
     }
@@ -158,11 +177,13 @@ public struct ImagePreviewView: View {
     ///   - onReturn: The handler when the preview should be dismissed.
     ///   - onDelete: The optional handler when the `image` should be deleted
     ///   - nameSpace: The namespace containing ``ImagePreviewView/nameSpaceID``. Used for smooth transition.
-    public init(image: UIImage, nameSpace: Namespace.ID, onReturn: @escaping () -> Void, onDelete: (() -> Void)? = nil) {
+    public init(image: NativeImage, nameSpace: Namespace.ID, onReturn: @escaping () -> Void, onDelete: (() -> Void)? = nil) {
         self.image = image
         self.nameSpace = nameSpace
         self.onDelete = onDelete
+#if os(iOS)
         self._scrollCoordinator = StateObject(wrappedValue: .init(onReturn: onReturn))
+#endif
     }
 
     
@@ -171,7 +192,7 @@ public struct ImagePreviewView: View {
     /// The ID can be used inside `matchedGeometryEffect` to provide a smooth transition of image.
     public static let nameSpaceID = "ImagePreviewView.image"
     
-    
+#if os(iOS)
     private struct ScrollController: UIViewRepresentable {
         
         private let image: UIImage
@@ -266,9 +287,11 @@ public struct ImagePreviewView: View {
         }
         
     }
+#endif
     
 }
 
+#if os(iOS)
 #Preview {
     @Previewable @State var showImage = true
     

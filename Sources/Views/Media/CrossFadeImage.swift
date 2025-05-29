@@ -52,5 +52,4 @@ public struct CrossFadeImage: View {
         self._lowerImage = State(initialValue: image)
         self.upperImage = upperImage
     }
-    
 }

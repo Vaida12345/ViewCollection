@@ -9,6 +9,7 @@ import Essentials
 import SwiftUI
 
 
+/// A Soft UI style progress view.
 public struct SoftProgressStyle: ProgressViewStyle {
     
     let foregroundColor: Color
@@ -63,11 +64,15 @@ public struct SoftProgressStyle: ProgressViewStyle {
 extension ProgressViewStyle where Self == SoftProgressStyle {
     
     /// A Soft UI style progress view.
+    ///
+    /// ![Preview](SoftProgressStyle)
     public static var soft: SoftProgressStyle {
         soft()
     }
     
     /// A Soft UI style progress view.
+    ///
+    /// ![Preview](SoftProgressStyle)
     public static func soft(foregroundColor: Color = .accentColor) -> SoftProgressStyle {
         SoftProgressStyle(foregroundColor: foregroundColor, isAnimated: false)
     }
@@ -91,16 +96,16 @@ extension ProgressViewStyle where Self == SoftProgressStyle {
                     .hidden()
             }
             
-            ProgressView(value: 0)
+            ProgressView(value: 0.25)
             
-            ProgressView(value: showProgress ? 0 : 1)
-            
-            ProgressView(value: 1)
-            
-            Toggle(isOn: $showProgress) {
-                Text("Progress")
-            }
-            .toggleStyle(.soft(.indicator))
+//            ProgressView(value: showProgress ? 0 : 1)
+//            
+//            ProgressView(value: 1)
+//            
+//            Toggle(isOn: $showProgress) {
+//                Text("Progress")
+//            }
+//            .toggleStyle(.soft(.indicator))
         }
         .padding()
         .progressViewStyle(.soft)

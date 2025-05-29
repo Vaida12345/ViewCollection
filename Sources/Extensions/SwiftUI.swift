@@ -108,6 +108,9 @@ extension Color: Codable {
 
 extension Color: @retroactive Animatable {
     
+    /// The components of the color.
+    ///
+    /// Layout in `[red, green, blue, alpha]`.
     public var components: [Double] {
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
         let color = NSColor(self).usingColorSpace(.displayP3)!
@@ -133,8 +136,8 @@ extension Color: @retroactive Animatable {
 
 extension Color: @retroactive Identifiable {
     
-    public var id: String {
-        self.description
+    public var id: [Double] {
+        self.components
     }
     
 }

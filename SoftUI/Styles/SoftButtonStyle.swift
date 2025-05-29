@@ -9,6 +9,9 @@ import SwiftUI
 import ViewCollection
 
 
+/// A Soft UI style button
+///
+/// ![Preview](SoftButtonStyle)
 public struct SoftButtonStyle: ButtonStyle {
     
     let isAnimated: Bool
@@ -67,6 +70,8 @@ public struct SoftButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == SoftButtonStyle {
     
     /// A Soft UI style button
+    ///
+    /// ![Preview](SoftButtonStyle)
     public static var soft: SoftButtonStyle {
         SoftButtonStyle(isAnimated: false)
     }
@@ -81,12 +86,15 @@ extension ButtonStyle where Self == SoftButtonStyle {
         Color.soft.main.ignoresSafeArea(.all)
         
         VStack {
+            Spacer()
+            
             Button {
                 withAnimation {
                     showSecondary.toggle()
                 }
             } label: {
                 Text("Hit Me!")
+                    .padding(.horizontal)
             }
             .buttonStyle(.soft)
             .padding()

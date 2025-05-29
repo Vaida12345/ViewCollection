@@ -10,6 +10,8 @@ import SwiftUI
 import CoreHaptics
 
 /// The large button style with the haptic feedback on iOS.
+///
+/// ![Preview](LargeCapsuleButtonStyle)
 @available(iOS 17, *)
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
@@ -104,12 +106,16 @@ public struct LargeCapsuleButtonStyle: ButtonStyle {
 @available(visionOS, unavailable)
 extension ButtonStyle where Self == LargeCapsuleButtonStyle {
     
-    /// A large button style, designed for iPhones.
+    /// The large button style with the haptic feedback on iOS.
     ///
-    /// ## Topics
+    /// ![Preview](LargeCapsuleButtonStyle)
+    public static var largeCapsule: LargeCapsuleButtonStyle {
+        largeCapsule()
+    }
+    
+    /// The large button style with the haptic feedback on iOS.
     ///
-    /// ### Returned Style
-    /// - ``LargeCapsuleButtonStyle``
+    /// ![Preview](LargeCapsuleButtonStyle)
     public static func largeCapsule(color: Color? = nil) -> LargeCapsuleButtonStyle {
         LargeCapsuleButtonStyle(color: color)
     }

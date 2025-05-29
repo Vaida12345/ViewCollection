@@ -9,6 +9,9 @@ import SwiftUI
 import ViewCollection
 
 
+/// A Soft styled picker.
+///
+/// ![Preview](SoftPicker)
 public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
     
     @Binding private var selection: SelectionValue

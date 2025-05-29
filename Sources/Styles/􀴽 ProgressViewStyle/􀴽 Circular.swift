@@ -128,6 +128,8 @@ extension ProgressViewStyle where Self == CircularProgressViewStyle {
     ///
     /// This style draws the arc when the `fractionCompleted` is none `nil`.
     ///
+    /// ![Preview](CircularProgressTrack)
+    ///
     /// - Parameters:
     ///   - color: The primary color.
     ///   - checkmarkOnCompletion: Whether to show a check mark when `fractionCompleted` is 100%.
