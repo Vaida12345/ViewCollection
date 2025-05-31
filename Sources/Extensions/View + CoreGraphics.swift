@@ -11,11 +11,11 @@ import CoreGraphics
 
 extension View {
     
-    public func frame(_ size: CGSize, alignment: Alignment) -> some View {
+    public func frame(_ size: CGSize, alignment: Alignment = .center) -> some View {
         self.frame(width: size.width, height: size.height, alignment: alignment)
     }
     
-    public func frame(_ frame: CGRect, alignment: Alignment) -> some View {
+    public func frame(_ frame: CGRect, alignment: Alignment = .center) -> some View {
         self
             .position(frame.origin)
             .frame(frame.size, alignment: alignment)
