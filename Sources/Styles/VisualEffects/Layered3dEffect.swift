@@ -17,9 +17,11 @@ import SwiftUI
 /// ```
 ///
 /// ![Preview](Layered3dEffectView)
-public struct Layered3dEffectView: View {
+public struct Layered3dEffectView<Content: View>: View {
     
-    let image: () -> Image
+    let content: () -> Content
+    let background: [Color]?
+    
     
     public var body: some View {
         ZStack {
@@ -33,10 +35,10 @@ public struct Layered3dEffectView: View {
                             .offset(x: geometry.size.width * 0.23 * CGFloat(i), y: -geometry.size.height * 0.13 * CGFloat(i))
                             .offset(x: -geometry.size.width * 0.34, y: geometry.size.width * 0.2)
                     }
+                    .foregroundStyle(background?.element(at: i - 1).map({ AnyShapeStyle($0) }) ?? AnyShapeStyle(.secondary))
             }
             
-            image()
-                .resizable()
+            content()
                 .aspectRatio(contentMode: .fit)
                 .visualEffect { content, geometry in
                     content
@@ -49,9 +51,26 @@ public struct Layered3dEffectView: View {
         }
     }
     
+    public func backgroundStyle(_ first: Color, _ second: Color, third: Color) -> Layered3dEffectView {
+        Layered3dEffectView(content: self.content, background: [first, second, third])
+    }
     
-    public init(image: @escaping () -> Image) {
-        self.image = image
+    
+    internal init(content: @escaping () -> Content, background: [Color]? = nil) {
+        self.content = content
+        self.background = background
+    }
+    
+    public init(image: @escaping () -> Image) where Content == Image {
+        self.content = {
+            image().resizable()
+        }
+        self.background = nil
+    }
+    
+    public init(content: @escaping () -> Content) {
+        self.content = content
+        self.background = nil
     }
     
 }
@@ -75,7 +94,9 @@ extension VisualEffect {
     Layered3dEffectView {
         Image(systemName: "square.text.square.fill")
     }
+    .backgroundStyle(.blue, .yellow, third: .brown)
     .padding(.horizontal, 100)
     .offset(y: 100)
+    .foregroundStyle(.blue)
 }
 
