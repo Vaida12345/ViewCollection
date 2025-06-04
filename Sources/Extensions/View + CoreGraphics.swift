@@ -46,6 +46,29 @@ extension View {
             .position(rect.center)
     }
     
+    /// Positions this view at the specified rect in its parent's coordinate space.
+    ///
+    /// This view uses the same coordinate plane as in `CoreGraphics`, with the origin located at the top left corner.
+    ///
+    /// ```swift
+    /// ZStack {
+    ///     DebugGridView()
+    ///     Rectangle()
+    ///         .frame(CGRect(x: 10, y: 10, width: 20, height: 20))
+    /// }
+    /// .frame(width: 100, height: 100)
+    /// ```
+    ///
+    /// ![Preview](frame)
+    ///
+    /// - Parameters:
+    ///   - rect: The rect position containing the view.
+    ///   - alignment: The alignment of this view inside `rect`.
+    public func frame(origin: CGPoint, size: CGSize, alignment: Alignment = .center) -> some View {
+        self
+            .frame(CGRect(origin: origin, size: size))
+    }
+    
 }
 
 
