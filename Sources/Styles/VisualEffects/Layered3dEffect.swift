@@ -51,7 +51,7 @@ public struct Layered3dEffectView<Content: View>: View {
         }
     }
     
-    public func backgroundStyle(_ first: Color, _ second: Color, third: Color) -> Layered3dEffectView {
+    public func backgroundStyle(_ first: Color, _ second: Color, _ third: Color) -> Layered3dEffectView {
         Layered3dEffectView(content: self.content, background: [first, second, third])
     }
     
@@ -94,7 +94,7 @@ extension VisualEffect {
     Layered3dEffectView {
         Image(systemName: "square.text.square.fill")
     }
-    .backgroundStyle(.blue, .yellow, third: .brown)
+    .backgroundStyle(.blue, .yellow, .brown)
     .padding(.horizontal, 100)
     .offset(y: 100)
     .foregroundStyle(.blue)
