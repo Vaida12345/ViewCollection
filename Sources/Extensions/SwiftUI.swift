@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import Matrix
+import simd
 
 
 // MARK: - SwiftUI Convenience Initializers
@@ -111,7 +111,8 @@ extension Color: @retroactive Animatable {
     /// The components of the color.
     ///
     /// Layout in `[red, green, blue, alpha]`.
-    public var components: [Double] {
+    @inlinable
+    public var components: SIMD4<Double> {
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
         let color = NSColor(self).usingColorSpace(.displayP3)!
         return [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent]
@@ -122,9 +123,9 @@ extension Color: @retroactive Animatable {
     }
     
     @inlinable
-    public var animatableData: Vector<Double> {
+    public var animatableData: SIMD4<Double> {
         get {
-            Vector(self.components)
+            self.components
         }
         set(newValue) {
             self = .init(.displayP3, red: newValue[0], green: newValue[1], blue: newValue[2], opacity: newValue[3])
@@ -134,9 +135,24 @@ extension Color: @retroactive Animatable {
 }
 
 
+extension SIMD4: @retroactive AdditiveArithmetic, @retroactive VectorArithmetic where Scalar == Double {
+    
+    @inlinable
+    public mutating func scale(by rhs: Double) {
+        self *= rhs
+    }
+    
+    @inlinable
+    public var magnitudeSquared: Double {
+        simd_dot(self, self)
+    }
+    
+}
+
+
 extension Color: @retroactive Identifiable {
     
-    public var id: [Double] {
+    public var id: SIMD4<Double> {
         self.components
     }
     

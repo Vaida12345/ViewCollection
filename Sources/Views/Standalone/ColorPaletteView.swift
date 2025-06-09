@@ -191,13 +191,7 @@ public struct ColorPaletteView: View {
 private extension Color {
     
     func isEqual(to color: Color) -> Bool {
-        let lhs =  self.animatableData
-        let rhs = color.animatableData
-        for i in 0..<lhs.count {
-            guard abs(lhs[i] - rhs[i]) <= 0.1 else { return false }
-        }
-        
-        return true
+        self.components == color.components
     }
     
 }
