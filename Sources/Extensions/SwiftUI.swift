@@ -118,7 +118,7 @@ extension Color: @retroactive Animatable {
         return [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent]
 #elseif canImport(UIKit)
         let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
-        return color.components!.map { Double($0) }
+        return SIMD4<Double>(color.components!.map(Double.init))
 #endif
     }
     
