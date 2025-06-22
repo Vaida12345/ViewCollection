@@ -74,7 +74,7 @@ extension ButtonStyle where Self == CircularFillButtonStyle {
     } label: {
         Image(systemName: "xmark")
     }
-    .buttonStyle(.circular)
+    .buttonStyle(.circularFill)
     .padding()
 }
 #endif

@@ -205,3 +205,13 @@ extension EnvironmentValues {
     }
     
 }
+
+
+extension LocalizedStringKey.StringInterpolation {
+    
+    /// Append a localized subject.
+    public mutating func appendInterpolation(_ subject: some CustomLocalizedStringResourceConvertible) {
+        self.appendInterpolation(subject.localizedStringResource)
+    }
+    
+}
