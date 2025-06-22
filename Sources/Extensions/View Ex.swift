@@ -58,6 +58,22 @@ public extension Picker {
         }
     }
     
+    /// Initialize a picker with a `CaseIterable` enumeration, whose rawValue is string.
+    ///
+    /// - Remark: The set of options that builds a `ForEach` view are generated from `allCases`.
+    ///
+    /// - Parameters:
+    ///   - title: A localized string key that describes the purpose of selecting an option.
+    ///   - selection: A binding to a property that determines the currently-selected option.
+    @inlinable
+    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>) where SelectionValue: CustomLocalizedStringResourceConvertible, SelectionValue: CaseIterable, Label == Text, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
+        self.init(title, selection: selection) {
+            ForEach(SelectionValue.allCases, id: \.self) {
+                Text("\($0)")
+            }
+        }
+    }
+    
 }
 
 
