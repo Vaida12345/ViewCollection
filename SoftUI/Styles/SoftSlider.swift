@@ -105,12 +105,14 @@ public struct SoftSlider<T>: View where T: BinaryFloatingPoint {
             }
         }
         .frame(height: backgroundHeight)
+#if !os(visionOS)
         .sensoryFeedback(.selection, trigger: normalized) { _, newValue in
             (newValue == 0 || newValue == 1) && translation != nil // ensure it is user initialized.
         }
         .sensoryFeedback(.selection, trigger: playsSensoryFeedback) { _, newValue in
             newValue
         }
+#endif
         .frame(height: 20)
     }
     

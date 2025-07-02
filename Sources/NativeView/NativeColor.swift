@@ -31,13 +31,11 @@ extension NativeColor {
         self.getRed(&firstComponents.red, green: &firstComponents.green, blue: &firstComponents.blue, alpha: &firstComponents.alpha)
         color.getRed(&secondComponents.red, green: &secondComponents.green, blue: &secondComponents.blue, alpha: &secondComponents.alpha)
         
-        let blendAlpha = (1 - fraction) * firstComponents.alpha + fraction * secondComponents.alpha
-        
         return NativeColor(
             red: (1 - fraction) * firstComponents.red + fraction * secondComponents.red,
             green: (1 - fraction) * firstComponents.green + fraction * secondComponents.green,
             blue: (1 - fraction) * firstComponents.blue + fraction * secondComponents.blue,
-            alpha: blendAlpha
+            alpha: (1 - fraction) * firstComponents.alpha + fraction * secondComponents.alpha
         )
     }
 }

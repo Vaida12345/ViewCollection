@@ -46,9 +46,11 @@ public struct SoftControlButtonStyle: ButtonStyle {
                 }
             }
             .animation(.spring, value: radius)
+#if !os(visionOS)
             .sensoryFeedback(trigger: configuration.isPressed) { oldValue, newValue in
                     .impact(flexibility: .soft, intensity: newValue ? 1.0 : 0.7)
             }
+#endif
     }
     
     /// Indicates that transitions should be shown on view appear.

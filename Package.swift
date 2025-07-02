@@ -17,6 +17,7 @@ let package = Package (
         .package(url: "https://www.github.com/Vaida12345/Essentials", from: "1.0.44"),
     ], targets: [
         .target(name: "ViewCollection", dependencies: ["NativeImage", "FinderItem", "Essentials"], path: "Sources"),
-        .target(name: "SoftUI", dependencies: ["ViewCollection"], path: "SoftUI")
+        .target(name: "SoftUI", dependencies: ["ViewCollection"], path: "SoftUI"),
+        .testTarget(name: "Tests", dependencies: ["ViewCollection"], path: "Tests")
     ]
 )

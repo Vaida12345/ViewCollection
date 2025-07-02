@@ -56,8 +56,10 @@ public struct CheckMarkView: View {
                 )
             )
         }
+#if !os(visionOS)
         .sensoryFeedback(.impact(flexibility: .solid, intensity: 0.9), trigger: initialFeedback)
         .sensoryFeedback(.impact(flexibility: .soft, intensity: 0.9), trigger: secondaryFeedback)
+#endif
         .task {
             initialFeedback.toggle()
             withAnimation(.easeInOut(duration: 0.5)) {
