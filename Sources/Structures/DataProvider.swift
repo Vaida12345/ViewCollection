@@ -9,6 +9,7 @@
 import Foundation
 import FinderItem
 import SwiftUI
+import OSLog
 
 
 /// The provider for the main storable workflow of data.
@@ -85,6 +86,8 @@ extension DataProvider {
         do {
             return try Self.init(at: Self.storageLocation, format: .plist)
         } catch {
+            let logger = Logger(subsystem: "DataProvider", category: "load()")
+            logger.error("Failed to load previous data provider state at \(Self.storageLocation): \(error)")
             return Self.init()
         }
     }
