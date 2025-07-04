@@ -69,7 +69,16 @@ extension DataProvider {
     /// The path indicating the location where this ``DataProvider`` is persisted on disk.
     @inlinable
     public static var storageLocation: FinderItem {
-        .homeDirectory/"Library/Application Support/DataProviders/\(Self.self).plist"
+        var homeDirectory: FinderItem = .homeDirectory
+#if os(macOS)
+        if homeDirectory.path.wholeMatch(of: #//Users/\w+/#) == nil {
+            // non-sandboxed
+            guard let identifier = Bundle.main.bundleIdentifier else { preconditionFailure("Cannot infer a storage location for a non-sandboxed app without a bundle identifier, please provide one manually.") }
+            homeDirectory = homeDirectory/"Library/Containers/\(identifier)/Data/"
+        }
+#endif
+        let location = homeDirectory/"Library/Application Support/DataProviders/\(Self.self).plist"
+        return location
     }
     
     /// Save the encoded provider to ``storageLocation`` using `.plist`.
