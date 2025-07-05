@@ -31,6 +31,18 @@ extension Defaults {
             self.defaultValue = defaultValue
         }
         
+        /// Initialize a new defaults key.
+        ///
+        /// - Parameters:
+        ///   - identifier: The identifier for the given key.
+        ///
+        /// - Warning: You need to ensure the `identifier` is used uniquely. `preconditionError` will be thrown if the type associated with a key is unexpected.
+        @inlinable
+        public init(_ identifier: String) where Value: ExpressibleByNilLiteral {
+            self.identifier = identifier
+            self.defaultValue = nil
+        }
+        
     }
     
 }
