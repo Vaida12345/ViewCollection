@@ -31,7 +31,7 @@ public struct AsyncDrawnImage: View {
         switch self.source {
         case .image(let cgImage):
             source = cgImage
-        case .generator(let generator):
+        case .cgImage(let generator):
             source = await generator()
         }
         guard let source else { return nil }
@@ -136,7 +136,7 @@ public struct AsyncDrawnImage: View {
     ///   - generator: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(generator: @escaping @Sendable () async -> CGImage?, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: .generator(generator), cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .cgImage(generator), cornerRadius: 0)
     }
     
     public func cornerRadius(_ radius: CGFloat) -> AsyncDrawnImage {
@@ -150,7 +150,7 @@ public struct AsyncDrawnImage: View {
     
     private enum Source {
         case image(CGImage)
-        case generator(@Sendable () async -> CGImage?)
+        case cgImage(@Sendable () async -> CGImage?)
     }
     
 }
