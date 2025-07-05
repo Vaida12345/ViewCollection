@@ -21,7 +21,7 @@ import Foundation
 ///
 /// Then, you can access the value stored in `UserDefaults` via
 /// ```swift
-/// Defaults.<#identifier#>
+/// Defaults.standard.<#identifier#>
 /// ```
 ///
 /// ## Integration with SwiftUI
@@ -32,12 +32,24 @@ import Foundation
 @dynamicMemberLookup
 public struct Defaults {
     
-    @inlinable
-    public static subscript<T>(dynamicMember keyPath: KeyPath<Defaults.Key<Void>, Defaults.Key<T>>) -> T {
+    private let userDefaults: UserDefaults
+    
+    /// A global instance of `Defaults` configured to search the current application's search list.
+    public static var standard: Defaults {
+        Defaults(userDefaults: .standard)
+    }
+    
+    /// Creates a user defaults object initialized with the defaults for the specified database name.
+    public static func suite(name: String) -> Defaults? {
+        guard let userDefaults = UserDefaults(suiteName: name) else { return nil }
+        return Defaults(userDefaults: userDefaults)
+    }
+    
+    public subscript<T>(dynamicMember keyPath: KeyPath<Defaults.Key<Void>, Defaults.Key<T>>) -> T {
         get {
             let key = Key("", default: ())[keyPath: keyPath]
             
-            let object = UserDefaults.standard.object(forKey: key.identifier)
+            let object = userDefaults.object(forKey: key.identifier)
             if object == nil { return key.defaultValue }
             
             guard let value = object as? T else {
@@ -49,7 +61,7 @@ public struct Defaults {
         set {
             let key = Key("", default: ())[keyPath: keyPath]
             
-            UserDefaults.standard.set(newValue, forKey: key.identifier)
+            userDefaults.set(newValue, forKey: key.identifier)
         }
     }
 }
