@@ -26,23 +26,27 @@ extension KeyChain {
             try await self.query(account: self.identifier)
         }
         
+        /// Persist the given data to keyChain service.
         @inlinable
         public func get() async throws -> Value where Value == Data {
             try await self.getData()
         }
         
+        /// Persist the given data to keyChain service.
         @inlinable
         public func get() async throws -> Value where Value == String {
             let data = try await self.getData()
             return String(data: data, encoding: .utf8)!
         }
         
+        /// Persist the given data to keyChain service.
         @inlinable
         public func get() async throws -> Value where Value == Int {
             let data = try await self.getData()
             return Int(data: data)
         }
         
+        /// Persist the given data to keyChain service.
         @inlinable
         public func get() async throws -> Value where Value: RawRepresentable, Value.RawValue == String {
             let data = try await self.getData()
@@ -50,6 +54,7 @@ extension KeyChain {
             return Value(rawValue: string)!
         }
         
+        /// Persist the given data to keyChain service.
         @inlinable
         public func get() async throws -> Value where Value: RawRepresentable, Value.RawValue == Int {
             let data = try await self.getData()
@@ -63,27 +68,31 @@ extension KeyChain {
             try await self.persist(data, account: self.identifier)
         }
         
-        
+        /// Query the first match of given account and identifier.
         @inlinable
         public func set(_ value: Value) async throws where Value == Data {
             try await self.set(data: value)
         }
         
+        /// Query the first match of given account and identifier.
         @inlinable
         public func set(_ value: Value) async throws where Value == String {
             try await self.set(data: value.data(using: .utf8)!)
         }
         
+        /// Query the first match of given account and identifier.
         @inlinable
         public func set(_ value: Value) async throws where Value == Int {
             try await self.set(data: value.data)
         }
         
+        /// Query the first match of given account and identifier.
         @inlinable
         public func set(_ value: Value) async throws where Value: RawRepresentable, Value.RawValue == String {
             try await self.set(data: value.rawValue.data(using: .utf8)!)
         }
         
+        /// Query the first match of given account and identifier.
         @inlinable
         public func set(_ value: Value) async throws where Value: RawRepresentable, Value.RawValue == Int {
             try await self.set(data: value.rawValue.data)
