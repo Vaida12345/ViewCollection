@@ -5,7 +5,7 @@
 //  Created by Vaida on 4/3/25.
 //
 
-import SwiftUICore
+import SwiftUI
 import ViewCollection
 
 
