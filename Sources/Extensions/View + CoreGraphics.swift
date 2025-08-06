@@ -62,7 +62,8 @@ extension View {
     /// ![Preview](frame)
     ///
     /// - Parameters:
-    ///   - rect: The rect position containing the view.
+    ///   - origin: The position containing the view.
+    ///   - size: The size of the view.
     ///   - alignment: The alignment of this view inside `rect`.
     public func frame(origin: CGPoint, size: CGSize, alignment: Alignment = .center) -> some View {
         self
