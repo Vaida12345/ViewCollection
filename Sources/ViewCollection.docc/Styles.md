@@ -17,11 +17,15 @@
 - ``SwiftUI/ButtonStyle/largeCapsule``
 - ``SwiftUI/ButtonStyle/largeCapsule(color:)``
 
+### ToggleStyles
+- ``SwiftUI/ToggleStyle/checkmark``
+
 ### Slider Styles
 - ``MediaSlider``
 - ``PlainSlider``
 
 ### Style Symbols
+Definitions for style structures.
 - <doc:StylesSymbols>
 
 ### Deprecated

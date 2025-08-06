@@ -8,6 +8,18 @@
 import SwiftUI
 
 
+/// A grid for debugging purposes.
+/// 
+/// ```swift
+/// ZStack {
+///     DebugGridView()
+///     Rectangle()
+///         .frame(CGRect(x: 10, y: 10, width: 20, height: 20))
+/// }
+/// .frame(width: 100, height: 100)
+/// ```
+///
+/// ![Preview](frame)
 public struct DebugGridView: View {
     
     private let stride: Int

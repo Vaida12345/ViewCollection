@@ -17,5 +17,9 @@
 - ``ColorPaletteView``
 - ``ImagePreviewView``
 
+### Special Views
+- ``Layered3dEffectView``
+- ``DebugGridView``
+
 ### Technology-Specific Views
 - ``DropHandlerView``

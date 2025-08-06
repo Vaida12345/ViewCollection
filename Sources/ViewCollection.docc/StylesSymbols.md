@@ -14,3 +14,6 @@
 - ``LargeCapsuleButtonStyle``
 - ``LargeControlButtonStyle``
 - ``WideBorderedButtonStyle``
+
+### ToggleStyle
+- ``CheckMarkToggleStyle``

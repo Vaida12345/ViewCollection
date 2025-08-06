@@ -8,6 +8,9 @@
 import SwiftUI
 
 
+/// The toggle style that shows a checkmark when selected.
+///
+/// ![Preview](checkmarkToggleStyle)
 public struct CheckMarkToggleStyle: ToggleStyle {
     
     public func makeBody(configuration: Configuration) -> some View {
@@ -34,7 +37,9 @@ public struct CheckMarkToggleStyle: ToggleStyle {
 
 extension ToggleStyle where Self == CheckMarkToggleStyle {
     
-    /// Checkmark style for list
+    /// The toggle style that shows a checkmark when selected.
+    ///
+    /// ![Preview](checkmarkToggleStyle)
     public static var checkmark: CheckMarkToggleStyle {
         CheckMarkToggleStyle()
     }
