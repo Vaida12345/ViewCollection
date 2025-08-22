@@ -83,7 +83,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         var systemName: String {
             switch self {
             case .open: "arrow.up.right.square"
-            case .reveal: "document.viewfinder"
+            case .reveal: "document.viewfinder.fill"
             }
         }
         
@@ -107,7 +107,6 @@ public struct DefaultLaunchDocumentLabel: View {
     
     public var body: some View {
         Label(action.title, systemImage: action.systemName)
-            .symbolVariant(.fill)
     }
 }
 
