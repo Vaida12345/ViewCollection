@@ -5,6 +5,7 @@
 //  Created by Vaida on 2025-08-22.
 //
 
+#if canImport(AppKit) && !targetEnvironment(macCatalyst)
 import SwiftUI
 import FinderItem
 import Essentials
@@ -114,3 +115,4 @@ public struct DefaultLaunchDocumentLabel: View {
 #Preview {
     LaunchDocumentButton(.open, item: .homeDirectory)
 }
+#endif
