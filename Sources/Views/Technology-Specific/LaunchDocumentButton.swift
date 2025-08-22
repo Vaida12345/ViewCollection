@@ -90,9 +90,9 @@ public struct LaunchDocumentButton<Label: View>: View {
         func help(name: String) -> LocalizedStringKey {
             switch self {
             case .reveal:
-                "Reveal *\(name)* in Finder"
+                "Reveal \(name) in Finder"
             case .open:
-                "Open *\(name)*"
+                "Open \(name)"
             }
         }
         
