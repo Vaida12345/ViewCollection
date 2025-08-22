@@ -44,6 +44,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         } label: {
             label
         }
+        .help(action.help(name: item.name))
     }
     
     
@@ -72,7 +73,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         case open
         
         
-        var title: String {
+        var title: LocalizedStringKey {
             switch self {
             case .open: "Open"
             case .reveal: "Reveal"
@@ -83,6 +84,15 @@ public struct LaunchDocumentButton<Label: View>: View {
             switch self {
             case .open: "arrow.up.right.square"
             case .reveal: "document.viewfinder"
+            }
+        }
+        
+        func help(name: String) -> LocalizedStringKey {
+            switch self {
+            case .reveal:
+                "Reveal *\(name)* in Finder"
+            case .open:
+                "Open *\(name)*"
             }
         }
         
