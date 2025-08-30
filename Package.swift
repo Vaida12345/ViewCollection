@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package (
     name: "ViewCollection",
+    defaultLocalization: "en",
     platforms: [
         .macOS(.v15),
         .iOS(.v18),
