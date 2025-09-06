@@ -8,7 +8,7 @@
 import SwiftUI
 
 
-@available(iOS 18, *)
+@available(iOS, introduced: 18.0, deprecated: 26.0, message: "Use `presentationDetents` and `presentationCompactAdaptation` instead.")
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -21,6 +21,12 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
     @State private var contentSize = CGSize(width: 100, height: 100)
     @State private var containerSize = CGSize(width: 100, height: 100)
     @State private var safeAreaInsets = EdgeInsets()
+    var padding: CGSize {
+        CGSize(
+            width: (containerSize.width - contentSize.width) / 2,
+            height: (containerSize.height - contentSize.height) / 2
+        )
+    }
     
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     
@@ -28,11 +34,6 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
     func body(content: Content) -> some View {
         Group {
             if verticalSizeClass == .compact {
-                let padding = CGSize(
-                    width: (containerSize.width - contentSize.width) / 2,
-                    height: (containerSize.height - contentSize.height) / 2
-                )
-                
                 ZStack {
                     Color.clear
                         .onGeometryChange(for: CGSize.self, of: \.size) {
@@ -40,21 +41,8 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
                         }
                     
                     content
-                        .frame(
-                            width: horizontal?.fixed,
-                            height: vertical?.fixed
-                        )
-                        .frame(
-                            minWidth: horizontal?.min,
-                            maxWidth: horizontal?.max,
-                            minHeight: vertical?.min,
-                            maxHeight: vertical?.max
-                        )
-                        .onGeometryChange(for: CGSize.self, of: \.size) {
-                            self.contentSize = $1
-                        }
-                        .padding(.horizontal, horizontal?.padding(safeAreaInsets.leading, safeAreaInsets.trailing) ?? 0)
-                        .padding(.vertical, vertical?.padding(safeAreaInsets.top, safeAreaInsets.bottom) ?? 0)
+                        .modifier(FloatingSheetConditionalHorizontalLayoutModifier(horizontal: horizontal, contentSize: $contentSize, safeAreaInsets: safeAreaInsets))
+                        .modifier(FloatingSheetConditionalVerticalLayoutModifier(vertical: vertical, contentSize: $contentSize, safeAreaInsets: safeAreaInsets))
                         .presentationBackground {
                             Canvas { context, size in
                                 context.fill(
@@ -79,9 +67,73 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
     }
 }
 
+@available(iOS, introduced: 18.0, deprecated: 26.0)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
+private struct FloatingSheetConditionalHorizontalLayoutModifier: ViewModifier {
+    
+    let horizontal: DimensionConstrain?
+    
+    @Binding var contentSize: CGSize
+    let safeAreaInsets: EdgeInsets
+    
+    func body(content: Content) -> some View {
+        switch horizontal {
+        case .fixed(let width):
+            content.frame(width: width)
+                .onAppear { self.contentSize.width = width }
+        case .max(let width):
+            content.frame(maxWidth: width)
+                .onGeometryChange(for: CGFloat.self, of: \.size.width) { self.contentSize.width = $1 }
+        case .min(let width):
+            content.frame(minWidth: width)
+                .onGeometryChange(for: CGFloat.self, of: \.size.width) { self.contentSize.width = $1 }
+        case .padding:
+            content.padding(.horizontal, horizontal!.padding(safeAreaInsets.leading, safeAreaInsets.trailing)!)
+                .onGeometryChange(for: CGFloat.self, of: \.size.width) { self.contentSize.width = $1 }
+        case nil:
+            content
+        }
+    }
+}
+
+@available(iOS, introduced: 18.0, deprecated: 26.0)
+@available(macOS, unavailable)
+@available(tvOS, unavailable)
+@available(watchOS, unavailable)
+@available(visionOS, unavailable)
+private struct FloatingSheetConditionalVerticalLayoutModifier: ViewModifier {
+    
+    let vertical: DimensionConstrain?
+    
+    @Binding var contentSize: CGSize
+    let safeAreaInsets: EdgeInsets
+    
+    func body(content: Content) -> some View {
+        switch vertical {
+        case .fixed(let height):
+            content.frame(height: height)
+                .onAppear { self.contentSize.height = height }
+        case .max(let height):
+            content.frame(maxHeight: height)
+                .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
+        case .min(let height):
+            content.frame(maxHeight: height)
+                .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
+        case .padding:
+            content.padding(.vertical, vertical!.padding(safeAreaInsets.top, safeAreaInsets.bottom)!)
+                .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
+        case nil:
+            content
+        }
+    }
+}
+
 #if os(iOS)
 #Preview(traits: .landscapeLeft) {
-    Text("Content")
+    DebugGridView()
         .sheet(isPresented: .constant(true)) {
             Text("Sheet")
                 .floatingSheetLayout(horizontal: .max(500), vertical: .max(300))
@@ -92,7 +144,7 @@ private struct FloatingSheetLayoutModifier: ViewModifier {
 
 
 /// The layout constrains.
-@available(iOS 18, *)
+@available(iOS, introduced: 18.0, deprecated: 26.0)
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
@@ -114,37 +166,8 @@ public enum DimensionConstrain {
         .padding(padding, ignoresSafeArea: false)
     }
     
-    
-    fileprivate var fixed: CGFloat? {
-        switch self {
-        case .fixed(let value): value
-        default: nil
-        }
-    }
-    
-    fileprivate var max: CGFloat? {
-        switch self {
-        case .max(let value): value
-        default: nil
-        }
-    }
-    
-    fileprivate var min: CGFloat? {
-        switch self {
-        case .min(let value): value
-        default: nil
-        }
-    }
-    
-    fileprivate var padding: (CGFloat, ignoresSafeArea: Bool)? {
-        switch self {
-        case .padding(let value, let ignoresSafeArea): (value, ignoresSafeArea)
-        default: nil
-        }
-    }
-    
     fileprivate func padding(_ safeAreaInset1: CGFloat, _ safeAreaInset2: CGFloat) -> CGFloat? {
-        guard let (padding, ignoresSafeArea) = self.padding else { return nil }
+        guard case let .padding(padding, ignoresSafeArea) = self else { return nil }
         let inset: CGFloat = ignoresSafeArea ? 0 : Swift.max(safeAreaInset1, safeAreaInset2)
         return padding + inset
     }
@@ -167,12 +190,19 @@ extension View {
     ///
     /// - Warning: `presentationDetents` must support `large` when landscape, otherwise crash.
     ///
-    /// - Bug: Currently does not support `ViewThatFits`, can crash.
-    ///
     /// - Parameters:
     ///   - horizontal: Specifies the horizontal constrains.
     ///   - vertical: Specifies the vertical constrains.
-    @available(iOS 18, *)
+    ///
+    /// > Deprecated:
+    /// > Starting from iOS 26, `presentationBackground` no longer supports transparency. Please use `SwiftUI`-native methods instead.
+    /// > ```swift
+    /// > Text("123456")
+    /// >   .presentationDetents([.fraction(0.5), .fraction(0.9)])
+    /// >   .presentationCompactAdaptation(.sheet)
+    /// >   .presentationSizing(.form)
+    /// > ```
+    @available(iOS, introduced: 18.0, deprecated: 26.0, message: "Use `presentationDetents` and `presentationCompactAdaptation` instead.")
     @available(macOS, unavailable)
     @available(tvOS, unavailable)
     @available(watchOS, unavailable)
