@@ -90,7 +90,7 @@ private struct FloatingSheetConditionalHorizontalLayoutModifier: ViewModifier {
         case .min(let width):
             content.frame(minWidth: width)
                 .onGeometryChange(for: CGFloat.self, of: \.size.width) { self.contentSize.width = $1 }
-        case .padding:
+        case .padding(_, _):
             content.padding(.horizontal, horizontal!.padding(safeAreaInsets.leading, safeAreaInsets.trailing)!)
                 .onGeometryChange(for: CGFloat.self, of: \.size.width) { self.contentSize.width = $1 }
         case nil:
@@ -122,7 +122,7 @@ private struct FloatingSheetConditionalVerticalLayoutModifier: ViewModifier {
         case .min(let height):
             content.frame(maxHeight: height)
                 .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
-        case .padding:
+        case .padding(_, _):
             content.padding(.vertical, vertical!.padding(safeAreaInsets.top, safeAreaInsets.bottom)!)
                 .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
         case nil:
