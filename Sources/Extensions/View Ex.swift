@@ -19,6 +19,7 @@ public extension Picker {
     ///   - title: A localized string key that describes the purpose of selecting an option.
     ///   - selection: A binding to a property that determines the currently-selected option.
     ///   - options: A set of options that builds a `ForEach` view.
+    @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
     init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>, options: [SelectionValue]) where SelectionValue: CustomStringConvertible, Label == Text, Content == ForEach<[SelectionValue], SelectionValue, Text> {
@@ -35,6 +36,7 @@ public extension Picker {
     ///   - title: A localized string key that describes the purpose of selecting an option.
     ///   - selection: A binding to a property that determines the currently-selected option.
     ///   - options: A set of options that builds a `ForEach` view.
+    @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
     init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>, options: [SelectionValue]) where SelectionValue: RawRepresentable, Label == Text, Content == ForEach<[SelectionValue], SelectionValue, Text> {
@@ -52,6 +54,7 @@ public extension Picker {
     /// - Parameters:
     ///   - title: A localized string key that describes the purpose of selecting an option.
     ///   - selection: A binding to a property that determines the currently-selected option.
+    @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
     init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>) where SelectionValue: RawRepresentable, SelectionValue: CaseIterable, Label == Text, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
