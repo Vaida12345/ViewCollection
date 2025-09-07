@@ -29,14 +29,14 @@ public struct LaunchDocumentButton<Label: View>: View {
         Button {
             switch action {
             case .open:
-                Task {
+                Task { [item] in
                     await withErrorPresented("Failed to open \(item.name)") {
                         try await item.open()
                     }
                 }
                 
             case .reveal:
-                Task {
+                Task { [item] in
                     await withErrorPresented("Failed to reveal \(item.name)") {
                         try await item.reveal()
                     }
@@ -77,23 +77,23 @@ public struct LaunchDocumentButton<Label: View>: View {
         var title: LocalizedStringKey {
             switch self {
             case .open: "Open"
-            case .reveal: "Reveal"
+            case .reveal: "Show in Finder"
             }
         }
         
         var systemName: String {
             switch self {
             case .open: "arrow.up.right.square"
-            case .reveal: "document.viewfinder.fill"
+            case .reveal: "finder"
             }
         }
         
         func help(name: String) -> LocalizedStringKey {
             switch self {
             case .reveal:
-                "Reveal \(name) in Finder"
+                "Show \(name) in Finder"
             case .open:
-                "Open \(name)"
+                "Open \(name) with external software"
             }
         }
         
