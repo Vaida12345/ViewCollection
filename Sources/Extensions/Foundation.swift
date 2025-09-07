@@ -11,6 +11,8 @@ import Foundation
 extension ProcessInfo {
     
     /// Checks if the process currently runs in Xcode Preview environment.
+    ///
+    /// - Note: on non-`DEBUG` builds, this value always returns `false`.
     @inlinable
     public var isPreview: Bool {
 #if DEBUG
