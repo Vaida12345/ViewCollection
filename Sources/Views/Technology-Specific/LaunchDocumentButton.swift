@@ -45,7 +45,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         } label: {
             label
         }
-        .help(action.help(name: item.name))
+        .help(Text(action.help(name: item.name), bundle: .module))
     }
     
     
@@ -112,12 +112,17 @@ public struct DefaultLaunchDocumentLabel: View {
     let action: LaunchDocumentButton<DefaultLaunchDocumentLabel>.Action
     
     public var body: some View {
-        Label(action.title, systemImage: action.systemName)
+        Label {
+            Text(action.title, bundle: .module)
+        } icon: {
+            Image(systemName: action.systemName)
+        }
     }
 }
 
 
 #Preview {
     LaunchDocumentButton(.open, item: .homeDirectory)
+        .padding()
 }
 #endif

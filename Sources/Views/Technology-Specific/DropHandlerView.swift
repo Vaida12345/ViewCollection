@@ -98,7 +98,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
                         .fontWeight(.light)
                         .foregroundStyle(isDropTargeted ? .blue : .secondary)
                     
-                    Text(prompt)
+                    Text(prompt, bundle: .module)
                         .bold()
                         .fontDesign(.rounded)
                         .font(.title3)

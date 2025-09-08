@@ -87,7 +87,7 @@ public struct ImagePreviewView: View {
                 scrollCoordinator.onReturn()
 #endif
             } label: {
-                Label("Return", systemImage: "arrow.down")
+                Label("Return", systemImage: "arrow.down", bundle: .module)
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
@@ -112,7 +112,7 @@ public struct ImagePreviewView: View {
                 Button {
                     onDelete()
                 } label: {
-                    Label("Remove", systemImage: "trash")
+                    Label("Remove", systemImage: "trash", bundle: .module)
                         .padding(.horizontal)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)

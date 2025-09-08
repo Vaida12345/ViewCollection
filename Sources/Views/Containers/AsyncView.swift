@@ -129,7 +129,7 @@ private struct AsyncViewPreview: View {
             } content: { result in
                 Text("\(result)")
             } placeHolder: {
-                Text("Loading...")
+                Text("Loading...", bundle: .module)
             }
             .id(state)
             

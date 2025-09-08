@@ -100,6 +100,21 @@ public extension Picker {
 }
 
 
+extension Label {
+    
+    /// Creates a label with localization settings.
+    @inlinable
+    nonisolated public init(_ titleKey: LocalizedStringKey, systemImage name: String, tableName: String? = nil, bundle: Bundle? = nil, comment: StaticString? = nil) where Title == Text, Icon == Image {
+        self.init {
+            Text(titleKey, tableName: tableName, bundle: bundle, comment: comment)
+        } icon: {
+            Image(systemName: name)
+        }
+    }
+    
+}
+
+
 public extension View {
     
     /// The mask that does the opposite of `mask(_:,_:)`.
