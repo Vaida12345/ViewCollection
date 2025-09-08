@@ -83,8 +83,13 @@ public struct LaunchDocumentButton<Label: View>: View {
         
         var systemName: String {
             switch self {
-            case .open: "arrow.up.right.square"
-            case .reveal: "finder"
+            case .open: return "arrow.up.right.square"
+            case .reveal:
+                if #available(macOS 26, *) {
+                    return "finder"
+                } else {
+                    return "document.viewfinder.fill"
+                }
             }
         }
         
