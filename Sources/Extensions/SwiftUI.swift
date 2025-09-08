@@ -190,7 +190,7 @@ extension EnvironmentValues {
     ///
     /// This value returns `true` when
     /// - iPhone is in landscape mode
-    /// - iPad is not in split screen
+    /// - iPad window is wide enough
     /// - any other device
     @MainActor
     public var showsExtendedMenubar: Bool {

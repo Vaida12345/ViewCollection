@@ -24,6 +24,8 @@ public struct LaunchDocumentButton<Label: View>: View {
     
     let action: Action
     
+    let dismiss: DismissAction?
+    
     
     public var body: some View {
         Button {
@@ -42,6 +44,8 @@ public struct LaunchDocumentButton<Label: View>: View {
                     }
                 }
             }
+            
+            dismiss?()
         } label: {
             label
         }
@@ -50,17 +54,30 @@ public struct LaunchDocumentButton<Label: View>: View {
     
     
     /// Creates with a customized label.
-    public init(_ action: Action = .open, item: FinderItem, @ViewBuilder label: () -> Label) {
+    ///
+    /// - Parameters:
+    ///   - action: The action of the button
+    ///   - item: The target
+    ///   - dismiss: When specified, perform the dismiss action when the user clicked on the button
+    ///   - label: The label of the button
+    public init(_ action: Action = .open, item: FinderItem, dismiss: DismissAction? = nil, @ViewBuilder label: () -> Label) {
         self.action = action
         self.label = label()
         self.item = item
+        self.dismiss = dismiss
     }
     
     /// Creates with the default label.
-    public init(_ action: Action = .open, item: FinderItem) where Label == DefaultLaunchDocumentLabel {
+    ///
+    /// - Parameters:
+    ///   - action: The action of the button
+    ///   - item: The target
+    ///   - dismiss: When specified, perform the dismiss action when the user clicked on the button
+    public init(_ action: Action = .open, item: FinderItem, dismiss: DismissAction? = nil) where Label == DefaultLaunchDocumentLabel {
         self.action = action
         self.label = DefaultLaunchDocumentLabel(action: action)
         self.item = item
+        self.dismiss = dismiss
     }
     
     
