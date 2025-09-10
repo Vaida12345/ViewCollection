@@ -7,7 +7,6 @@
 
 import Testing
 import ViewCollection
-import AppKit
 
 
 @Suite

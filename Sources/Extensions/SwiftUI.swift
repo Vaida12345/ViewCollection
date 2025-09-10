@@ -114,11 +114,26 @@ extension Color: @retroactive Animatable {
     @inlinable
     public var components: SIMD4<Double> {
 #if canImport(AppKit) && !targetEnvironment(macCatalyst)
-        let color = NSColor(self).usingColorSpace(.displayP3)!
-        return [color.redComponent, color.greenComponent, color.blueComponent, color.alphaComponent]
+        let color = NSColor(self).usingColorSpace(.sRGB)!
+        var components = SIMD4<Double>.zero
+        withUnsafeMutableBytes(of: &components) { pointer in
+            pointer.withMemoryRebound(to: CGFloat.self) { buffer in
+                color.getComponents(buffer.baseAddress!)
+            }
+        }
+        return components
 #elseif canImport(UIKit)
-        let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
-        return SIMD4<Double>(color.components!.map(Double.init))
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        if UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a) {
+            return SIMD4<Double>(r, g, b, a)
+        } else {
+            let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.sRGB)!, intent: .defaultIntent, options: nil)!
+            let components = color.components!
+            return SIMD4<Double>(components[0], components[1], components[2], components[3])
+        }
 #endif
     }
     
