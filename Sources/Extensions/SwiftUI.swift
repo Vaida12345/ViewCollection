@@ -143,8 +143,14 @@ extension Color: @retroactive Animatable {
             self.components
         }
         set(newValue) {
-            self = .init(.displayP3, red: newValue[0], green: newValue[1], blue: newValue[2], opacity: newValue[3])
+            self = Color(components: newValue)
         }
+    }
+    
+    /// Creates a color with its components.
+    @inlinable
+    public init(_ colorSpace: RGBColorSpace = .sRGB, components: SIMD4<Double>) {
+        self.init(colorSpace, red: components[0], green: components[1], blue: components[2], opacity: components[3])
     }
     
 }
