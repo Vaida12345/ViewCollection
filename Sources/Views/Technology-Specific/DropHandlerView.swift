@@ -32,6 +32,18 @@ import Essentials
 ///         // handle the dropped finder items.
 ///     }
 /// ```
+///
+/// > Tip: In `ForEach`, you can use `dropDestination` instead.
+/// >
+/// > ```swift
+/// > .dropDestination(for: FinderItem.self) { sources, _ in
+/// >     withErrorPresented("Failed to import") {
+/// >         for source in sources {
+/// >             try self.load(from: source)
+/// >         }
+/// >     }
+/// > }
+/// > ```
 public struct DropHandlerView<Overlay>: View where Overlay: View {
     
     // MARK: - Basic Properties
