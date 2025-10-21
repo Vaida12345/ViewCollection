@@ -24,7 +24,9 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
     
     @Binding var value: F.FormatInput
     
-    let defaultValue: F.FormatInput
+    let defaultValue: F.FormatInput?
+    
+    let step: F.FormatInput?
     
     let format: F
     
@@ -59,9 +61,9 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
                 .scaleEffect(0.75, anchor: .bottom)
         }
         .overlay(alignment: .leading) {
-            if onHover {
+            if onHover, let defaultValue {
                 Button {
-                    self.value = self.defaultValue
+                    self.value = defaultValue
                 } label: {
                     SwiftUI.Label("Reset", systemImage: "arrow.counterclockwise")
                         .labelStyle(.iconOnly)
@@ -85,13 +87,14 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
     }
     
     
-    public init(_ titleKey: LocalizedStringKey, value: Binding<F.FormatInput>, default: F.FormatInput, format: F, suffix: String, @ViewBuilder label: () -> Label = { EmptyView() }) {
+    public init(_ titleKey: LocalizedStringKey, value: Binding<F.FormatInput>, default: F.FormatInput? = nil, format: F, suffix: String = "", @ViewBuilder label: () -> Label = { EmptyView() }) {
         self.titleKey = titleKey
         self._value = value
         self.defaultValue = `default`
         self.format = format
         self.suffix = suffix
         self.label = label()
+        self.step = nil
     }
     
 }
@@ -101,8 +104,10 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
     @Previewable @State var value: Double = 0.93
     
     let format = FloatingPointFormatStyle<Double>.number.scale(100).precision(1)
-    FormattedTextField("", value: $value, default: 0, format: format, suffix: "%") {
-        Text("x")
+    VStack {
+        FormattedTextField("", value: $value, default: 0, format: format, suffix: "%") {
+            Text("x")
+        }
     }
     .frame(width: 100)
     .padding()
