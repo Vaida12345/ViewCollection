@@ -11,7 +11,8 @@ import SwiftUI
 /// Presents a formatted TextField that is suitable in `GroupBox`.
 ///
 /// ```swift
-/// FormattedTextField("", value: $value, default: 0, format: .number.scale(100).precision(1), suffix: "%") {
+/// let format = FloatingPointFormatStyle<Double>.number.scale(100).precision(0)
+/// FormattedTextField("", value: $value, default: 0, format: format, suffix: "%") {
 ///     Text("x")
 /// }
 /// ```
