@@ -55,6 +55,9 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
                 .multilineTextAlignment(.trailing)
                 .textFieldStyle(.plain)
                 .focused($isFocused)
+                .listRowBackground(Color.clear)
+                .scrollContentBackground(.hidden)
+                .clipped()
             
             Text(suffix)
                 .foregroundStyle(.secondary)
@@ -104,7 +107,7 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
     @Previewable @State var value: Double = 0.93
     
     let format = FloatingPointFormatStyle<Double>.number.scale(100).precision(1)
-    VStack {
+    List {
         FormattedTextField("", value: $value, default: 0, format: format, suffix: "%") {
             Text("x")
         }
