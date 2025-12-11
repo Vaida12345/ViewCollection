@@ -154,3 +154,19 @@ extension View {
     }
     
 }
+
+
+extension View {
+    
+    /// Apply the view modifier only when the current device is `DesignPattern`.
+    ///
+    /// You can safety use this modifier without breaking identity, as the branching is expected to stable at runtime. The closure is executed lazily, but conditional complication is not supported.
+    @ViewBuilder
+    public func varyBy(_ device: DesignPattern, @ViewBuilder modifier: (Self) -> some View) -> some View {
+        if DesignPattern.current == device {
+            modifier(self)
+        } else {
+            self
+        }
+    }
+}
