@@ -236,3 +236,14 @@ extension LocalizedStringKey.StringInterpolation {
     }
     
 }
+
+
+/// Executes a closure without animation and returns the result.
+///
+/// This is the opposite of `withAnimation`, disable animations usually associated with an action, such as sheet presentation.
+@inlinable
+public func withoutAnimation<R>(action: () throws -> R) rethrows -> R {
+    try withTransaction(\.disablesAnimations, true) {
+        try action()
+    }
+}
