@@ -162,6 +162,7 @@ extension View {
     ///
     /// You can safety use this modifier without breaking identity, as the branching is expected to stable at runtime. The closure is executed lazily, but conditional complication is not supported.
     @ViewBuilder
+    @available(*, deprecated, message: "Use `showExtendedMenubar` or equivalent to properly handle windows size.")
     public func varyBy(_ device: DesignPattern, @ViewBuilder modifier: (Self) -> some View) -> some View {
         if DesignPattern.current == device {
             modifier(self)
