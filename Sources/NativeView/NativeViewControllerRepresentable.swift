@@ -40,12 +40,11 @@ public protocol NativeViewControllerRepresentable: NSViewControllerRepresentable
     @MainActor @preconcurrency
     static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
-    
-    associatedtype ViewControllerType: NativeViewController
-    
 }
 
 extension NativeViewControllerRepresentable {
+    
+    public typealias ViewControllerType = NSViewControllerType
     
     public func makeNSViewController(context: Self.Context) -> ViewControllerType {
         self.makeViewController(context: context)
@@ -85,12 +84,11 @@ public protocol NativeViewControllerRepresentable: UIViewControllerRepresentable
     @MainActor @preconcurrency
     static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
-    
-    associatedtype ViewControllerType: NativeViewController
-    
 }
 
 extension NativeViewControllerRepresentable {
+    
+    public typealias ViewControllerType = UIViewControllerType
     
     public func makeUIViewController(context: Self.Context) -> ViewControllerType {
         self.makeViewController(context: context)
