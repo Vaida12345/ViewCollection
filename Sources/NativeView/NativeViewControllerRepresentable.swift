@@ -40,11 +40,13 @@ public protocol NativeViewControllerRepresentable: NSViewControllerRepresentable
     @MainActor @preconcurrency
     static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
+    
+    associatedtype ViewControllerType: NativeViewController
+    associatedtype Coordinator = Void
+    
 }
 
 extension NativeViewControllerRepresentable {
-    
-    public typealias ViewControllerType = NSViewControllerType
     
     public func makeNSViewController(context: Self.Context) -> ViewControllerType {
         self.makeViewController(context: context)
@@ -84,11 +86,13 @@ public protocol NativeViewControllerRepresentable: UIViewControllerRepresentable
     @MainActor @preconcurrency
     static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
+    
+    associatedtype ViewControllerType: NativeViewController
+    associatedtype Coordinator = Void
+    
 }
 
 extension NativeViewControllerRepresentable {
-    
-    public typealias ViewControllerType = UIViewControllerType
     
     public func makeUIViewController(context: Self.Context) -> ViewControllerType {
         self.makeViewController(context: context)
@@ -116,7 +120,6 @@ extension NativeViewControllerRepresentable {
     public func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize? {
         nil
     }
-    
     
     public static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator) {
         

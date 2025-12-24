@@ -27,11 +27,13 @@ public protocol NativeViewRepresentable: NSViewRepresentable {
     @MainActor @preconcurrency
     static func dismantleView(_ view: Self.ViewType, coordinator: Self.Coordinator)
     
+    
+    associatedtype ViewType: NativeView
+    associatedtype Coordinator = Void
+    
 }
 
 extension NativeViewRepresentable {
-    
-    public typealias ViewType = Self.NSViewType
     
     public func makeNSView(context: Self.Context) -> ViewType {
         self.makeView(context: context)
@@ -71,11 +73,13 @@ public protocol NativeViewRepresentable: UIViewRepresentable {
     @MainActor @preconcurrency
     static func dismantleView(_ viewController: Self.ViewType, coordinator: Self.Coordinator)
     
+    
+    associatedtype ViewType: NativeView
+    associatedtype Coordinator = Void
+    
 }
 
 extension NativeViewRepresentable {
-    
-    public typealias ViewType = Self.UIViewType
     
     public func makeUIView(context: Self.Context) -> ViewType {
         self.makeView(context: context)
