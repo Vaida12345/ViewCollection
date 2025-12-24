@@ -24,6 +24,9 @@ public protocol NativeViewRepresentable: NSViewRepresentable {
     @MainActor @preconcurrency
     func sizeThatFits(_ proposal: ProposedViewSize, view: Self.ViewType, context: Self.Context) -> CGSize?
     
+    @MainActor @preconcurrency
+    static func dismantleView(_ view: Self.ViewType, coordinator: Self.Coordinator)
+    
     
     associatedtype ViewType: NativeView
     
@@ -41,6 +44,10 @@ extension NativeViewRepresentable {
     
     public func sizeThatFits(_ proposal: ProposedViewSize, nsView: ViewType, context: Self.Context) -> CGSize? {
         self.sizeThatFits(proposal, view: nsView, context: context)
+    }
+    
+    public static func dismantleNSView(_ nsView: Self.ViewType, coordinator: Coordinator) {
+        self.dismantleView(nsView, coordinator: coordinator)
     }
     
 }
@@ -62,6 +69,9 @@ public protocol NativeViewRepresentable: UIViewRepresentable {
     @MainActor @preconcurrency
     func sizeThatFits(_ proposal: ProposedViewSize, view: Self.ViewType, context: Self.Context) -> CGSize?
     
+    @MainActor @preconcurrency
+    static func dismantleView(_ viewController: Self.ViewType, coordinator: Self.Coordinator)
+    
     
     associatedtype ViewType: NativeView
     
@@ -81,6 +91,10 @@ extension NativeViewRepresentable {
         self.sizeThatFits(proposal, view: uiView, context: context)
     }
     
+    public static func dismantleUIView(_ uiView: Self.ViewType, coordinator: Coordinator) {
+        Self.dismantleView(uiView, coordinator: coordinator)
+    }
+    
 }
 
 #endif
@@ -90,6 +104,10 @@ extension NativeViewRepresentable {
     
     public func sizeThatFits(_ proposal: ProposedViewSize, view: Self.ViewType, context: Self.Context) -> CGSize? {
         nil
+    }
+    
+    public static func dismantleView(_ view: Self.ViewType, coordinator: Self.Coordinator) {
+        
     }
     
 }
