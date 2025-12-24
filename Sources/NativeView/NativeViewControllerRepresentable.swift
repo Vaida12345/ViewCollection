@@ -32,10 +32,13 @@ public protocol NativeViewControllerRepresentable: NSViewControllerRepresentable
     func makeViewController(context: Self.Context) -> Self.ViewControllerType
     
     @MainActor @preconcurrency
-    func updateViewController(_ view: Self.ViewControllerType, context: Self.Context)
+    func updateViewController(_ viewController: Self.ViewControllerType, context: Self.Context)
     
     @MainActor @preconcurrency
     func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize?
+    
+    @MainActor @preconcurrency
+    static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
     
     associatedtype ViewControllerType: NativeViewController
@@ -56,6 +59,10 @@ extension NativeViewControllerRepresentable {
         self.sizeThatFits(proposal, viewController: nsViewController, context: context)
     }
     
+    public static func dismantleNSViewController(_ nsViewController: ViewControllerType, coordinator: Coordinator) {
+        Self.dismantleViewController(nsViewController, coordinator: coordinator)
+    }
+    
 }
 
 
@@ -70,10 +77,13 @@ public protocol NativeViewControllerRepresentable: UIViewControllerRepresentable
     func makeViewController(context: Self.Context) -> Self.ViewControllerType
     
     @MainActor @preconcurrency
-    func updateViewController(_ view: Self.ViewControllerType, context: Self.Context)
+    func updateViewController(_ viewController: Self.ViewControllerType, context: Self.Context)
     
     @MainActor @preconcurrency
     func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize?
+    
+    @MainActor @preconcurrency
+    static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator)
     
     
     associatedtype ViewControllerType: NativeViewController
@@ -94,6 +104,10 @@ extension NativeViewControllerRepresentable {
         self.sizeThatFits(proposal, viewController: uiViewController, context: context)
     }
     
+    public static func dismantleUIViewController(_ uiViewController: ViewControllerType, coordinator: Coordinator) {
+        Self.dismantleViewController(uiViewController, coordinator: coordinator)
+    }
+    
 }
 
 #endif
@@ -103,6 +117,11 @@ extension NativeViewControllerRepresentable {
     
     public func sizeThatFits(_ proposal: ProposedViewSize, viewController: Self.ViewControllerType, context: Self.Context) -> CGSize? {
         nil
+    }
+    
+    
+    static func dismantleViewController(_ viewController: ViewControllerType, coordinator: Self.Coordinator) {
+        
     }
     
 }
