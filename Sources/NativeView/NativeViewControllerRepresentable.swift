@@ -120,7 +120,7 @@ extension NativeViewControllerRepresentable {
     }
     
     
-    static func dismantleViewController(_ viewController: ViewControllerType, coordinator: Self.Coordinator) {
+    public static func dismantleViewController(_ viewController: Self.ViewControllerType, coordinator: Self.Coordinator) {
         
     }
     
