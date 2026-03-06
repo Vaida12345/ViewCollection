@@ -40,11 +40,14 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
             GeometryReader { geometry in
                 let selectionWidth = geometry.size.width / Double(options.count)
                 
-                shape
-                    .frame(width: selectionWidth, height: 30)
-                    .offset(x: selectionWidth * Double(options.firstIndex(of: selection) ?? 0))
-                    .foregroundStyle(Color.soft.fill)
-                    .animation(.spring, value: selection)
+                if let selectionIndex = options.firstIndex(of: selection) {
+                    shape
+                        .fill(Color.soft.fill)
+                        .shadow(color: .soft.darkShadow.opacity(0.5), radius: 0.3, x: 0.3, y: 0.3)
+                        .frame(width: selectionWidth - 1, height: 30 - 1)
+                        .offset(x: selectionWidth * Double(selectionIndex) + 0.5, y: 0.5)
+                        .animation(.spring, value: selection)
+                }
                 
                 HStack(spacing: 0) {
                     ForEach(options, id: \.self) { option in
@@ -129,8 +132,8 @@ public struct SoftPicker<SelectionValue: Hashable, Label: View>: View {
 
 
 #Preview {
-    @Previewable @State var selection = 3
-    @Previewable @State var phase = 0
+    @Previewable @State var selection = 1
+    @Previewable @State var phase = 1
     
     VStack {
         SoftPicker(selection: $selection, options: [1, 2, 3, 4]) {
