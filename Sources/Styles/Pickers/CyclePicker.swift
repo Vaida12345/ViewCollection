@@ -10,24 +10,26 @@ import SwiftUI
 
 /// A picker style that cycles the choices on tap.
 ///
-/// - Experiment: When used in in a list, you may want to have an `offset` with `x = 2`.
+/// - Experiment: When used in a list, you may want to have an `offset` with `x = 2`.
 @available(iOS 17, *)
 @available(macOS, unavailable)
 @available(tvOS, unavailable)
 @available(watchOS, unavailable)
 @available(visionOS, unavailable)
-public struct CyclePicker<Selection>: View where Selection: CaseIterable & CustomLocalizedStringResourceConvertible {
+public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value> {
     
-    @Binding private var selection: Selection
-    @Untracked private var iterator: Selection.AllCases.Iterator
+    @Binding private var selection: Value
+    let allCases: AllCases
+    let textForValue: (Value) -> Text
+    @Untracked private var iterator: AllCases.Iterator
     
     public var body: some View {
         Button {
-            let choice: Selection?
+            let choice: Value?
             if let next = iterator.next() {
                 choice = next
             } else {
-                self.iterator = Selection.allCases.makeIterator()
+                self.iterator = allCases.makeIterator()
                 choice = self.iterator.next()
             }
             guard let choice else { return }
@@ -37,7 +39,7 @@ public struct CyclePicker<Selection>: View where Selection: CaseIterable & Custo
             }
         } label: {
             HStack(spacing: 2) {
-                Text(selection.localizedStringResource)
+                textForValue(selection)
                     .contentTransition(.numericText())
                 Image(systemName: "chevron.up.chevron.down")
                     .scaleEffect(0.75)
@@ -48,9 +50,18 @@ public struct CyclePicker<Selection>: View where Selection: CaseIterable & Custo
         .buttonStyle(.plain)
     }
     
-    public init(selection: Binding<Selection>) {
+    public init(selection: Binding<Value>) where Value: CaseIterable & CustomLocalizedStringResourceConvertible, AllCases == Value.AllCases {
         self._selection = selection
-        self.iterator = Selection.allCases.makeIterator()
+        self.allCases = Value.allCases
+        self.textForValue = { Text($0.localizedStringResource) }
+        self.iterator = self.allCases.makeIterator()
+    }
+    
+    public init(selection: Binding<Value>, allCases: AllCases, label: @escaping (Value) -> Text) {
+        self._selection = selection
+        self.allCases = allCases
+        self.textForValue = label
+        self.iterator = self.allCases.makeIterator()
     }
     
 }
@@ -61,6 +72,7 @@ public struct CyclePicker<Selection>: View where Selection: CaseIterable & Custo
     
     VStack {
         CyclePicker(selection: $model)
+            .foregroundStyle(.blue)
         
 //        Picker(selection: $model)
     }
