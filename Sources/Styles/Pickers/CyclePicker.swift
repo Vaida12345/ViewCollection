@@ -11,11 +11,6 @@ import SwiftUI
 /// A picker style that cycles the choices on tap.
 ///
 /// - Experiment: When used in a list, you may want to have an `offset` with `x = 2`.
-@available(iOS 17, *)
-@available(macOS, unavailable)
-@available(tvOS, unavailable)
-@available(watchOS, unavailable)
-@available(visionOS, unavailable)
 public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value> {
     
     @Binding private var selection: Value
