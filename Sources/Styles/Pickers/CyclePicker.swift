@@ -11,38 +11,51 @@ import SwiftUI
 /// A picker style that cycles the choices on tap.
 ///
 /// - Experiment: When used in a list, you may want to have an `offset` with `x = 2`.
-public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value> {
+public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value>, Value: Hashable {
     
     @Binding private var selection: Value
     let allCases: AllCases
     let textForValue: (Value) -> Text
     @Untracked private var iterator: AllCases.Iterator
     
+    let _convertToNativePicker: Bool
+    
     public var body: some View {
-        Button {
-            let choice: Value?
-            if let next = iterator.next() {
-                choice = next
-            } else {
-                self.iterator = allCases.makeIterator()
-                choice = self.iterator.next()
+        if _convertToNativePicker {
+            Picker(selection: $selection) {
+                ForEach(Array(allCases), id: \.self) { option in
+                    textForValue(option)
+                        .tag(option)
+                }
+            } label: {
+                EmptyView()
             }
-            guard let choice else { return }
-            
-            withAnimation {
-                self.selection = choice
+        } else {
+            Button {
+                let choice: Value?
+                if let next = iterator.next() {
+                    choice = next
+                } else {
+                    self.iterator = allCases.makeIterator()
+                    choice = self.iterator.next()
+                }
+                guard let choice else { return }
+                
+                withAnimation {
+                    self.selection = choice
+                }
+            } label: {
+                HStack(spacing: 2) {
+                    textForValue(selection)
+                        .contentTransition(.numericText())
+                    Image(systemName: "chevron.up.chevron.down")
+                        .scaleEffect(0.75)
+                        .fontWeight(.medium)
+                }
+                .contentShape(Rectangle())
             }
-        } label: {
-            HStack(spacing: 2) {
-                textForValue(selection)
-                    .contentTransition(.numericText())
-                Image(systemName: "chevron.up.chevron.down")
-                    .scaleEffect(0.75)
-                    .fontWeight(.medium)
-            }
-            .contentShape(Rectangle())
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
     }
     
     public init(selection: Binding<Value>) where Value: CaseIterable & CustomLocalizedStringResourceConvertible, AllCases == Value.AllCases {
@@ -50,6 +63,7 @@ public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value>
         self.allCases = Value.allCases
         self.textForValue = { Text($0.localizedStringResource) }
         self.iterator = self.allCases.makeIterator()
+        _convertToNativePicker = false
     }
     
     public init(selection: Binding<Value>, allCases: AllCases, label: @escaping (Value) -> Text) {
@@ -57,22 +71,38 @@ public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value>
         self.allCases = allCases
         self.textForValue = label
         self.iterator = self.allCases.makeIterator()
+        _convertToNativePicker = false
     }
     
+    init(selection: Binding<Value>, allCases: AllCases, label: @escaping (Value) -> Text, convertToNativePicker: Bool) {
+        self._selection = selection
+        self.allCases = allCases
+        self.textForValue = label
+        self._convertToNativePicker = convertToNativePicker
+        self.iterator = self.allCases.makeIterator()
+    }
+    
+    #if os(macOS)
+    public func convertToNativePicker(_ bool: Bool = true) -> CyclePicker {
+        CyclePicker(selection: $selection, allCases: allCases, label: textForValue, convertToNativePicker: bool)
+    }
+    #endif
 }
 
-#if DEBUG && os(iOS)
+#if DEBUG
 #Preview {
     @Previewable @State var model = _Model.a
     
     VStack {
         CyclePicker(selection: $model)
+#if os(macOS)
+            .convertToNativePicker()
+            .pickerStyle(.inline)
+#else
             .foregroundStyle(.blue)
-        
-//        Picker(selection: $model)
+#endif
     }
     .padding()
-    .scaleEffect(5)
 }
 
 private enum _Model: CaseIterable, CustomLocalizedStringResourceConvertible {
