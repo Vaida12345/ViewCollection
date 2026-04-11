@@ -58,11 +58,11 @@ public enum DesignPattern: Codable, Equatable {
         case .pad, .iPad:
             "ipad.landscape"
         case .tv:
-            "appletv.fill"
+            "appletv"
         case .carPlay:
             "car"
         case .vision:
-            "rectangle.connected.to.line.below"
+            "vision.pro"
         case .watch:
             "watchface.applewatch.case"
         case .unspecified:
