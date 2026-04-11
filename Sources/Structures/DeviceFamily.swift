@@ -5,9 +5,7 @@
 //  Created by Vaida on 2026-04-11.
 //
 
-#if os(macOS)
 import Foundation
-import Playgrounds
 
 
 /// macOS device family.
@@ -56,6 +54,7 @@ public enum DeviceFamily: UInt8, CaseIterable, Sendable, CustomStringConvertible
         }
     }
     
+#if os(macOS)
     /// The device family for the current device.
     public static let current: DeviceFamily = {
         return switch macModelNameSystemProfiler() {
@@ -101,6 +100,6 @@ public enum DeviceFamily: UInt8, CaseIterable, Sendable, CustomStringConvertible
         
         return nil
     }
+#endif
 
 }
-#endif
