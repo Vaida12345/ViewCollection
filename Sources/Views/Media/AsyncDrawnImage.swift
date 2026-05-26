@@ -22,6 +22,8 @@ public struct AsyncDrawnImage: View {
     
     private let cornerRadius: CGFloat
     
+    private let disableAnimation: Bool
+    
     @Environment(\.displayScale) private var displayScale
     
     
@@ -105,11 +107,12 @@ public struct AsyncDrawnImage: View {
     }
     
     
-    private init(frame: CGSize, contentMode: ContentMode, source: Source, cornerRadius: CGFloat) {
+    private init(frame: CGSize, contentMode: ContentMode, source: Source, cornerRadius: CGFloat, disableAnimation: Bool) {
         self.frame = frame
         self.contentMode = contentMode
         self.source = source
         self.cornerRadius = cornerRadius
+        self.disableAnimation = disableAnimation
     }
     
     /// Creates the image with the given image and the size of presentation.
@@ -118,7 +121,7 @@ public struct AsyncDrawnImage: View {
     ///   - cgImage: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(cgImage: CGImage, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: .image(cgImage), cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .image(cgImage), cornerRadius: 0, disableAnimation: false)
     }
     
     /// Creates the image with the given image and the size of presentation.
@@ -127,7 +130,7 @@ public struct AsyncDrawnImage: View {
     ///   - nativeImage: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(nativeImage: NativeImage, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: .image(nativeImage.cgImage!), cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .image(nativeImage.cgImage!), cornerRadius: 0, disableAnimation: false)
     }
     
     /// Creates the image with the given image and the size of presentation.
@@ -136,15 +139,19 @@ public struct AsyncDrawnImage: View {
     ///   - generator: The source image.
     ///   - frame: The size of presentation. The actual size of the image might be different, as the `displayScale` would be taken into account.
     public init(generator: @escaping @Sendable () async -> CGImage?, frame: CGSize) {
-        self.init(frame: frame, contentMode: .fit, source: .cgImage(generator), cornerRadius: 0)
+        self.init(frame: frame, contentMode: .fit, source: .cgImage(generator), cornerRadius: 0, disableAnimation: false)
     }
     
     public func cornerRadius(_ radius: CGFloat) -> AsyncDrawnImage {
-        AsyncDrawnImage(frame: self.frame, contentMode: self.contentMode, source: self.source, cornerRadius: radius)
+        AsyncDrawnImage(frame: self.frame, contentMode: self.contentMode, source: self.source, cornerRadius: radius, disableAnimation: self.disableAnimation)
     }
     
     public func contentMode(_ mode: ContentMode) -> AsyncDrawnImage {
-        AsyncDrawnImage(frame: self.frame, contentMode: mode, source: self.source, cornerRadius: self.cornerRadius)
+        AsyncDrawnImage(frame: self.frame, contentMode: mode, source: self.source, cornerRadius: self.cornerRadius, disableAnimation: self.disableAnimation)
+    }
+    
+    public func disableAnimation(_ disabled: Bool = true) -> AsyncDrawnImage {
+        AsyncDrawnImage(frame: self.frame, contentMode: self.contentMode, source: self.source, cornerRadius: self.cornerRadius, disableAnimation: true)
     }
     
     
