@@ -53,6 +53,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     private let resultGenerator: @Sendable () async throws -> Success?
     private let viewGenerator: (_ result: Success) -> Content
     private let placeHolder: () -> PlaceHolder
+    private let disableAnimation: Bool
     
     @State private var result: Success?
     
@@ -84,21 +85,38 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     ///   - generator: The closure that would typically take time to generate the result.
     ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
     ///   - placeHolder: The temperate view shown when the result is still be generated.
-    public init(generator: @escaping @Sendable () async throws -> Success?,
+    public init(disableAnimation: Bool = false,
+                generator: @escaping @Sendable () async throws -> Success?,
                 @ViewBuilder content: @escaping (_ result: Success) -> Content,
                 @ViewBuilder placeHolder: @escaping () -> PlaceHolder = { EmptyView() }) {
+        self.disableAnimation = disableAnimation
         self.resultGenerator = generator
         self.viewGenerator = content
         self.placeHolder = placeHolder
     }
     
-    func update() async {
+    public func disableAnimation(_ disableAnimation: Bool) -> AsyncView {
+        AsyncView(
+            disableAnimation: self.disableAnimation,
+            generator: self.resultGenerator,
+            content: self.viewGenerator,
+            placeHolder: self.placeHolder
+        )
+    }
+    
+    nonisolated func update() async {
         let resultGenerator = resultGenerator
         let success = await _updates(resultGenerator: resultGenerator)
         
-        await MainActor.run {
-            withAnimation {
+        if disableAnimation {
+            await MainActor.run {
                 self.result = success
+            }
+        } else {
+            await MainActor.run {
+                withAnimation {
+                    self.result = success
+                }
             }
         }
     }
