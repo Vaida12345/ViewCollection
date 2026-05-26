@@ -97,7 +97,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     
     public func disableAnimation(_ disableAnimation: Bool = true) -> AsyncView {
         AsyncView(
-            disableAnimation: self.disableAnimation,
+            disableAnimation: disableAnimation,
             generator: self.resultGenerator,
             content: self.viewGenerator,
             placeHolder: self.placeHolder
