@@ -26,8 +26,6 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
     
     let defaultValue: F.FormatInput?
     
-    let step: F.FormatInput?
-    
     let format: F
     
     let suffix: String
@@ -97,7 +95,6 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
         self.format = format
         self.suffix = suffix
         self.label = label()
-        self.step = nil
     }
     
 }

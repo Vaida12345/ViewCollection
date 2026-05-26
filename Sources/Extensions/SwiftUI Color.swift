@@ -28,25 +28,16 @@ extension Color: @retroactive Codable {
         let blue =  try container.decode(CGFloat.self, forKey: .blue)
         let alpha = try container.decodeIfPresent(CGFloat.self, forKey: .alpha) ?? 1
         
-        self.init(.displayP3, red: red, green: green, blue: blue, opacity: alpha)
+        self.init(.sRGB, red: red, green: green, blue: blue, opacity: alpha)
     }
     
     public func encode(to encoder: Encoder) throws {
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-        let color = NSColor(self).usingColorSpace(.displayP3)!
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(color.redComponent,   forKey: .red)
-        try container.encode(color.greenComponent, forKey: .green)
-        try container.encode(color.blueComponent,  forKey: .blue)
-        if color.alphaComponent != 1 { try container.encode(color.alphaComponent, forKey: .alpha) }
-#elseif canImport(UIKit)
-        let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.displayP3)!, intent: .defaultIntent, options: nil)!
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(color.components![0],   forKey: .red)
-        try container.encode(color.components![1],   forKey: .green)
-        try container.encode(color.components![2],   forKey: .blue)
-        if color.alpha != 1 { try container.encode(color.alpha, forKey: .alpha) }
-#endif
+        let components = self.components
+        try container.encode(components[0], forKey: .red)
+        try container.encode(components[1], forKey: .green)
+        try container.encode(components[2], forKey: .blue)
+        if components[3] != 1 { try container.encode(components[3], forKey: .alpha) }
     }
     
     private enum CodingKeys: CodingKey {

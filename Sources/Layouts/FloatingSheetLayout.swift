@@ -120,7 +120,7 @@ private struct FloatingSheetConditionalVerticalLayoutModifier: ViewModifier {
             content.frame(maxHeight: height)
                 .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
         case .min(let height):
-            content.frame(maxHeight: height)
+            content.frame(minHeight: height)
                 .onGeometryChange(for: CGFloat.self, of: \.size.height) { self.contentSize.height = $1 }
         case .padding(_, _):
             content.padding(.vertical, vertical!.padding(safeAreaInsets.top, safeAreaInsets.bottom)!)

@@ -106,9 +106,4 @@ public enum DesignPattern: Codable, Equatable {
         .watch
 #endif
     }
-    
-    @MainActor
-    public static func == (lhs: DesignPattern.Type, rhs: DesignPattern) -> Bool {
-        DesignPattern.current == rhs
-    }
 }

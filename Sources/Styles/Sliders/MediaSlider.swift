@@ -74,7 +74,6 @@ public struct MediaSlider<T>: View where T: BinaryFloatingPoint {
     private func gesture(size: CGSize) -> some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                print(value.location.x, size.width)
                 self.normalized = clamp(value.location.x / size.width, min: 0, max: 1)
             }
             .onEnded { _ in

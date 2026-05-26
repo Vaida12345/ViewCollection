@@ -50,7 +50,7 @@ open class ApplicationDelegate: NSObject, UIApplicationDelegate {
     
     /// Tells the delegate that the app is about to terminate.
     open func applicationWillTerminate() {
-        try? FinderItem.temporaryDirectory(intent: .discardable).removeIfExists()
+        try? FinderItem.temporaryDirectory.removeIfExists()
     }
     
 }

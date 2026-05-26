@@ -205,7 +205,6 @@ public struct ImagePreviewView: View {
             
             let imageView = UIImageView(image: image)
             imageView.contentMode = .scaleAspectFit
-            imageView.frame.size = UIScreen.main.bounds.size
             
             scrollView.addSubview(imageView)
             scrollView.contentSize = imageView.frame.size

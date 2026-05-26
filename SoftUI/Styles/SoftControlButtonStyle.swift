@@ -61,8 +61,8 @@ public struct SoftControlButtonStyle: ButtonStyle {
     /// >     .buttonStyle(.soft(shape: .capsule).animated())
     /// >     .transitionPhaseExposing()
     /// > ```
-    public func animated(_ animated: Bool = true) -> SoftButtonStyle {
-        SoftButtonStyle(isAnimated: animated)
+    public func animated(_ animated: Bool = true) -> SoftControlButtonStyle {
+        SoftControlButtonStyle(isAnimated: animated)
     }
     
 }

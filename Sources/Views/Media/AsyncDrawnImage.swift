@@ -152,7 +152,7 @@ public struct AsyncDrawnImage: View {
     }
     
     public func disableAnimation(_ disabled: Bool = true) -> AsyncDrawnImage {
-        AsyncDrawnImage(frame: self.frame, contentMode: self.contentMode, source: self.source, cornerRadius: self.cornerRadius, disableAnimation: true)
+        AsyncDrawnImage(frame: self.frame, contentMode: self.contentMode, source: self.source, cornerRadius: self.cornerRadius, disableAnimation: disabled)
     }
     
     

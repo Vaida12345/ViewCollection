@@ -140,10 +140,10 @@ public struct GalleryView: Layout {
             var cumulativeHeight: CGFloat = 0
             for element in column {
                 subviews[element].place(at: bounds.origin + CGPoint(x: cumulativeWidth, y: cumulativeHeight), proposal: .init(width: idealCellWidth, height: nil))
-                cumulativeHeight += sizes[element].height + (spacing.horizontal ?? 0)
+                cumulativeHeight += sizes[element].height + (spacing.vertical ?? 0)
                 pendingWidth = max(pendingWidth, sizes[element].width)
             }
-            cumulativeWidth += pendingWidth + (spacing.vertical ?? 0)
+            cumulativeWidth += pendingWidth + (spacing.horizontal ?? 0)
             pendingWidth = 0
         }
     }
