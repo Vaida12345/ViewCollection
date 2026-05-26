@@ -64,6 +64,7 @@ public struct AsyncDrawnImage: View {
 #endif
             }
         }
+        .disableAnimation(self.disableAnimation)
         .frame(width: frame.width, height: frame.height)
     }
     
