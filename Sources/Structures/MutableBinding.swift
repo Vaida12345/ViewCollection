@@ -42,7 +42,7 @@ public final class MutableBinding<T>: Sendable {
         self.content.wrappedValue
     }
     
-    fileprivate init(content: Binding<T>) {
+    init(content: Binding<T>) {
         self.content = content
     }
     

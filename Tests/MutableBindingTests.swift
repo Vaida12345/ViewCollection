@@ -6,7 +6,7 @@
 
 import Testing
 import SwiftUI
-import ViewCollection
+@testable import ViewCollection
 
 
 @Suite("MutableBinding")
