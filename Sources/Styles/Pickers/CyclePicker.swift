@@ -32,18 +32,7 @@ public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value>
             }
         } else {
             Button {
-                let choice: Value?
-                if let next = iterator.next() {
-                    choice = next
-                } else {
-                    self.iterator = allCases.makeIterator()
-                    choice = self.iterator.next()
-                }
-                guard let choice else { return }
-                
-                withAnimation {
-                    self.selection = choice
-                }
+                rotate()
             } label: {
                 HStack(spacing: 2) {
                     textForValue(selection)
@@ -55,6 +44,25 @@ public struct CyclePicker<Value, AllCases>: View where AllCases: Sequence<Value>
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
+        }
+    }
+    
+    func rotate(depth: Int = 0) {
+        guard depth < 2 else { return }
+        let choice: Value?
+        if let next = iterator.next() {
+            choice = next
+        } else {
+            self.iterator = allCases.makeIterator()
+            return rotate(depth: depth + 1)
+        }
+        guard let choice else { return }
+        if choice == self.selection {
+            return rotate(depth: depth + 1)
+        }
+        
+        withAnimation {
+            self.selection = choice
         }
     }
     
