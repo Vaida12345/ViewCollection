@@ -82,3 +82,20 @@ extension Binding where Value == CGFloat {
     }
     
 }
+
+
+extension Binding where Value: OptionSet {
+    
+    @MainActor
+    public func contains(_ member: Value.Element) -> Binding<Bool> {
+        Binding<Bool> {
+            self.wrappedValue.contains(member)
+        } set: {
+            if $0 {
+                self.wrappedValue.insert(member)
+            } else {
+                self.wrappedValue.remove(member)
+            }
+        }
+    }
+}
