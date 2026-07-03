@@ -30,7 +30,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     
     private var isPanel: Bool? = nil
     
-    private var title: String? = nil
+    private var identifier: String? = nil
     
     private var undoManager: UndoManager? = nil
     
@@ -38,7 +38,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// Open the view in a new window, or pop the exiting window if any.
     ///
     /// - Parameters:
-    ///   - title: The window title, which is hidden. It is used to identify the view and restore window position.
+    ///   - title: The window title///   - identifier: This unique id of this window, and used to identify the window using `NSWindow.identifier.rawValue`..
+    ///   - identifier: This unique id of this window, and used to identify the window using `NSWindow.identifier.rawValue`.
     ///   - view: The view body of the window.
     ///   - styleMask: The window stye.
     ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
@@ -71,14 +72,15 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     ///
     /// - Note: When a window is closed, either by user or by calling `window.close()`, a window manager is reset. This ensures SwiftUI will call `onDisappear`.
     @MainActor public func open(
-        title: String,
+        title: LocalizedStringResource,
+        identifier: String,
         view: some View,
         styleMask: NSWindow.StyleMask = [.fullSizeContentView, .titled, .closable, .resizable, .miniaturizable],
         initialSize: CGSize? = nil,
         hiding: [NSWindow.ButtonType] = [],
         undoManager: UndoManager? = nil
     ) {
-        self.title = title
+        self.identifier = identifier
         self.undoManager = undoManager
         
         if let window {
@@ -98,7 +100,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         
         window.styleMask = styleMask
         window.titlebarAppearsTransparent = true
-        window.title = title
+        window.title = title.localized()
+        window.identifier = .init(rawValue: identifier)
         
         for hide in hiding {
             window.standardWindowButton(hide)?.isHidden = true
@@ -129,18 +132,20 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// > ```
     ///
     /// - Parameters:
-    ///   - title: The window title, which is hidden. It is used to identify the view and restore window position.
+    ///   - title: The window title, which is hidden.
+    ///   - identifier: This unique id of this window, and used to identify the window using `NSWindow.identifier.rawValue`.
     ///   - view: The view body of the window.
     ///   - initialSize: The initial size of the window. However, if previous windows states exists, this value is ignored.
     ///   - undoManager: The undo manager associated with the resulting window.
     @MainActor public func openPanel(
-        title: String,
+        title: LocalizedStringResource,
+        identifier: String,
         view: some View,
         initialSize: CGSize? = nil,
         undoManager: UndoManager? = nil
     ) {
         self.isPanel = true
-        self.title = title
+        self.identifier = identifier
         self.undoManager = undoManager
         
         if let window {
@@ -166,7 +171,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         window.styleMask = [.titled, .fullSizeContentView]
         window.backingType = .buffered
         window.titlebarAppearsTransparent = true
-        window.title = title
+        window.title = title.localized()
+        window.identifier = .init(rawValue: identifier)
         
         // Set window properties
         window.isFloatingPanel = true  // Keeps it above other windows
@@ -185,8 +191,8 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     }
     
     public func windowWillClose(_ notification: Notification) {
-        if let title, let window {
-            UserDefaults.standard.set(NSStringFromRect(window.frame), forKey: "NSWindow Frame \(title)")
+        if let identifier, let window {
+            UserDefaults.standard.set(NSStringFromRect(window.frame), forKey: "NSWindow Frame \(identifier)")
         }
         self.reset()
     }
@@ -203,7 +209,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     private func reset() {
         self.window = nil
         self.isPanel = nil
-        self.title = nil
+        self.identifier = nil
         self.undoManager = nil
     }
 }
