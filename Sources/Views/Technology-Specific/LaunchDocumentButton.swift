@@ -20,7 +20,7 @@ public struct LaunchDocumentButton<Label: View>: View {
     
     let label: Label
     
-    let item: FinderItem
+    let item: FinderItem?
     
     let action: Action
     
@@ -29,6 +29,7 @@ public struct LaunchDocumentButton<Label: View>: View {
     
     public var body: some View {
         Button {
+            guard let item else { return }
             switch action {
             case .open:
                 Task { [item] in
@@ -49,7 +50,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         } label: {
             label
         }
-        .help(Text(action.help(name: item.name), bundle: .module))
+        .help(Text(action.help(name: item?.name), bundle: .module))
     }
     
     
@@ -60,7 +61,7 @@ public struct LaunchDocumentButton<Label: View>: View {
     ///   - item: The target
     ///   - dismiss: When specified, perform the dismiss action when the user clicked on the button
     ///   - label: The label of the button
-    public init(_ action: Action = .open, item: FinderItem, dismiss: DismissAction? = nil, @ViewBuilder label: () -> Label) {
+    public init(_ action: Action = .open, item: FinderItem?, dismiss: DismissAction? = nil, @ViewBuilder label: () -> Label) {
         self.action = action
         self.label = label()
         self.item = item
@@ -73,7 +74,7 @@ public struct LaunchDocumentButton<Label: View>: View {
     ///   - action: The action of the button
     ///   - item: The target
     ///   - dismiss: When specified, perform the dismiss action when the user clicked on the button
-    public init(_ action: Action = .open, item: FinderItem, dismiss: DismissAction? = nil) where Label == DefaultLaunchDocumentLabel {
+    public init(_ action: Action = .open, item: FinderItem?, dismiss: DismissAction? = nil) where Label == DefaultLaunchDocumentLabel {
         self.action = action
         self.label = DefaultLaunchDocumentLabel(action: action)
         self.item = item
@@ -110,12 +111,21 @@ public struct LaunchDocumentButton<Label: View>: View {
             }
         }
         
-        func help(name: String) -> LocalizedStringKey {
-            switch self {
-            case .reveal:
-                "Show \(name) in Finder"
-            case .open:
-                "Open \(name) with external software"
+        func help(name: String?) -> LocalizedStringKey {
+            if let name {
+                switch self {
+                case .reveal:
+                    "Show \(name) in Finder"
+                case .open:
+                    "Open \(name) with external software"
+                }
+            } else {
+                switch self {
+                case .reveal:
+                    "Show in Finder"
+                case .open:
+                    "Open with external software"
+                }
             }
         }
         
