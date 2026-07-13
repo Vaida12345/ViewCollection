@@ -22,10 +22,46 @@ public extension Picker {
     @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
-    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>, options: [SelectionValue]) where SelectionValue: CustomStringConvertible, Label == Text, Content == ForEach<[SelectionValue], SelectionValue, Text> {
-        self.init(title, selection: selection) {
+    init<C>(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>,
+        options: C
+    ) where SelectionValue: CustomStringConvertible, C: Collection, C.Element == SelectionValue,
+            Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<C, SelectionValue, Text> {
+        self.init(selection: selection) {
             ForEach(options, id: \.self) {
                 Text(LocalizedStringKey($0.description))
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
+            }
+        }
+    }
+    
+    /// Initialize a picker with its `options`.
+    ///
+    /// - Parameters:
+    ///   - title: A localized string key that describes the purpose of selecting an option.
+    ///   - selection: A binding to a property that determines the currently-selected option.
+    @_disfavoredOverload
+    @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
+    @inlinable
+    init(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>
+    ) where SelectionValue: CustomStringConvertible & CaseIterable, Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
+        self.init(selection: selection) {
+            ForEach(SelectionValue.allCases, id: \.self) {
+                Text(LocalizedStringKey($0.description))
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
             }
         }
     }
@@ -39,10 +75,21 @@ public extension Picker {
     @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
-    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>, options: [SelectionValue]) where SelectionValue: RawRepresentable, Label == Text, Content == ForEach<[SelectionValue], SelectionValue, Text> {
-        self.init(title, selection: selection) {
+    init<C>(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>,
+        options: C
+    ) where SelectionValue: RawRepresentable, C: Collection, C.Element == SelectionValue,
+            Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<C, SelectionValue, Text> {
+        self.init(selection: selection) {
             ForEach(options, id: \.self) {
                 Text("\($0)")
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
             }
         }
     }
@@ -57,13 +104,23 @@ public extension Picker {
     @_disfavoredOverload
     @available(*, deprecated, message: "Please make sure that `SelectionValue` conforms to `CustomLocalizedStringResourceConvertible`.")
     @inlinable
-    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>) where SelectionValue: RawRepresentable, SelectionValue: CaseIterable, Label == Text, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
-        self.init(title, selection: selection) {
+    init(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>
+    ) where SelectionValue: RawRepresentable & CaseIterable, Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
+        self.init(selection: selection) {
             ForEach(SelectionValue.allCases, id: \.self) {
                 Text("\($0)")
             }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
+            }
         }
     }
+    
     
     // MARK: - Picker with Localized String
     /// Initialize a picker with its `options`.
@@ -73,10 +130,21 @@ public extension Picker {
     ///   - selection: A binding to a property that determines the currently-selected option.
     ///   - options: A set of options that builds a `ForEach` view.
     @inlinable
-    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>, options: [SelectionValue]) where SelectionValue: CustomLocalizedStringResourceConvertible, Label == Text, Content == ForEach<[SelectionValue], SelectionValue, Text> {
-        self.init(title, selection: selection) {
+    init<C>(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>,
+        options: C
+    ) where SelectionValue: CustomLocalizedStringResourceConvertible, C: Collection, C.Element == SelectionValue,
+            Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<C, SelectionValue, Text> {
+        self.init(selection: selection) {
             ForEach(options, id: \.self) {
                 Text($0.localizedStringResource)
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
             }
         }
     }
@@ -89,14 +157,75 @@ public extension Picker {
     ///   - title: A localized string key that describes the purpose of selecting an option.
     ///   - selection: A binding to a property that determines the currently-selected option.
     @inlinable
-    init(_ title: LocalizedStringKey = "", selection: Binding<SelectionValue>) where SelectionValue: CustomLocalizedStringResourceConvertible, SelectionValue: CaseIterable, Label == Text, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
-        self.init(title, selection: selection) {
+    init(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>
+    ) where SelectionValue: CustomLocalizedStringResourceConvertible, SelectionValue: CaseIterable, Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<SelectionValue.AllCases, SelectionValue, Text> {
+        self.init(selection: selection) {
             ForEach(SelectionValue.allCases, id: \.self) {
                 Text($0.localizedStringResource)
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
             }
         }
     }
     
+    // MARK: - Picker with custom currentValueLabel
+    /// Initialize a picker with its `options`.
+    ///
+    /// - Parameters:
+    ///   - title: A localized string key that describes the purpose of selecting an option.
+    ///   - selection: A binding to a property that determines the currently-selected option.
+    ///   - options: A set of options that builds a `ForEach` view.
+    @inlinable
+    init<CurrentValueLabel: View, C: Collection>(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>,
+        options: C,
+        @ViewBuilder currentValueLabel: @escaping (SelectionValue) -> CurrentValueLabel
+    ) where C.Element == SelectionValue, Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<C, SelectionValue, CurrentValueLabel> {
+        self.init(selection: selection) {
+            ForEach(options, id: \.self) {
+                currentValueLabel($0)
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
+            }
+        }
+    }
+    
+    /// Initialize a picker with a `CaseIterable` enumeration, whose rawValue is string.
+    ///
+    /// - Remark: The set of options that builds a `ForEach` view are generated from `allCases`.
+    ///
+    /// - Parameters:
+    ///   - title: A localized string key that describes the purpose of selecting an option.
+    ///   - selection: A binding to a property that determines the currently-selected option.
+    @inlinable
+    init<CurrentValueLabel: View>(
+        _ title: LocalizedStringKey? = nil,
+        selection: Binding<SelectionValue>,
+        @ViewBuilder currentValueLabel: @escaping (SelectionValue) -> CurrentValueLabel
+    ) where SelectionValue: CustomLocalizedStringResourceConvertible, SelectionValue: CaseIterable, Label == _ConditionalContent<Text, EmptyView>, Content == ForEach<SelectionValue.AllCases, SelectionValue, CurrentValueLabel> {
+        self.init(selection: selection) {
+            ForEach(SelectionValue.allCases, id: \.self) {
+                currentValueLabel($0)
+            }
+        } label: {
+            if let title {
+                Text(title)
+            } else {
+                EmptyView()
+            }
+        }
+    }
 }
 
 
@@ -104,7 +233,13 @@ extension Label {
     
     /// Creates a label with localization settings.
     @inlinable
-    nonisolated public init(_ titleKey: LocalizedStringKey, systemImage name: String, tableName: String? = nil, bundle: Bundle? = nil, comment: StaticString? = nil) where Title == Text, Icon == Image {
+    nonisolated public init(
+        _ titleKey: LocalizedStringKey,
+        systemImage name: String,
+        tableName: String? = nil,
+        bundle: Bundle? = nil,
+        comment: StaticString? = nil
+    ) where Title == Text, Icon == Image {
         self.init {
             Text(titleKey, tableName: tableName, bundle: bundle, comment: comment)
         } icon: {

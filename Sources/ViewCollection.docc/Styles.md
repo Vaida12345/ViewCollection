@@ -1,32 +1,30 @@
-
 # Styles
 
 ## Topics
+
 ### Transitions
 - ``SwiftUICore/View/transitionPhaseExposing()``
 
-### ProgressView Style
+### ProgressView Styles
 - ``SwiftUI/ProgressViewStyle/circular(color:checkmarkOnCompletion:)``
-- ``SwiftUI/ProgressViewStyle/heavy``
 - ``SwiftUI/ProgressViewStyle/simpleLinear``
+- ``SwiftUI/ProgressViewStyle/simpleCircular``
 
-### Button Style
-- ``SwiftUI/ButtonStyle/borderedWide``
+### Button Styles
 - ``SwiftUI/ButtonStyle/circularFill``
-- ``SwiftUI/ButtonStyle/largeControl``
-- ``SwiftUI/ButtonStyle/largeCapsule``
-- ``SwiftUI/ButtonStyle/largeCapsule(color:)``
+- ``SwiftUI/ButtonStyle/prominent``
 
-### ToggleStyles
+### Toggle Styles
 - ``SwiftUI/ToggleStyle/checkmark``
 
-### Slider Styles
+### Pickers
+- ``CyclePicker``
+- ``SegmentedPicker``
+
+### Sliders
 - ``MediaSlider``
 - ``PlainSlider``
 
 ### Style Symbols
 Definitions for style structures.
 - <doc:StylesSymbols>
-
-### Deprecated
-- ``SwiftUI/ProgressViewStyle/simpleCircular``

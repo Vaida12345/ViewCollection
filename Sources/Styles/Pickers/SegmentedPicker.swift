@@ -37,6 +37,7 @@ public struct SegmentedPicker<Value, AllCases>: View where AllCases: Sequence<Va
                             self.shape
                                 .fill(tint)
                                 .matchedGeometryEffect(id: 0, in: namespace)
+                                .padding(.horizontal, 2)
                         }
                     }
                     

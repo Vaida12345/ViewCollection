@@ -1,11 +1,10 @@
-
 # Views
 
 ## Topics
+
 ### Containers
 - ``AsyncView``
 - ``ContainerView``
-- ``withStateObserved(initial:handler:)``
 
 ### Media
 - ``AsyncDrawnImage``
@@ -15,11 +14,17 @@
 ### Standalone Views
 - ``CheckMarkView``
 - ``ColorPaletteView``
-- ``ImagePreviewView``
+- ``FormattedTextField``
 
 ### Special Views
-- ``Layered3dEffectView``
 - ``DebugGridView``
 
 ### Technology-Specific Views
 - ``DropHandlerView``
+- ``LaunchDocumentButton``
+- ``DefaultLaunchDocumentLabel``
+
+### Undo
+- ``UndoObserver``
+- ``UndoButton``
+- ``RedoButton``

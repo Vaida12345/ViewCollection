@@ -18,8 +18,9 @@ extension GridItem {
     ///
     /// - Parameters:
     ///   - size: the specified fixed size.
-    public static func fixed(_ size: CGFloat) -> GridItem {
-        GridItem(.fixed(size))
+    @inlinable
+    public static func fixed(_ size: CGFloat, spacing: CGFloat? = nil, alignment: Alignment? = nil) -> GridItem {
+        GridItem(.fixed(size), spacing: spacing, alignment: alignment)
     }
     
 }
@@ -39,6 +40,7 @@ extension GraphicsContext {
     ///   - shading: The color or pattern to use when filling the region
     ///     bounded by `path`.
     ///   - style: A style that indicates how to rasterize the path.
+    @inlinable
     public func fill(_ rect: CGRect, with shading: GraphicsContext.Shading, style: FillStyle = FillStyle()) {
         self.fill(Path(rect), with: shading, style: style)
     }
@@ -59,6 +61,7 @@ extension EnvironmentValues {
     /// - iPad window is wide enough
     /// - any other device
     @MainActor
+    @inlinable
     public var showsExtendedMenubar: Bool {
         switch DesignPattern.current {
         case .iPhone:
@@ -76,6 +79,7 @@ extension EnvironmentValues {
 extension LocalizedStringKey.StringInterpolation {
     
     /// Append a localized subject.
+    @inlinable
     public mutating func appendInterpolation(_ subject: some CustomLocalizedStringResourceConvertible) {
         self.appendInterpolation(subject.localizedStringResource)
     }

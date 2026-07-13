@@ -15,6 +15,7 @@ extension Binding {
     /// ```swift
     /// Toggle("Camera", systemImage: "camera.viewfinder", isOn: $popoverContent == .camera)
     /// ```
+    @inlinable
     public static func ==<T: Sendable> (lhs: Self, rhs: Value) -> Binding<Bool> where T: Equatable, Value == Optional<T> {
         Binding<Bool> {
             lhs.wrappedValue == rhs
@@ -32,6 +33,7 @@ extension Binding {
     /// ```swift
     /// Toggle("Camera", systemImage: "camera.viewfinder", isOn: $popoverContent != .camera)
     /// ```
+    @inlinable
     public static func !=<T: Sendable> (lhs: Self, rhs: Value) -> Binding<Bool> where T: Equatable, Value == Optional<T> {
         Binding<Bool> {
             lhs.wrappedValue != rhs
@@ -45,6 +47,7 @@ extension Binding {
     }
     
     /// Returns `true` is `self` equals to `other`. Or, when the result binding is set to `false`, assign `self` to `falseValue`.
+    @inlinable
     public func isEqual(to other: Value, or falseValue: Value) -> Binding<Bool> where Value: Equatable & Sendable {
         Binding<Bool> {
             self.wrappedValue == other
@@ -63,16 +66,7 @@ extension Binding {
 extension Binding where Value == CGFloat {
     
     /// Access the binding as a `Double`.
-    @available(*, deprecated, renamed: "double")
-    public var float: Binding<Double> {
-        Binding<Double> {
-            self.wrappedValue
-        } set: {
-            self.wrappedValue = $0
-        }
-    }
-    
-    /// Access the binding as a `Double`.
+    @inlinable
     public var double: Binding<Double> {
         Binding<Double> {
             self.wrappedValue
@@ -86,7 +80,9 @@ extension Binding where Value == CGFloat {
 
 extension Binding where Value: OptionSet {
     
+    /// Returns `true` when `self` contains `member`, and removes `member` from `self` when the resulting binding is set to false.
     @MainActor
+    @inlinable
     public func contains(_ member: Value.Element) -> Binding<Bool> {
         Binding<Bool> {
             self.wrappedValue.contains(member)

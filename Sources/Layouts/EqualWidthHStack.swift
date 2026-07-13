@@ -36,22 +36,51 @@ public struct EqualWidthHStack: Layout {
     
     private let spacing: Double
     
+    /// Returns the size needed to give every subview the same width.
+    ///
+    /// When a finite width is proposed, that width is divided equally between the
+    /// subviews after spacing is reserved. Otherwise, the widest ideal subview is
+    /// used as the width for every slot.
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let layout = AnyLayout(HStackLayout(spacing: spacing))
-        var cache = layout.makeCache(subviews: subviews)
-        return layout.sizeThatFits(proposal: proposal, subviews: subviews, cache: &cache)
+        guard !subviews.isEmpty else { return .zero }
+        
+        let spacing = CGFloat(self.spacing)
+        let spacingWidth = spacing * CGFloat(subviews.count - 1)
+        let itemWidth: CGFloat
+        let totalWidth: CGFloat
+        
+        if let proposedWidth = proposal.width {
+            itemWidth = max(0, (proposedWidth - spacingWidth) / CGFloat(subviews.count))
+            totalWidth = proposedWidth
+        } else {
+            itemWidth = subviews.reduce(0) { width, subview in
+                max(width, subview.dimensions(in: .init(width: nil, height: proposal.height)).width)
+            }
+            totalWidth = itemWidth * CGFloat(subviews.count) + spacingWidth
+        }
+        
+        let height = subviews.reduce(0) { height, subview in
+            max(height, subview.dimensions(in: .init(width: itemWidth, height: proposal.height)).height)
+        }
+        
+        return CGSize(width: max(0, totalWidth), height: height)
     }
     
+    /// Places each subview in an equal-width horizontal slot within the available bounds.
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let width = (bounds.width - Double(subviews.count - 1) * spacing) / Double(subviews.count)
-        let height = subviews.reduce(0) { max($0, $1.dimensions(in: proposal).height) }
+        guard !subviews.isEmpty else { return }
+        
+        let spacing = CGFloat(self.spacing)
+        let width = max(0, (bounds.width - CGFloat(subviews.count - 1) * spacing) / CGFloat(subviews.count))
+        let placementProposal = ProposedViewSize(width: width, height: bounds.height)
         
         for (index, subview) in subviews.enumerated() {
-            subview.place(at: bounds.origin + CGPoint(x: (spacing + width) * Double(index), y: 0), 
-                          proposal: .init(width: width, height: height))
+            subview.place(at: bounds.origin + CGPoint(x: (spacing + width) * CGFloat(index), y: 0),
+                          proposal: placementProposal)
         }
     }
     
+    /// Describes this layout as a horizontal stack for SwiftUI spacer behavior.
     public static var layoutProperties: LayoutProperties {
         var property = LayoutProperties()
         property.stackOrientation = .horizontal

@@ -59,15 +59,8 @@ private struct StateView<Value: Equatable, ContentView: View>: View {
 /// - Parameters:
 ///   - initialValue: The initial value of the state.
 ///   - handler: The view builder.
-@MainActor 
+@MainActor
+@available(*, deprecated, message: "Use proper state handling instead.")
 public func withStateObserved<Value: Hashable>(initial initialValue: Value, @ViewBuilder handler: @escaping (_ state: Binding<Value>) -> some View) -> some View {
     StateView(value: initialValue, handler: handler)
-}
-
-
-#Preview {
-    withStateObserved(initial: 0.0) { state in
-        Text("\(state.wrappedValue)")
-        Slider(value: state)
-    }
 }

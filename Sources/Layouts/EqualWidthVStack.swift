@@ -36,22 +36,49 @@ public struct EqualWidthVStack: Layout {
     
     private let spacing: Double
     
+    /// Returns the size needed to give every subview the same width.
+    ///
+    /// When a finite width is proposed, that width is used for every subview.
+    /// Otherwise, the widest ideal subview is used as the shared width.
     public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
-        let width = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).width) }
-        let height = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).height) }
-        return CGSize(width: width, height: height * Double(subviews.count) + spacing * Double(subviews.count - 1))
+        guard !subviews.isEmpty else { return .zero }
+        
+        let spacing = CGFloat(self.spacing)
+        let width: CGFloat
+        
+        if let proposedWidth = proposal.width, proposedWidth.isFinite {
+            width = max(0, proposedWidth)
+        } else {
+            width = subviews.reduce(0) { width, subview in
+                max(width, subview.dimensions(in: .init(width: nil, height: proposal.height)).width)
+            }
+        }
+        
+        let height = subviews.reduce(0) { height, subview in
+            height + subview.dimensions(in: .init(width: width, height: nil)).height
+        }
+        let spacingHeight = spacing * CGFloat(subviews.count - 1)
+        
+        return CGSize(width: max(0, width), height: max(0, height + spacingHeight))
     }
     
+    /// Places each subview in an equal-width vertical slot within the available bounds.
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
-        let width = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).width) }
-        let height = subviews.reduce(0) { max($0, $1.dimensions(in: .unspecified).height) }
+        guard !subviews.isEmpty else { return }
         
-        for (index, subview) in subviews.enumerated() {
-            subview.place(at: bounds.origin + CGPoint(x: 0, y: (spacing + height) * Double(index)),
+        let spacing = CGFloat(self.spacing)
+        let width = bounds.width.isFinite ? max(0, bounds.width) : 0
+        var y = bounds.minY
+        
+        for subview in subviews {
+            let height = subview.dimensions(in: .init(width: width, height: nil)).height
+            subview.place(at: CGPoint(x: bounds.minX, y: y),
                           proposal: .init(width: width, height: height))
+            y += height + spacing
         }
     }
     
+    /// Describes this layout as a vertical stack for SwiftUI spacer behavior.
     public static var layoutProperties: LayoutProperties {
         var property = LayoutProperties()
         property.stackOrientation = .vertical

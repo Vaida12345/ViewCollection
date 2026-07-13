@@ -1,19 +1,23 @@
-
 # Styles Symbols
 
 ## Topics
 
-### ProgressView Style
+### ProgressView Styles
 - ``CircularProgressViewStyle``
-- ``HeavyProgressViewStyle``
 - ``SimpleLinearProgressViewStyle``
 - ``SimpleCircularProgressViewStyle``
 
-### Button Style
+### Button Styles
 - ``CircularFillButtonStyle``
-- ``LargeCapsuleButtonStyle``
-- ``LargeControlButtonStyle``
-- ``WideBorderedButtonStyle``
+- ``ProminentButtonStyle``
 
-### ToggleStyle
+### Toggle Styles
 - ``CheckMarkToggleStyle``
+
+### Pickers
+- ``CyclePicker``
+- ``SegmentedPicker``
+
+### Sliders
+- ``MediaSlider``
+- ``PlainSlider``

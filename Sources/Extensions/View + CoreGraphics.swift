@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreGraphics
+import NativeImage
 
 
 extension View {
@@ -18,6 +19,7 @@ extension View {
     /// - Parameters:
     ///   - size: A fixed width and height for the resulting view.
     ///   - alignment: The alignment of this view inside the resulting frame.
+    @inlinable
     public func frame(_ size: CGSize, alignment: Alignment = .center) -> some View {
         self.frame(width: size.width, height: size.height, alignment: alignment)
     }
@@ -40,6 +42,7 @@ extension View {
     /// - Parameters:
     ///   - rect: The rect position containing the view.
     ///   - alignment: The alignment of this view inside `rect`.
+    @inlinable
     public func frame(_ rect: CGRect, alignment: Alignment = .center) -> some View {
         self
             .frame(rect.size, alignment: alignment)
@@ -65,6 +68,7 @@ extension View {
     ///   - origin: The position containing the view.
     ///   - size: The size of the view.
     ///   - alignment: The alignment of this view inside `rect`.
+    @inlinable
     public func frame(origin: CGPoint, size: CGSize, alignment: Alignment = .center) -> some View {
         self
             .frame(CGRect(origin: origin, size: size))

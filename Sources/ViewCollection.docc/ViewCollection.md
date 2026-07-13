@@ -14,13 +14,7 @@ A collection of SwiftUI Views.
 
 ## Getting Started
 
-`ViewCollection` uses [Swift Package Manager](https://www.swift.org/documentation/package-manager/) as its build tool. If you want to import in your own project, it's as simple as adding a `dependencies` clause to your `Package.swift`:
-```swift
-dependencies: [
-    .package(url: "https://github.com/Vaida12345/ViewCollection")
-]
-```
-and then adding the appropriate module to your target dependencies.
+`ViewCollection` uses [Swift Package Manager](https://www.swift.org/documentation/package-manager/) as its build tool.
 
 ### Using Xcode Package support
 
@@ -35,6 +29,7 @@ https://github.com/Vaida12345/ViewCollection
 - ``ColorPalette``
 - ``DataProvider``
 - ``DesignPattern``
+- ``DeviceFamily``
 - ``Untracked``
 - ``WindowManager``
 
@@ -44,15 +39,11 @@ https://github.com/Vaida12345/ViewCollection
 - <doc:Toplevel-Views>
 - <doc:ViewModifiers>
 
-
 ### Extensions
 - <doc:BindingEx>
 - <doc:BundleEx>
-- <doc:PickerInit>
+- <doc:SwiftUIEx>
 - <doc:TimelineScheduleEx>
 
 ### Articles
 - <doc:NativeViews>
-
-### Deprecated
-- <doc:DeprecatedSymbols>

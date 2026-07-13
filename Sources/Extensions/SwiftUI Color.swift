@@ -148,6 +148,7 @@ extension SIMD4: @retroactive AdditiveArithmetic, @retroactive VectorArithmetic 
 
 extension Color: @retroactive Identifiable {
     
+    @inlinable
     public var id: SIMD4<Double> {
         self.components
     }

@@ -10,6 +10,7 @@ import Foundation
 import FinderItem
 import SwiftUI
 import OSLog
+import Essentials
 
 
 /// The provider for the main storable workflow of data.
@@ -61,6 +62,10 @@ public protocol DataProvider: Codable, Identifiable, AnyObject {
     /// The default value is used when opening the app for the first time, or restoring states results in failure.
     init()
     
+    /// The path indicating the location where this ``DataProvider`` is persisted on disk.
+    @inlinable
+    static var storageLocation: FinderItem { get }
+    
 }
 
 
@@ -91,6 +96,7 @@ extension DataProvider {
     }
     
     /// Load the saved model, or create a new one using its default initializer.
+    @inlinable
     public static func load() -> Self {
         do {
             return try Self.init(at: Self.storageLocation, format: .plist)
