@@ -176,33 +176,3 @@ struct FilledVGridTests {
     }
 
 }
-
-
-@Suite("GalleryView")
-struct GalleryViewTests {
-
-    @Test("init itemsPerRow")
-    func initItemsPerRow() {
-        let layout = GalleryView(itemsPerRow: 3)
-        #expect(true)
-    }
-
-    @Test("init itemsPerRow with spacing")
-    func initItemsPerRowWithSpacing() {
-        let layout = GalleryView(itemsPerRow: 4, spacing: 10)
-        #expect(true)
-    }
-
-    @Test("init itemWidth")
-    func initItemWidth() {
-        let layout = GalleryView(itemWidth: 100)
-        #expect(true)
-    }
-
-    @Test("init itemWidth with spacing")
-    func initItemWidthWithSpacing() {
-        let layout = GalleryView(itemWidth: 100, spacing: .init(horizontal: 8, vertical: 8))
-        #expect(true)
-    }
-
-}

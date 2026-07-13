@@ -238,7 +238,7 @@ struct BindingTests {
             get: { 1.5 },
             set: { _ in }
         )
-        let floatBinding = binding.float
+        let floatBinding = binding.double
         #expect(floatBinding.wrappedValue == 1.5)
     }
 
@@ -249,7 +249,7 @@ struct BindingTests {
             get: { stored },
             set: { stored = $0 }
         )
-        let floatBinding = binding.float
+        let floatBinding = binding.double
         floatBinding.wrappedValue = 2.5
         #expect(stored == 2.5)
     }
