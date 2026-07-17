@@ -95,3 +95,21 @@ extension Binding where Value: OptionSet {
         }
     }
 }
+
+extension Binding {
+    
+    /// Returns `true` when `self` contains `member`, and removes `member` from `self` when the resulting binding is set to false.
+    @MainActor
+    @inlinable
+    public func contains<Element>(_ member: Element) -> Binding<Bool> where Value == Set<Element> {
+        Binding<Bool> {
+            self.wrappedValue.contains(member)
+        } set: {
+            if $0 {
+                self.wrappedValue.insert(member)
+            } else {
+                self.wrappedValue.remove(member)
+            }
+        }
+    }
+}
