@@ -25,17 +25,10 @@ extension NativeColor {
         with color: NativeColor,
         by fraction: CGFloat
     ) -> NativeColor {
-        var firstComponents = (red: 0.0 as CGFloat, green: 0.0 as CGFloat, blue: 0.0 as CGFloat, alpha: 0.0 as CGFloat)
-        var secondComponents = (red: 0.0 as CGFloat, green: 0.0 as CGFloat, blue: 0.0 as CGFloat, alpha: 0.0 as CGFloat)
-        
-        self.getRed(&firstComponents.red, green: &firstComponents.green, blue: &firstComponents.blue, alpha: &firstComponents.alpha)
-        color.getRed(&secondComponents.red, green: &secondComponents.green, blue: &secondComponents.blue, alpha: &secondComponents.alpha)
-        
-        return NativeColor(
-            red: (1 - fraction) * firstComponents.red + fraction * secondComponents.red,
-            green: (1 - fraction) * firstComponents.green + fraction * secondComponents.green,
-            blue: (1 - fraction) * firstComponents.blue + fraction * secondComponents.blue,
-            alpha: (1 - fraction) * firstComponents.alpha + fraction * secondComponents.alpha
-        )
+#if canImport (AppKit) && !targetEnvironment (macCatalyst)
+        self.components.mix(with: color.components, by: fraction).nsColor
+#else
+        self.components.mix(with: color.components, by: fraction).uiColor
+#endif
     }
 }

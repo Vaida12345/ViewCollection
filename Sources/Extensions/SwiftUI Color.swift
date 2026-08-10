@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import simd
+import ColorComponents
 
 
 // MARK: - Color
@@ -83,37 +83,8 @@ extension Color: @retroactive Codable {
 
 extension Color: @retroactive Animatable {
     
-    /// The components of the color.
-    ///
-    /// Layout in `[red, green, blue, alpha]`.
     @inlinable
-    public var components: SIMD4<Double> {
-#if canImport(AppKit) && !targetEnvironment(macCatalyst)
-        let color = NSColor(self).usingColorSpace(.sRGB)!
-        var components = SIMD4<Double>.zero
-        withUnsafeMutableBytes(of: &components) { pointer in
-            pointer.withMemoryRebound(to: CGFloat.self) { buffer in
-                color.getComponents(buffer.baseAddress!)
-            }
-        }
-        return components
-#elseif canImport(UIKit)
-        var r: CGFloat = 0
-        var g: CGFloat = 0
-        var b: CGFloat = 0
-        var a: CGFloat = 0
-        if UIColor(self).getRed(&r, green: &g, blue: &b, alpha: &a) {
-            return SIMD4<Double>(r, g, b, a)
-        } else {
-            let color = UIColor(self).cgColor.converted(to: CGColorSpace(name: CGColorSpace.sRGB)!, intent: .defaultIntent, options: nil)!
-            let components = color.components!
-            return SIMD4<Double>(components[0], components[1], components[2], components[3])
-        }
-#endif
-    }
-    
-    @inlinable
-    public var animatableData: SIMD4<Double> {
+    public var animatableData: ColorComponents {
         get {
             self.components
         }
@@ -130,26 +101,10 @@ extension Color: @retroactive Animatable {
     
 }
 
-
-extension SIMD4: @retroactive AdditiveArithmetic, @retroactive VectorArithmetic where Scalar == Double {
-    
-    @inlinable
-    public mutating func scale(by rhs: Double) {
-        self *= rhs
-    }
-    
-    @inlinable
-    public var magnitudeSquared: Double {
-        simd_dot(self, self)
-    }
-    
-}
-
-
 extension Color: @retroactive Identifiable {
     
     @inlinable
-    public var id: SIMD4<Double> {
+    public var id: ColorComponents {
         self.components
     }
     
