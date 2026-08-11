@@ -18,6 +18,8 @@ import UIKit
 public typealias NativeColor = UIColor
 #endif
 
+import ColorComponents
+
 
 extension NativeColor {
     
@@ -29,6 +31,15 @@ extension NativeColor {
         self.components.mix(with: color.components, by: fraction).nsColor
 #else
         self.components.mix(with: color.components, by: fraction).uiColor
+#endif
+    }
+    
+    
+    public convenience init(components: ColorComponents) {
+#if canImport (AppKit) && !targetEnvironment (macCatalyst)
+        self.init(srgbRed: components.red, green: components.green, blue: components.blue, alpha: components.alpha)
+#else
+        self.init(red: components.red, green: components.green, blue: components.blue, alpha: components.alpha)
 #endif
     }
 }
