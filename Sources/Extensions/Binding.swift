@@ -15,6 +15,7 @@ extension Binding {
     /// ```swift
     /// Toggle("Camera", systemImage: "camera.viewfinder", isOn: $popoverContent == .camera)
     /// ```
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @inlinable
     public static func ==<T: Sendable> (lhs: Self, rhs: Value) -> Binding<Bool> where T: Equatable, Value == Optional<T> {
         Binding<Bool> {
@@ -33,6 +34,7 @@ extension Binding {
     /// ```swift
     /// Toggle("Camera", systemImage: "camera.viewfinder", isOn: $popoverContent != .camera)
     /// ```
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @inlinable
     public static func !=<T: Sendable> (lhs: Self, rhs: Value) -> Binding<Bool> where T: Equatable, Value == Optional<T> {
         Binding<Bool> {
@@ -47,6 +49,7 @@ extension Binding {
     }
     
     /// Returns `true` is `self` equals to `other`. Or, when the result binding is set to `false`, assign `self` to `falseValue`.
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @inlinable
     public func isEqual(to other: Value, or falseValue: Value) -> Binding<Bool> where Value: Equatable & Sendable {
         Binding<Bool> {
@@ -66,6 +69,7 @@ extension Binding {
 extension Binding where Value == CGFloat {
     
     /// Access the binding as a `Double`.
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @inlinable
     public var double: Binding<Double> {
         Binding<Double> {
@@ -81,6 +85,7 @@ extension Binding where Value == CGFloat {
 extension Binding where Value: OptionSet {
     
     /// Returns `true` when `self` contains `member`, and removes `member` from `self` when the resulting binding is set to false.
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @MainActor
     @inlinable
     public func contains(_ member: Value.Element) -> Binding<Bool> {
@@ -99,6 +104,7 @@ extension Binding where Value: OptionSet {
 extension Binding {
     
     /// Returns `true` when `self` contains `member`, and removes `member` from `self` when the resulting binding is set to false.
+    @available(*, deprecated, message: "Use KeyPath bindings, not closure bindings")
     @MainActor
     @inlinable
     public func contains<Element>(_ member: Element) -> Binding<Bool> where Value == Set<Element> {

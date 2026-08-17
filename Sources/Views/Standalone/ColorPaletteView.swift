@@ -167,7 +167,7 @@ public struct ColorPaletteView: View {
                 self.strokeWidth = 1.67
             case .medium:
                 self.outerDiameter = 30
-                self.innerDiameter = 18
+                self.innerDiameter = 17
                 self.extendedDiameter = 25
                 self.strokeWidth = 2
             case .large:
@@ -177,7 +177,7 @@ public struct ColorPaletteView: View {
                 self.strokeWidth = 2.67
             @unknown default:
                 self.outerDiameter = 30
-                self.innerDiameter = 18
+                self.innerDiameter = 17
                 self.extendedDiameter = 25
                 self.strokeWidth = 2
             }
