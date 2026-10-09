@@ -60,12 +60,41 @@ extension EnvironmentValues {
     /// - iPhone is in landscape mode
     /// - iPad window is wide enough
     /// - any other device
+    ///
+    /// - SeeAlso: `showsExtendedToolbar`
     @MainActor
     @inlinable
     public var showsExtendedMenubar: Bool {
         switch DesignPattern.current {
         case .iPhone:
             verticalSizeClass == .compact // only show in landscape mode.
+        case .iPad:
+            horizontalSizeClass == .regular
+        default:
+            true // always show extended.
+        }
+    }
+    
+    /// Whether the tool bar is extended.
+    @MainActor
+    @inlinable
+    public var showsExtendedToolbar: Bool {
+        switch DesignPattern.current {
+        case .iPhone:
+            if #available(anyAppleOS 27.1, *) {
+                if toolbarVerticalEdge != nil {
+                    // vertical toolbar
+                    verticalSizeClass == .regular
+                } else {
+                    if verticalSizeClass == .compact && horizontalSizeClass == .compact {
+                        true // both compact means it is a small screen AND not vertical, as apparently it is SwiftUI behavior that with the same screen, when portrait, the vertical size class is regular, but when landscape, the horizontal size class is compact.
+                    } else {
+                        horizontalSizeClass == .regular
+                    }
+                }
+            } else {
+                verticalSizeClass == .compact // only show in landscape mode, as it rules out iPhone Duo, the only one with different design in iPhone class.
+            }
         case .iPad:
             horizontalSizeClass == .regular
         default:
