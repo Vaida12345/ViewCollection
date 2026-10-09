@@ -83,9 +83,8 @@ extension EnvironmentValues {
         case .iPhone:
             if #available(anyAppleOS 27.1, *) {
                 if toolbarVerticalEdge != nil {
-                    // vertical toolbar, this is the iPhone Duo fully extended portrait mode.
-                    // `verticalSizeClass == .regular` alone is not sufficient for showing extended toolbar.
-                    verticalSizeClass == .regular && horizontalSizeClass == .regular
+                    // vertical toolbar
+                    verticalSizeClass == .regular
                 } else {
                     if verticalSizeClass == .compact && horizontalSizeClass == .compact {
                         true // both compact means it is a small screen AND not vertical, as apparently it is SwiftUI behavior that with the same screen, when portrait, the vertical size class is regular, but when landscape, the horizontal size class is compact.
