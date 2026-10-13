@@ -128,7 +128,9 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
         } catch is CancellationError {
             return nil
         } catch {
-            AlertManager("Failed to update view state", error: error).present()
+            await MainActor.run {
+                AlertManager("Failed to update view state", error: error).present()
+            }
         }
         return nil
     }

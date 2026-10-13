@@ -15,7 +15,7 @@ let package = Package (
     ], dependencies: [
         .package(url: "https://github.com/Vaida12345/NativeImage.git", from: "1.3.0"),
         .package(url: "https://github.com/Vaida12345/FinderItem.git", from: "2.2.4"),
-        .package(url: "https://github.com/Vaida12345/Essentials.git", from: "1.2.1"),
+        .package(url: "https://github.com/Vaida12345/Essentials.git", from: "1.5.0"),
         .package(url: "https://github.com/Vaida12345/ColorComponents.git", from: "1.1.0"),
     ], targets: [
         .target(name: "ViewCollection", dependencies: ["NativeImage", "FinderItem", "Essentials", "ColorComponents"], path: "Sources"),
