@@ -100,7 +100,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         
         window.styleMask = styleMask
         window.titlebarAppearsTransparent = true
-        window.title = title.localized()
+        window.title = String(localized: title)
         window.identifier = .init(rawValue: identifier)
         
         for hide in hiding {
@@ -171,7 +171,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         window.styleMask = [.titled, .fullSizeContentView]
         window.backingType = .buffered
         window.titlebarAppearsTransparent = true
-        window.title = title.localized()
+        window.title = String(localized: title)
         window.identifier = .init(rawValue: identifier)
         
         // Set window properties

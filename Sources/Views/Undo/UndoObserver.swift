@@ -44,8 +44,8 @@ public final class UndoObserver {
     public init(undoManager: UndoManager?) {
         self.canUndo = undoManager?.canUndo ?? false
         self.canRedo = undoManager?.canRedo ?? false
-        self.undoLabel = undoManager?.undoMenuItemTitle ?? LocalizedStringResource("Undo", bundle: .module).localized()
-        self.redoLabel = undoManager?.redoMenuItemTitle ?? LocalizedStringResource("Redo", bundle: .module).localized()
+        self.undoLabel = undoManager?.undoMenuItemTitle ?? String(localized: LocalizedStringResource("Undo", bundle: .module))
+        self.redoLabel = undoManager?.redoMenuItemTitle ?? String(localized: LocalizedStringResource("Redo", bundle: .module))
         
         self.undoManager = undoManager
     }
