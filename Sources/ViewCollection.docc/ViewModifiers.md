@@ -17,6 +17,7 @@
 
 ### Windows
 - ``SwiftUICore/View/windowOverrideEnableFullScreen()``
+- ``SwiftUICore/View/windowButtons(hiding:)``
 
 ### Deprecated Helpers
 - ``withStateObserved(initial:handler:)``

@@ -54,7 +54,7 @@ extension View {
     ///
     /// SwiftUI does not make every window full-screen capable. This modifier forces the window's `collectionBehavior` to `fullScreenPrimary` and reapplies it whenever SwiftUI changes it, so the full-screen button stays enabled, including for windows with fixed-size content.
     ///
-    /// Apply it to the root content of the scene. It does nothing on platforms other than macOS.
+    /// Apply it to the root content of the scene.
     ///
     /// ```swift
     /// Window("Main", id: "main") {
