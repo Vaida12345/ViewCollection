@@ -15,6 +15,9 @@
 ### Undo
 - ``SwiftUICore/View/undoObservation(_:)``
 
+### Windows
+- ``SwiftUICore/View/windowOverrideEnableFullScreen()``
+
 ### Deprecated Helpers
 - ``withStateObserved(initial:handler:)``
 - ``SwiftUICore/View/animatedAppearing(_:)``
