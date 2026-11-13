@@ -38,7 +38,7 @@ public final class WindowManager: NSObject, NSWindowDelegate {
     /// Open the view in a new window, or pop the exiting window if any.
     ///
     /// - Parameters:
-    ///   - title: The window title///   - identifier: This unique id of this window, and used to identify the window using `NSWindow.identifier.rawValue`..
+    ///   - title: The window title.
     ///   - identifier: This unique id of this window, and used to identify the window using `NSWindow.identifier.rawValue`.
     ///   - view: The view body of the window.
     ///   - styleMask: The window stye.
@@ -106,15 +106,17 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         for hide in hiding {
             window.standardWindowButton(hide)?.isHidden = true
         }
-        
-        window.makeKeyAndOrderFront(nil)
-        
-        if let historySize = UserDefaults.standard.string(forKey: "NSWindow Frame \(title)") {
-            window.setFrame(NSRectFromString(historySize), display: true)
-        } else if let initialSize {
-            window.setFrame(CGRect(origin: window.frame.origin, size: initialSize), display: true)
+
+        if let initialSize {
+            window.setFrame(CGRect(origin: window.frame.origin, size: initialSize), display: false)
         }
-        
+        window.center()
+
+        // Restores the previously saved frame if any, and keeps saving it on every move and resize.
+        window.setFrameAutosaveName(identifier)
+
+        window.makeKeyAndOrderFront(nil)
+
         self.window = window
     }
     
@@ -178,22 +180,21 @@ public final class WindowManager: NSObject, NSWindowDelegate {
         window.isFloatingPanel = true  // Keeps it above other windows
         window.isMovableByWindowBackground = true  // Click and drag anywhere to move
         window.hasShadow = true
-        
-        window.makeKeyAndOrderFront(nil)
-        
-        if let historySize = UserDefaults.standard.string(forKey: "NSWindow Frame \(title)") {
-            window.setFrame(NSRectFromString(historySize), display: true)
-        } else if let initialSize {
-            window.setFrame(CGRect(origin: window.frame.origin, size: initialSize), display: true)
+
+        if let initialSize {
+            window.setFrame(CGRect(origin: window.frame.origin, size: initialSize), display: false)
         }
-        
+        window.center()
+
+        // Restores the previously saved frame if any, and keeps saving it on every move and resize.
+        window.setFrameAutosaveName(identifier)
+
+        window.makeKeyAndOrderFront(nil)
+
         self.window = window
     }
     
     public func windowWillClose(_ notification: Notification) {
-        if let identifier, let window {
-            UserDefaults.standard.set(NSStringFromRect(window.frame), forKey: "NSWindow Frame \(identifier)")
-        }
         self.reset()
     }
     
