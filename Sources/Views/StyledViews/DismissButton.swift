@@ -30,6 +30,8 @@ public struct DismissButton: View {
         Button(action: action) {
             Label(LocalizedStringResource("Close", bundle: #bundle), systemImage: "xmark")
                 .labelStyle(.iconOnly)
+                .help(LocalizedStringResource("Close", bundle: #bundle))
+                .accessibilityLabel(LocalizedStringResource("Close", bundle: #bundle))
 #if os(iOS)
                 .scaleEffect(1.4)
 #else
