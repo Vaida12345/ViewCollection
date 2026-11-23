@@ -16,7 +16,9 @@ import Essentials
 
 /// A view that handles drops from Finder.
 ///
-/// - Warning: The operating system implicitly starts security-scoped access on `URL`s passed. When you’ve finished with the resources, call `stopAccessingSecurityScopedResource()` to revoke your app’s access.
+/// - Warning: Security-scoped access depends on where the items come from:
+///   - Dropped items: The operating system implicitly starts security-scoped access on the `URL`s passed. When you’ve finished with the resources, call `stopAccessingSecurityScopedResource()` to revoke your app’s access.
+///   - Items chosen in the file importer (see ``showFileImporterBox(allowMultipleSelection:)``): Access isn’t started for you. Call `startAccessingSecurityScopedResource()` before using the resources, and `stopAccessingSecurityScopedResource()` when you’ve finished with them.
 ///
 /// ## Creating Instances
 ///
@@ -49,7 +51,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     // MARK: - Basic Properties
     
     /// The text shown as a prompt.
-    private let prompt: LocalizedStringKey
+    private let prompt: LocalizedStringResource
     
     /// The alignment of the overlay.
     private let overlayAlignment: Alignment
@@ -59,7 +61,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     
     
     /// The handler with an array of the `FinderItems` to the path of the *dropped* items.
-    private let dropHandler: @Sendable (_ sources: [FinderItem]) throws -> Void
+    private let dropHandler: @MainActor (_ sources: [FinderItem]) throws -> Void
     
     /// Layers the views that you specify in front of this view and hides the prompt.
     private let overlay: (_ isTargeted: Bool) -> Overlay
@@ -94,7 +96,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
                         
                         RoundedRectangle(cornerRadius: 10)
                             .stroke(lineWidth: isDropTargeted ? 2 : 0)
-                            .foregroundColor(Color.accentColor)
+                            .foregroundStyle(Color.accentColor)
                             .padding(.all, 1)
                     }
                 }
@@ -110,44 +112,45 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
                         .fontWeight(.light)
                         .foregroundStyle(isDropTargeted ? .blue : .secondary)
                     
-                    Text(prompt, bundle: .module)
+                    Text(prompt)
                         .bold()
                         .fontDesign(.rounded)
                         .font(.title3)
                 }
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .padding()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         } else {
             self.overlay(isDropTargeted)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: overlayAlignment)
         }
     }
     
     /// The main body.
     public var body: some View {
-        if isEnabled {
-            promptView
-                .dropDestination(for: FinderItem.self) { items, location in
-                    withErrorPresented("Failed to import items") {
-                        try self.dropHandler(items)
-                        return true
-                    } ?? false
-                } isTargeted: { isTargeted in
-                    withAnimation(.spring().speed(4)) {
-                        self.isDropTargeted = isTargeted
-                    }
+        promptView
+            .dropDestination(for: FinderItem.self) { items, location in
+                guard isEnabled else { return false }
+                return withErrorPresented("Failed to import items") {
+                    try self.dropHandler(items)
+                    return true
+                } ?? false
+            } isTargeted: { isTargeted in
+                let isTargeted = isEnabled && isTargeted
+                guard isTargeted != self.isDropTargeted else { return }
+                withAnimation(.spring().speed(4)) {
+                    self.isDropTargeted = isTargeted
                 }
-                .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.fileURL], allowsMultipleSelection: allowMultipleSelection ?? false) { result in
-                    withErrorPresented("Failed to import items") {
-                        let urls = try result.get()
-                        try dropHandler(urls.map({ FinderItem(at: $0) }))
-                    }
+            }
+            .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.fileURL], allowsMultipleSelection: allowMultipleSelection ?? false) { result in
+                guard isEnabled else { return }
+                withErrorPresented("Failed to import items") {
+                    let urls = try result.get()
+                    try dropHandler(urls.map({ FinderItem(at: $0) }))
                 }
-        } else {
-            promptView
-        }
+            }
     }
     
     
@@ -155,26 +158,25 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     
     /// Defines the destination for a drag and drop operation, handling dropped content with the given closure.
     ///
-    /// The handler is isolated `Sendable` to move from `MainActor` to a background `Task`, any modifications to UI should be reported using `@MainActor`.
+    /// The handler is called synchronously on the main actor, so you can update your view’s state directly. To perform asynchronous work, start a `Task` from the handler.
     ///
     /// ```swift
     /// DropHandlerView()
     ///     .onDrop { sources in
-    ///         let items = await operation(sources)
-    ///         await MainActor.run {
-    ///             self.items = items
-    ///         }
+    ///         self.items.append(contentsOf: sources)
     ///     }
     /// ```
     ///
+    /// Errors thrown from the handler are presented to the user, and the drop is reported as failed.
+    ///
     /// > Warning:
-    /// > The sources are security-scoped, which means you need to manually start and stop the security scope using `tryAccessSecurityScope` and `stopAccessSecurityScope`.
+    /// > The sources are security-scoped. For dropped items, the operating system has already started access; for items chosen in the file importer, it hasn’t. Since the handler receives both, start the security scope using `tryAccessSecurityScope` and stop it using `stopAccessSecurityScope` when you’ve finished.
     /// >
     /// > ```swift
     /// > .onDrop { sources in
     /// >     try? sources.tryAccessSecurityScope()
     /// >
-    /// >     Task { @MainActor in
+    /// >     Task {
     /// >         defer { sources.stopAccessSecurityScope() }
     /// >         do {
     /// >             let newItems = try await loadItems(from: sources)
@@ -185,13 +187,13 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     /// > }
     /// > ```
     /// >
-    /// > You should use `try?` to avoid the access being already provided.
+    /// > Use `try?`, because access may already have been started for dropped items.
     ///
     /// - note: This method can only handle drops from finders.
     ///
     /// - Parameters:
     ///   - handler: The handler with an array of the `FinderItems` to the path of the *dropped* items.
-    public func onDrop(_ handler: @escaping @Sendable (_ sources: [FinderItem]) throws -> Void) -> DropHandlerView {
+    public func onDrop(_ handler: @escaping @MainActor (_ sources: [FinderItem]) throws -> Void) -> DropHandlerView {
         DropHandlerView(prompt: self.prompt,
                         overlayAlignment: self.overlayAlignment,
                         isOverlayHidden: self.isOverlayHidden,
@@ -242,12 +244,12 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     // MARK: - Designated Initializers
     
     /// Initialize a drop handler.
-    private init(prompt: LocalizedStringKey,
+    private init(prompt: LocalizedStringResource,
                  overlayAlignment: Alignment,
                  isOverlayHidden: Bool,
                  allowMultipleSelection: Bool?,
                  overlay: @escaping (_ isDropTargeted: Bool) -> Overlay,
-                 dropHandler: @Sendable @escaping (_: [FinderItem]) throws -> Void
+                 dropHandler: @MainActor @escaping (_: [FinderItem]) throws -> Void
     ) {
         
         self.prompt = prompt
@@ -267,9 +269,9 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
     /// You would need to handle the drop using ``onDrop(_:)``.
     ///
     /// - Parameters:
-    ///   - prompt: The text shown as a prompt.
-    public init(prompt: LocalizedStringKey = "Drag in files or folder") where Overlay == EmptyView {
-        self.init(prompt: prompt,
+    ///   - prompt: The text shown as a prompt. Pass `nil` to use the default prompt.
+    public init(prompt: LocalizedStringResource? = nil) where Overlay == EmptyView {
+        self.init(prompt: prompt ?? LocalizedStringResource("Drag in files or folder", bundle: #bundle),
                   overlayAlignment: .center,
                   isOverlayHidden: true,
                   allowMultipleSelection: nil,
