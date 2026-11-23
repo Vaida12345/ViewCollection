@@ -21,7 +21,8 @@ import Essentials
 ///     .keyboardShortcut(.escape, modifiers: [])
 /// }
 /// ```
-@available(*, deprecated, message: "Use toolbar item instead.")
+@available(macOS 15.0, *)
+@available(iOS, introduced: 18.0, deprecated, message: "Use toolbar item instead")
 public struct DismissButton: View {
     
     let action: @MainActor () -> Void

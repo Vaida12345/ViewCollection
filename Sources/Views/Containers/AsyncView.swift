@@ -50,15 +50,13 @@ import Essentials
 /// - Tip: Open an unstructured `Task` only when something makes sense to execute *concurrently* to the `View`'s normal operation, like refreshing the model, not `buttonTapped()` callbacks.
 public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where Success: Sendable {
     
-    private let resultGenerator: @Sendable () async throws -> Success?
-    private let viewGenerator: (_ result: Success) -> Content
-    private let placeHolder: () -> PlaceHolder
-    private let disableAnimation: Bool
+    private let viewGenerator: @MainActor (_ result: Success) -> Content
+    private let placeHolder: @MainActor () -> PlaceHolder
     
-    @State private var result: Success?
+    @State private var controller: AsyncViewController<Success>
     
     public var body: some View {
-        if let result {
+        if let result = controller.result {
             viewGenerator(result)
         } else {
             Group {
@@ -70,7 +68,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
                 }
             }
             .task {
-                await self.update()
+                await controller.update()
             }
         }
     }
@@ -86,11 +84,11 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     ///   - content: The `View` that makes use of the result generated. It would only be presented when the results has been generated asynchronously.
     ///   - placeHolder: The temperate view shown when the result is still be generated.
     public init(disableAnimation: Bool = false,
-                generator: @escaping @Sendable () async throws -> Success?,
-                @ViewBuilder content: @escaping (_ result: Success) -> Content,
-                @ViewBuilder placeHolder: @escaping () -> PlaceHolder = { EmptyView() }) {
-        self.disableAnimation = disableAnimation
-        self.resultGenerator = generator
+                generator: @escaping Generator,
+                @ViewBuilder content: @escaping @MainActor (_ result: Success) -> Content,
+                @ViewBuilder placeHolder: @escaping @MainActor () -> PlaceHolder = { EmptyView() }) {
+        self.controller = .init(generator: generator, disableAnimation: disableAnimation)
+        
         self.viewGenerator = content
         self.placeHolder = placeHolder
     }
@@ -98,31 +96,48 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
     public func disableAnimation(_ disableAnimation: Bool = true) -> AsyncView {
         AsyncView(
             disableAnimation: disableAnimation,
-            generator: self.resultGenerator,
+            generator: self.controller.generator,
             content: self.viewGenerator,
             placeHolder: self.placeHolder
         )
     }
     
-    nonisolated func update() async {
-        let resultGenerator = resultGenerator
-        let success = await _updates(resultGenerator: resultGenerator)
-        
+    public typealias Generator = @Sendable () async throws -> Success?
+}
+
+
+@MainActor
+@Observable
+private final class AsyncViewController<Success: Sendable> {
+    
+    private(set) var result: Success?
+    nonisolated let generator: Generator
+    private nonisolated let disableAnimation: Bool
+    
+    init(generator: @escaping Generator, disableAnimation: Bool) {
+        self.generator = generator
+        self.disableAnimation = disableAnimation
+    }
+    
+    func update(result: sending Success?) {
         if disableAnimation {
-            await MainActor.run {
-                self.result = success
-            }
+            self.result = result
         } else {
-            await MainActor.run {
-                withAnimation {
-                    self.result = success
-                }
+            withAnimation {
+                self.result = result
             }
         }
     }
     
+    nonisolated func update() async {
+        let resultGenerator = self.generator
+        let success = await _updates(resultGenerator: resultGenerator)
+        
+        await self.update(result: success)
+    }
+    
     nonisolated
-    private func _updates(resultGenerator: @Sendable () async throws -> Success?) async -> Success? {
+    private func _updates(resultGenerator: @Sendable () async throws -> Success?) async -> sending Success? {
         do {
             return try await resultGenerator()
         } catch is CancellationError {
@@ -134,6 +149,8 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
         }
         return nil
     }
+    
+    public typealias Generator = @Sendable () async throws -> Success?
     
 }
 
