@@ -66,7 +66,7 @@ public struct FormattedTextField<F, Label: View>: View where F : ParseableFormat
                 Button {
                     self.value = defaultValue
                 } label: {
-                    SwiftUI.Label("Reset", systemImage: "arrow.counterclockwise")
+                    SwiftUI.Label(LocalizedStringResource("Reset", bundle: #bundle), systemImage: "arrow.counterclockwise")
                         .labelStyle(.iconOnly)
                         .scaleEffect(0.9)
                 }

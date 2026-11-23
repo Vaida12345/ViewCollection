@@ -33,14 +33,14 @@ public struct LaunchDocumentButton<Label: View>: View {
             switch action {
             case .open:
                 Task { [item] in
-                    await withErrorPresented("Failed to open \(item.name)") {
+                    await withErrorPresented(LocalizedStringResource("Failed to open \(item.name)", bundle: #bundle)) {
                         try await item.open()
                     }
                 }
                 
             case .reveal:
                 Task { [item] in
-                    await withErrorPresented("Failed to reveal \(item.name)") {
+                    await withErrorPresented(LocalizedStringResource("Failed to reveal \(item.name)", bundle: #bundle)) {
                         try await item.reveal()
                     }
                 }
@@ -50,7 +50,7 @@ public struct LaunchDocumentButton<Label: View>: View {
         } label: {
             label
         }
-        .help(Text(action.help(name: item?.name), bundle: .module))
+        .help(action.help(name: item?.name))
     }
     
     
@@ -92,10 +92,10 @@ public struct LaunchDocumentButton<Label: View>: View {
         case open
         
         
-        var title: LocalizedStringKey {
+        var title: LocalizedStringResource {
             switch self {
-            case .open: "Open"
-            case .reveal: "Show in Finder"
+            case .open: LocalizedStringResource("Open", bundle: #bundle)
+            case .reveal: LocalizedStringResource("Show in Finder", bundle: #bundle)
             }
         }
         
@@ -111,20 +111,20 @@ public struct LaunchDocumentButton<Label: View>: View {
             }
         }
         
-        func help(name: String?) -> LocalizedStringKey {
+        func help(name: String?) -> LocalizedStringResource {
             if let name {
                 switch self {
                 case .reveal:
-                    "Show \(name) in Finder"
+                    LocalizedStringResource("Show \(name) in Finder", bundle: #bundle)
                 case .open:
-                    "Open \(name) with external software"
+                    LocalizedStringResource("Open \(name) with external software", bundle: #bundle)
                 }
             } else {
                 switch self {
                 case .reveal:
-                    "Show in Finder"
+                    LocalizedStringResource("Show in Finder", bundle: #bundle)
                 case .open:
-                    "Open with external software"
+                    LocalizedStringResource("Open with external software", bundle: #bundle)
                 }
             }
         }
@@ -139,11 +139,7 @@ public struct DefaultLaunchDocumentLabel: View {
     let action: LaunchDocumentButton<DefaultLaunchDocumentLabel>.Action
     
     public var body: some View {
-        Label {
-            Text(action.title, bundle: .module)
-        } icon: {
-            Image(systemName: action.systemName)
-        }
+        Label(action.title, systemImage: action.systemName)
     }
 }
 

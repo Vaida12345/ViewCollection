@@ -116,7 +116,7 @@ public struct CircularProgressViewStyle: ProgressViewStyle {
             }
         }
         .aspectRatio(1, contentMode: .fit)
-        .help("\(configuration.fractionCompleted ?? 0, format: .percent.precision(.fractionLength(2)))")
+        .help(Text(configuration.fractionCompleted ?? 0, format: .percent.precision(.fractionLength(2))))
         .animation(.linear, value: configuration.fractionCompleted)
     }
 }

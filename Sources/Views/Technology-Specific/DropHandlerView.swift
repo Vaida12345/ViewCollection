@@ -133,7 +133,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
         promptView
             .dropDestination(for: FinderItem.self) { items, location in
                 guard isEnabled else { return false }
-                return withErrorPresented("Failed to import items") {
+                return withErrorPresented(LocalizedStringResource("Failed to import items", bundle: #bundle)) {
                     try self.dropHandler(items)
                     return true
                 } ?? false
@@ -146,7 +146,7 @@ public struct DropHandlerView<Overlay>: View where Overlay: View {
             }
             .fileImporter(isPresented: $showFileImporter, allowedContentTypes: [.fileURL], allowsMultipleSelection: allowMultipleSelection ?? false) { result in
                 guard isEnabled else { return }
-                withErrorPresented("Failed to import items") {
+                withErrorPresented(LocalizedStringResource("Failed to import items", bundle: #bundle)) {
                     let urls = try result.get()
                     try dropHandler(urls.map({ FinderItem(at: $0) }))
                 }

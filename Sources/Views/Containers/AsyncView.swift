@@ -129,7 +129,7 @@ public struct AsyncView<Success, Content: View, PlaceHolder: View>: View where S
             return nil
         } catch {
             await MainActor.run {
-                AlertManager("Failed to update view state", error: error).present()
+                AlertManager(LocalizedStringResource("Failed to update view state", bundle: #bundle), error: error).present()
             }
         }
         return nil
@@ -149,7 +149,7 @@ private struct AsyncViewPreview: View {
             } content: { result in
                 Text("\(result)")
             } placeHolder: {
-                Text("Loading...", bundle: .module)
+                Text(LocalizedStringResource("Loading...", bundle: #bundle))
             }
             .id(state)
             
