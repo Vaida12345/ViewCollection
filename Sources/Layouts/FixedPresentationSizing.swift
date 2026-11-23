@@ -36,7 +36,7 @@ extension PresentationSizing where Self == FixedPresentationSizing {
 
 #Preview {
     PreviewSheet {
-        Text("12345")
+        Text(verbatim: "12345")
             .padding()
             .presentationSizing(.fixed(width: 100, height: 100))
     }
